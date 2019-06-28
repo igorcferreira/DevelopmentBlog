@@ -10,8 +10,8 @@ permalink:           pretty
 # Setup
 repository:          igorcferreira/DevelopmentBlog
 title:               Igor Ferreira
-tagline:             'Um simples blog'
-description:         'Um blog escrito por <a href="https://twitter.com/icastanheda">mim</a> sobre coisas'
+tagline:             'A simple blog, about my technical discoveries along the way'
+description:         'A simple blog, about my technical discoveries along the way. Here, I'll mostly post things about Swift, iOS, and some other random dev tools'
 url:                 https://igorcferreira.dev
 baseurl:             ''
 paginate:            3
