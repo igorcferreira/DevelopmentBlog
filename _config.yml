@@ -8,7 +8,7 @@ highlighter:      rouge
 permalink:           pretty
 
 # Setup
-repository:          igorcferreira/igorcferreira.dev.github.io
+repository:          igorcferreira/DevelopmentBlog
 title:               Igor Ferreira
 tagline:             'Um simples blog'
 description:         'Um blog escrito por <a href="https://twitter.com/icastanheda">mim</a> sobre coisas'
@@ -19,7 +19,7 @@ paginate:            3
 # About/contact
 author:
   name:              Igor Ferreira
-  url:               https://twitter.com/icastanhed
+  url:               https://twitter.com/icastanheda
   email:             igorcferreira@hotmail.com
 
 # Custom vars
@@ -28,4 +28,4 @@ version:             1.0.0
 plugins: [jekyll-paginate, jekyll-github-metadata]
 
 github:
-  repo:           https://github.com/igorcferreira/igorcferreira.dev.github.io
+  repo:           https://github.com/igorcferreira/DevelopmentBlog
