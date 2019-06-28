@@ -11,7 +11,7 @@ permalink:           pretty
 repository:          igorcferreira/DevelopmentBlog
 title:               Igor Ferreira
 tagline:             'A simple blog, about my technical discoveries along the way'
-description:         'A simple blog, about my technical discoveries along the way. Here, I'll mostly post things about Swift, iOS, and some other random dev tools'
+description:         'A simple blog, about my technical discoveries along the way. Here, I\'ll mostly post things about Swift, iOS, and some other random dev tools'
 url:                 https://igorcferreira.dev
 baseurl:             ''
 paginate:            3
