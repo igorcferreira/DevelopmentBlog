@@ -14,18 +14,26 @@ tagline:             'A simple blog, about my technical discoveries along the wa
 description:         'A simple blog, about my technical discoveries along the way. Here, I will mostly post things about Swift, iOS, and some other random dev tools'
 url:                 https://igorcferreira.dev
 baseurl:             ''
-paginate:            3
+paginate:            10
 
 # About/contact
 author:
   name:              Igor Ferreira
   url:               https://twitter.com/icastanheda
-  email:             igorcferreira@hotmail.com
+  twitter:           icastanheda
+  picture:           /public/user_avatar.png
 
 # Custom vars
 version:             1.0.0
 
-plugins: [jekyll-paginate, jekyll-github-metadata]
+plugins:
+  - jekyll-paginate
+  - jekyll-feed
+  - jekyll-github-metadata
+
+feed:
+  path: atom.xml
+  excerpt_only: true
 
 github:
   repo:           https://github.com/igorcferreira/DevelopmentBlog
