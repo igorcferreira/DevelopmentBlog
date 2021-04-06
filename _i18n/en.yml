@@ -4,3 +4,8 @@ site:
   description: A simple blog, about my technical discoveries along the way. Here, I will mostly post things about Swift, iOS, and some other random dev tools
 titles:
   about: About
+error:
+  404:
+    title: 404 - Page not found
+    message: Sorry, we've misplaced that URL or it's pointing to something that doesn't exist.
+    link: Head back home to try finding it again
