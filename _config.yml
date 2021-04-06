@@ -29,7 +29,6 @@ version:             1.0.0
 plugins:
   - jekyll-paginate
   - jekyll-feed
-  - jekyll-github-metadata
   - jekyll-multiple-languages-plugin
 
 languages: ["en", "pt"]
