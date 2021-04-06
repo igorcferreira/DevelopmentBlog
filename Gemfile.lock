@@ -260,11 +260,9 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages (~> 214)
-  jekyll (~> 3.9.0)
   jekyll-feed (~> 0.15.1)
+  jekyll-mentions (~> 1.6.0)
   jekyll-paginate (~> 1.1.0)
-  kramdown (~> 2.3.1)
-  rouge (~> 3.26.0)
 
 BUNDLED WITH
-   2.1.4
+   2.1.0.pre.1
