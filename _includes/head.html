@@ -4,13 +4,13 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
   {% if page.image %}
-  <meta property="og:image" content="{{ site.url }}/{{ page.image }}">
+  <meta property="og:image" content="{{ site.baseurl_root }}/{{ page.image }}">
   {% endif %}
 
-  {% if page.title == "Home" %}
-  <meta property="og:title" content="{{ site.title }}">
+  {% if page.title == "site.title" %}
+  <meta property="og:title" content="{% t site.title %}">
   {% else %}
-  <meta property="og:title" content="{{ page.title }}">
+  <meta property="og:title" content="{% t page.title %}">
   {% endif %}
 
   {% feed_meta %}
@@ -19,20 +19,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <title>
-    {% if page.title == "Home" %}
-      {{ site.title }} &middot; {{ site.tagline }}
+    {% if page.title == "site.title" %}
+      {% t site.title %} &middot; {% t site.tagline %}
     {% else %}
-      {{ page.title }} &middot; {{ site.title }}
+      {% t page.title %} &middot; {% t site.title %}
     {% endif %}
   </title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="{{ site.baseurl }}/public/css/poole.css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/public/css/syntax.css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/public/css/lanyon.css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/public/css/text.css">
+  <link rel="stylesheet" href="{{ site.baseurl_root }}/public/css/poole.css">
+  <link rel="stylesheet" href="{{ site.baseurl_root }}/public/css/syntax.css">
+  <link rel="stylesheet" href="{{ site.baseurl_root }}/public/css/lanyon.css">
+  <link rel="stylesheet" href="{{ site.baseurl_root }}/public/css/text.css">
 
   <!-- Icons -->
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ site.baseurl }}/public/apple-touch-icon-precomposed.png">
-  <link rel="shortcut icon" href="{{ site.baseurl }}/public/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ site.baseurl_root }}/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="{{ site.baseurl_root }}/public/favicon.ico">
 </head>
