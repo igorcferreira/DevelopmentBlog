@@ -4,7 +4,6 @@ ruby '2.7.2'
 
 gem 'rake', '~> 13.0.3'
 gem 'puma', '~> 5.2.2'
-gem 'rack-jekyll', '~> 0.5.0'
 
 group :jekyll_plugins do
 	gem 'jekyll', '~> 4.2.0'
