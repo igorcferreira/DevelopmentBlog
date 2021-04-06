@@ -42,7 +42,7 @@ feed:
   path: atom.xml
   excerpt_only: true
 
-exclude: ['config.ru', 'Gemfile', 'Gemfile.lock', 'vendor', 'Procfile', 'Rakefile']
+exclude: ['config.ru', 'Gemfile', 'Gemfile.lock', 'vendor', 'Procfile', 'Rakefile', 'static.json', 'README.md', 'CONTRIBUTING.md', 'LICENSE.md']
 
 github:
   repo: https://github.com/igorcferreira/DevelopmentBlog
