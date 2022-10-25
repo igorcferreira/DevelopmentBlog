@@ -1,56 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="pt"><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://igorcferreira.dev/atom.xml" rel="self" type="application/atom+xml" /><link href="https://igorcferreira.dev/" rel="alternate" type="text/html" hreflang="pt" /><updated>2022-02-15T14:50:58+00:00</updated><id>https://igorcferreira.dev/atom.xml</id><title type="html">Igor Ferreira</title><subtitle>A simple blog, about my technical discoveries along the way. 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="pt"><generator uri="https://jekyllrb.com/" version="4.3.0">Jekyll</generator><link href="https://igorcferreira.dev/atom.xml" rel="self" type="application/atom+xml" /><link href="https://igorcferreira.dev/" rel="alternate" type="text/html" hreflang="pt" /><updated>2022-10-25T19:05:14+00:00</updated><id>https://igorcferreira.dev/atom.xml</id><title type="html">Igor Ferreira</title><subtitle>A simple blog, about my technical discoveries along the way. 
 Here, I will mostly post things about Swift, iOS, and some other random dev tools
-</subtitle><author><name>Igor Ferreira</name></author><entry><title type="html">titles.post.dynamic_link</title><link href="https://igorcferreira.dev/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink/" rel="alternate" type="text/html" title="titles.post.dynamic_link" /><published>2019-06-28T00:00:00+00:00</published><updated>2019-06-28T00:00:00+00:00</updated><id>https://igorcferreira.dev/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink</id><content type="html" xml:base="https://igorcferreira.dev/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink/">&lt;p&gt;Por causa de uma &lt;a href=&quot;https://twitter.com/thwittem/status/1143272885588549632&quot;&gt;thread no Twitter&lt;/a&gt;, eu criei um &lt;a href=&quot;https://gist.github.com/igorcferreira/b302ea59830ce1a3ee2558fa996505ea&quot;&gt;pequeno gist&lt;/a&gt; com uma tentativa de simular o use de DynamicNavigationDestinationLink para mostrar um conteúdo carregado de uma fonte externa. Isso pode ser útil para quem está em busca da fonte de um crash.&lt;/p&gt;
+</subtitle><author><name>Igor Ferreira</name></author><entry><title type="html">titles.post.dynamic_link</title><link href="https://igorcferreira.dev/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink/" rel="alternate" type="text/html" title="titles.post.dynamic_link" /><published>2019-06-28T00:00:00+00:00</published><updated>2019-06-28T00:00:00+00:00</updated><id>https://igorcferreira.dev/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink</id><content type="html" xml:base="https://igorcferreira.dev/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink/"><![CDATA[<p>Por causa de uma <a href="https://twitter.com/thwittem/status/1143272885588549632">thread no Twitter</a>, eu criei um <a href="https://gist.github.com/igorcferreira/b302ea59830ce1a3ee2558fa996505ea">pequeno gist</a> com uma tentativa de simular o use de DynamicNavigationDestinationLink para mostrar um conteúdo carregado de uma fonte externa. Isso pode ser útil para quem está em busca da fonte de um crash.</p>
 
-&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SwiftUI&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;PlaygroundSupport&lt;/span&gt;
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">SwiftUI</span>
+<span class="kd">import</span> <span class="kt">PlaygroundSupport</span>
 
-&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;RootView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;some&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kt&quot;&gt;NavigationView&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;kt&quot;&gt;MainView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+<span class="kd">struct</span> <span class="kt">RootView</span><span class="p">:</span> <span class="kt">View</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">some</span> <span class="kt">View</span> <span class="p">{</span>
+        <span class="kt">NavigationView</span> <span class="p">{</span>
+            <span class="kt">MainView</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MainView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+<span class="kd">struct</span> <span class="kt">MainView</span><span class="p">:</span> <span class="kt">View</span> <span class="p">{</span>
     
-    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;destination&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;DynamicNavigationDestinationLink&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
-        &lt;span class=&quot;kt&quot;&gt;SecondaryView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;@State&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;loading&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;
+    <span class="k">let</span> <span class="nv">destination</span> <span class="o">=</span> <span class="kt">DynamicNavigationDestinationLink</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="p">\</span><span class="kt">String</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span> <span class="n">state</span> <span class="k">in</span>
+        <span class="kt">SecondaryView</span><span class="p">(</span><span class="nv">input</span><span class="p">:</span> <span class="n">state</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kd">@State</span> <span class="k">var</span> <span class="nv">loading</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span>
     
-    &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;some&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kt&quot;&gt;VStack&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;kt&quot;&gt;Text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loading&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Loading&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Main View&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loading&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;kt&quot;&gt;Button&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;action&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;navigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-                    &lt;span class=&quot;kt&quot;&gt;Text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Random number&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-                &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">some</span> <span class="kt">View</span> <span class="p">{</span>
+        <span class="kt">VStack</span> <span class="p">{</span>
+            <span class="kt">Text</span><span class="p">(</span><span class="n">loading</span> <span class="p">?</span> <span class="s">"Loading"</span> <span class="p">:</span> <span class="s">"Main View"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="o">!</span><span class="n">loading</span> <span class="p">{</span>
+                <span class="kt">Button</span><span class="p">(</span><span class="nv">action</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">navigate</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kt">Text</span><span class="p">(</span><span class="s">"Random number"</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
     
-    &lt;span class=&quot;kd&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;navigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loading&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;randomElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;??&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-        &lt;span class=&quot;kt&quot;&gt;DispatchQueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;asyncAfter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;deadline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loading&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;destination&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;presentedData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    <span class="kd">func</span> <span class="nf">navigate</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">loading</span> <span class="o">=</span> <span class="kc">true</span>
+        <span class="k">let</span> <span class="nv">number</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">...</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="nf">randomElement</span><span class="p">()</span> <span class="p">??</span> <span class="mi">0</span>
+        <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">asyncAfter</span><span class="p">(</span><span class="nv">deadline</span><span class="p">:</span> <span class="o">.</span><span class="nf">now</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">self</span><span class="o">.</span><span class="n">loading</span> <span class="o">=</span> <span class="kc">false</span>
+            <span class="k">self</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">presentedData</span><span class="p">?</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s">"</span><span class="se">\(</span><span class="n">number</span><span class="se">)</span><span class="s">"</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SecondaryView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kd&quot;&gt;@State&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;
+<span class="kd">struct</span> <span class="kt">SecondaryView</span><span class="p">:</span> <span class="kt">View</span> <span class="p">{</span>
+    <span class="kd">@State</span> <span class="k">var</span> <span class="nv">input</span><span class="p">:</span> <span class="kt">String</span>
     
-    &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;some&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;kt&quot;&gt;Text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">some</span> <span class="kt">View</span> <span class="p">{</span>
+        <span class="kt">Text</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-&lt;span class=&quot;kt&quot;&gt;PlaygroundPage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liveView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;UIHostingController&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;rootView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;RootView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
-&lt;span class=&quot;kt&quot;&gt;PlaygroundPage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;needsIndefiniteExecution&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+<span class="kt">PlaygroundPage</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">liveView</span> <span class="o">=</span> <span class="kt">UIHostingController</span><span class="p">(</span><span class="nv">rootView</span><span class="p">:</span> <span class="kt">RootView</span><span class="p">())</span>
+<span class="kt">PlaygroundPage</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">needsIndefiniteExecution</span> <span class="o">=</span> <span class="kc">true</span>
+</code></pre></div></div>
 
-&lt;p&gt;P.s.: Esse código foi feito em um Playground porque eu prefiro essa ferramenta para executar testes/exemplos de SwiftUI no Mojave.&lt;/p&gt;</content><author><name>Igor Ferreira</name></author><category term="iOS" /><category term="SwiftUI" /><summary type="html">Por causa de uma thread no Twitter, eu criei um pequeno gist com uma tentativa de simular o use de DynamicNavigationDestinationLink para mostrar um conteúdo carregado de uma fonte externa. Isso pode ser útil para quem está em busca da fonte de um crash.</summary></entry></feed>
+<p>P.s.: Esse código foi feito em um Playground porque eu prefiro essa ferramenta para executar testes/exemplos de SwiftUI no Mojave.</p>]]></content><author><name>Igor Ferreira</name></author><category term="iOS" /><category term="SwiftUI" /><summary type="html"><![CDATA[descriptions.post.dynamic_link]]></summary></entry></feed>
