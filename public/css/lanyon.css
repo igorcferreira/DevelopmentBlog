@@ -447,4 +447,9 @@ a.pagination-item:hover {
   .hr {
     color: #aaa;
   }
+  .container a,
+  .sidebar-toggle,
+  .related-posts li a:hover {
+    color: #ffffff;
+  }
 }
