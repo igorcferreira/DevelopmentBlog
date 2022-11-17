@@ -452,4 +452,7 @@ a.pagination-item:hover {
   .related-posts li a:hover {
     color: #ffffff;
   }
+  .sidebar {
+    background-color: #404040;
+  }
 }
