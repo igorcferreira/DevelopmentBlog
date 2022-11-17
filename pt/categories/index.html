@@ -60,20 +60,11 @@ Categorias
 
   <body>
 
-    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
-     styles, `#sidebar-checkbox` for behavior. -->
-<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
-
-<!-- Toggleable sidebar -->
+    <!-- Toggleable sidebar -->
 <div class="sidebar" id="sidebar">
-  <div class="sidebar-item">
-    <p>Um simples blog, sobre minhas descoberta no mundo da tecnologia.
-Aqui, eu vou postar sobre Swift, iOS e algums outros temas aleatórios
-</p>
-  </div>
 
-  <nav class="sidebar-nav">
-    <a class="sidebar-nav-item" href="/pt/">Página inicial</a>
+  <nav class="container sidebar-nav">
+    <a class="sidebar-nav-item" href="/pt/">Home</a>
 
     
     
@@ -92,31 +83,24 @@ Aqui, eu vou postar sobre Swift, iOS e algums outros temas aleatórios
       
     
 
-    <a class="sidebar-nav-item" href="https://github.com/igorcferreira/DevelopmentBlog">Projeto github</a>
     <a class="sidebar-nav-item" rel="me" href="https://mastodon.social/@igorcferreira">Mastodon</a>
-    <a class="sidebar-nav-item" href="/pt/atom.xml">Feed Atom</a>
+    <a class="sidebar-nav-item" href="/pt/atom.xml">Feed</a>
     
     <a class="sidebar-nav-item" href="/pt/categories">
     Categorias
     </a>
     
-    Outros idiomas:
+    Idiomas:
     
     
     
     
     <a class="sidebar-nav-item" href="/categories/">
-      See the site in English
+      EN
     </a><a>
     
     
   </a></nav>
-
-  <div class="sidebar-item">
-    <p>
-      © 2022. Todos os direitos reservados.
-    </p>
-  </div>
 </div>
 
 
@@ -126,7 +110,7 @@ Aqui, eu vou postar sobre Swift, iOS e algums outros temas aleatórios
       <div class="masthead">
         <div class="container">
           <h3 class="masthead-title">
-            <a href="/pt/" title="Página inicial">Igor Ferreira</a>
+            <a href="/pt/" title="Home">Igor Ferreira</a>
             <small>Um simples blog, sobre minhas descoberta no mundo da tecnologia</small>
           </h3>
         </div>
@@ -181,25 +165,5 @@ Usando DynamicNavigationDestinationLink
 </div>
       </div>
     </div>
-
-    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
-
-    <script>
-      (function(document) {
-        var toggle = document.querySelector('.sidebar-toggle');
-        var sidebar = document.querySelector('#sidebar');
-        var checkbox = document.querySelector('#sidebar-checkbox');
-
-        document.addEventListener('click', function(e) {
-          var target = e.target;
-
-          if(!checkbox.checked ||
-             sidebar.contains(target) ||
-             (target === checkbox || target === toggle)) return;
-
-          checkbox.checked = false;
-        }, false);
-      })(document);
-    </script>
   </body>
 </html>
