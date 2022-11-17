@@ -429,3 +429,22 @@ a.pagination-item:hover {
 .theme-base-0f .sidebar-nav a {
   color: #ffffff;
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #ffffff;
+    background: #202020;
+  }
+  h1, h2, h3, h4, h5, h6, p {
+    color: #aaa;
+  }
+  strong {
+    color: #eee;
+  }
+  .masthead {
+    border-bottom: 1px solid #aaa;
+  }
+  .hr {
+    color: #aaa;
+  }
+}
