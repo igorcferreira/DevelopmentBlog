@@ -27,6 +27,21 @@ body {
   overflow-x: hidden;
 }
 
+.language-area {
+  float: inline-end;
+}
+
+.language-icon {
+  height: 1.5em;
+  width: 1.5em;
+  border-radius: 30%;
+  float: inline-end;
+}
+
+.language-link {
+  padding-inline-start: .5em;
+}
+
 .center-image
 {
     margin: 0 auto;
