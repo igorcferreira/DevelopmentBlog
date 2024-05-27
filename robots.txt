@@ -1,0 +1,19 @@
+User-agent: Googlebot
+Disallow: *
+
+User-agent: bingbot
+Disallow: *
+
+User-agent: GPTBot
+Disallow: *
+
+User-agent: Applebot
+Disallow: *
+
+User-agent: *
+Disallow: *
+
+User-agent: *
+Allow: /
+
+Sitemap: https://igorcferreira.dev/sitemap.xml

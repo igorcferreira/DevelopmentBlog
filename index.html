@@ -1,192 +1,50 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  
+<!doctype html><html lang="en" data-bs-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="author" content="Igor Ferreira"><meta name="generator" content="Ignite v0.1.0"><title>Home</title><link href="/css/bootstrap.min.css" rel="stylesheet"><link href="/css/bootstrap-icons.min.css" rel="stylesheet"><link href="https://igorcferreira.dev/" rel="canonical"><link href="/favicon.ico" rel="icon"><meta property="og:site_name" content="Development Blog"><meta property="og:title" content="Home"><meta property="twitter:title" content="Home"><meta property="og:url" content="https://igorcferreira.dev/"><meta name="twitter:domain" content="igorcferreira.dev"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:dnt" content="on"><link href="/css/sidebar.css" rel="stylesheet"><link href="/css/prism-default-dark.css" rel="stylesheet"><script src="/script/theme.js"></script><script src="/script/syntax-highlighting.js"></script><link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon"><meta name="apple-mobile-web-app-title" content="Development Blog"></head><body data-bs-theme="auto"><div class="col-sm-10 mx-auto"><header><nav class="sidebar sidebar-nav navbar navbar-expand-md"><div class="container-fluid col"><button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div id="navbarCollapse" class="collapse navbar-collapse"><ul class="navbar-nav mb-2 mb-md-0 col"><li><button type="button" class="dropdown-toggle btn" data-bs-toggle="dropdown" aria-expanded="false"><a href="/"><img src="/images/flag_uk.svg"  class="language-icon"alt="English"/></a></button><ul class="dropdown-menu" style="min-width: 1rem; padding: .5rem"><li><a href="/"><img src="/images/flag_uk.svg"  class="language-icon"alt="English"/></a></li><li><a href="/pt-BR"><img src="/images/flag_brazil.svg"  class="language-icon"alt="português (Brasil)"/></a></li></ul></li><li class="nav-item"><a href="/en/" class="sidebar-nav-item nav-link">Home</a></li><li class="nav-item"><a href="/en/categories" class="sidebar-nav-item nav-link">Categories</a></li><li class="nav-item"><a href="https://mastodon.social/@igorcferreira" rel="me" class="sidebar-nav-item nav-link">Mastodon</a></li></ul></div></div></nav></header><div class="content"><h1>Using DynamicNavigationDestinationLink</h1><div><p>Tagged with: iOS, SwiftUI</p><p>189 words; 1 minutes to read.</p></div><p><p>Because of a <a href="https://twitter.com/thwittem/status/1143272885588549632">thread on Twitter</a>, I created this <a href="https://gist.github.com/igorcferreira/b302ea59830ce1a3ee2558fa996505ea">simple gist</a> with an attempt to simulate the use of DynamicNavigationDestinationLink to display a content fetched from an external source, it may be useful for you on trying to find a solution for your crashes.</p><pre><code class="language-swift">import SwiftUI
+import PlaygroundSupport
 
+struct RootView: View {
+    var body: some View {
+        NavigationView {
+            MainView()
+        }
+    }
+}
 
-
- 
-  <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@icastanheda" />
-  <meta name="twitter:creator" content="@icastanheda" />
-  <meta name="twitter:domain" content="https://igorcferreira.dev/" />
-  <meta property="og:url" content="https://igorcferreira.dev/" />
-
-
-  
-  <meta property="og:image" content="https://igorcferreira.dev/public/user_avatar.png" />
-  
-
-  <meta property="og:title" content="
-Igor Ferreira
-" />
-  <meta name="twitter:title" content="
-Igor Ferreira
-" />
-
-  
-  <meta property="og:description" content="A simple blog, about my technical discoveries along the way" />
-  <meta name="twitter:description" content="A simple blog, about my technical discoveries along the way" />
-  
-
-  <link type="application/atom+xml" rel="alternate" href="https://igorcferreira.dev/atom.xml" title="Igor Ferreira" />
-
-  <!-- Enable responsiveness on mobile devices-->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-
-  <title>
+struct MainView: View {
     
-      Igor Ferreira &middot; A simple blog, about my technical discoveries along the way
+    let destination = DynamicNavigationDestinationLink(id: \String.self) { state in
+        SecondaryView(input: state)
+    }
+    @State var loading: Bool = false
     
-  </title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="/public/css/poole.css">
-  <link rel="stylesheet" href="/public/css/syntax.css">
-  <link rel="stylesheet" href="/public/css/lanyon.css">
-  <link rel="stylesheet" href="/public/css/text.css">
-
-  <!-- Icons -->
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-precomposed.png">
-  <link rel="shortcut icon" href="/favicon.ico">
-</head>
-
-  <body>
-    <!-- Toggleable sidebar -->
-<div class="sidebar" id="sidebar">
-
-  <nav class="container sidebar-nav">
-    <a class="sidebar-nav-item" href="/">Home</a>
-
+    var body: some View {
+        VStack {
+            Text(loading ? "Loading" : "Main View")
+            if !loading {
+                Button(action: self.navigate) {
+                    Text("Random number")
+                }
+            }
+        }
+    }
     
+    func navigate() {
+        self.loading = true
+        let number = (1...100).randomElement() ?? 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.loading = false
+            self.destination.presentedData?.value = "\(number)"
+        }
+    }
+}
+
+struct SecondaryView: View {
+    @State var input: String
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-    
-      
-        
-      
-    
+    var body: some View {
+        Text(input)
+    }
+}
 
-    <a class="sidebar-nav-item" rel="me" href="https://mastodon.social/@igorcferreira">Mastodon</a>
-    <a class="sidebar-nav-item" href="/atom.xml">Feed</a>
-    
-    <a class="sidebar-nav-item" href="/categories">
-    Categories
-    </a>
-    
-    <div class="language-area">
-      
-      
-      <a class="language-link" href="/pt/">
-        <img class="language-icon" src="/public/flag_brazil.svg" alt="Português">
-      </a><a>
-      
-      
-      
-      
-    </a>
-</div>
-  </nav>
-</div>
-
-    <div class="wrap container content">
-      <div class="posts">
-  
-  <div class="post">
-    
-
-
-
- 
-
-    <h1 class="post-title">
-      <a href="/ios/swiftui/2019/06/28/dynamicnavigationdestionationlink/">
-        
-Using DynamicNavigationDestinationLink
-
-      </a>
-    </h1>
-
-    <span class="post-date">28 Jun 2019 </span>
-
-    <p>Because of a <a href="https://twitter.com/thwittem/status/1143272885588549632">thread on Twitter</a>, I created this <a href="https://gist.github.com/igorcferreira/b302ea59830ce1a3ee2558fa996505ea">simple gist</a> with an attempt to simulate the use of DynamicNavigationDestinationLink to display a content fetched from an external source, it may be useful for you on trying to find a solution for your crashes.</p>
-
-<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">import</span> <span class="kt">SwiftUI</span>
-<span class="kd">import</span> <span class="kt">PlaygroundSupport</span>
-
-<span class="kd">struct</span> <span class="kt">RootView</span><span class="p">:</span> <span class="kt">View</span> <span class="p">{</span>
-    <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">some</span> <span class="kt">View</span> <span class="p">{</span>
-        <span class="kt">NavigationView</span> <span class="p">{</span>
-            <span class="kt">MainView</span><span class="p">()</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">struct</span> <span class="kt">MainView</span><span class="p">:</span> <span class="kt">View</span> <span class="p">{</span>
-    
-    <span class="k">let</span> <span class="nv">destination</span> <span class="o">=</span> <span class="kt">DynamicNavigationDestinationLink</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="p">\</span><span class="kt">String</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span> <span class="n">state</span> <span class="k">in</span>
-        <span class="kt">SecondaryView</span><span class="p">(</span><span class="nv">input</span><span class="p">:</span> <span class="n">state</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="kd">@State</span> <span class="k">var</span> <span class="nv">loading</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span>
-    
-    <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">some</span> <span class="kt">View</span> <span class="p">{</span>
-        <span class="kt">VStack</span> <span class="p">{</span>
-            <span class="kt">Text</span><span class="p">(</span><span class="n">loading</span> <span class="p">?</span> <span class="s">"Loading"</span> <span class="p">:</span> <span class="s">"Main View"</span><span class="p">)</span>
-            <span class="k">if</span> <span class="o">!</span><span class="n">loading</span> <span class="p">{</span>
-                <span class="kt">Button</span><span class="p">(</span><span class="nv">action</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">navigate</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="kt">Text</span><span class="p">(</span><span class="s">"Random number"</span><span class="p">)</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    
-    <span class="kd">func</span> <span class="nf">navigate</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">self</span><span class="o">.</span><span class="n">loading</span> <span class="o">=</span> <span class="kc">true</span>
-        <span class="k">let</span> <span class="nv">number</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">...</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="nf">randomElement</span><span class="p">()</span> <span class="p">??</span> <span class="mi">0</span>
-        <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">asyncAfter</span><span class="p">(</span><span class="nv">deadline</span><span class="p">:</span> <span class="o">.</span><span class="nf">now</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">self</span><span class="o">.</span><span class="n">loading</span> <span class="o">=</span> <span class="kc">false</span>
-            <span class="k">self</span><span class="o">.</span><span class="n">destination</span><span class="o">.</span><span class="n">presentedData</span><span class="p">?</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s">"</span><span class="se">\(</span><span class="n">number</span><span class="se">)</span><span class="s">"</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">struct</span> <span class="kt">SecondaryView</span><span class="p">:</span> <span class="kt">View</span> <span class="p">{</span>
-    <span class="kd">@State</span> <span class="k">var</span> <span class="nv">input</span><span class="p">:</span> <span class="kt">String</span>
-    
-    <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="kd">some</span> <span class="kt">View</span> <span class="p">{</span>
-        <span class="kt">Text</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kt">PlaygroundPage</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">liveView</span> <span class="o">=</span> <span class="kt">UIHostingController</span><span class="p">(</span><span class="nv">rootView</span><span class="p">:</span> <span class="kt">RootView</span><span class="p">())</span>
-<span class="kt">PlaygroundPage</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">needsIndefiniteExecution</span> <span class="o">=</span> <span class="kc">true</span>
-</code></pre></div></div>
-
-<p>P.s.: It is as a Playground because I prefer this way to test/run SwiftUI on Mojave.</p>
-
-</div>
-  
-</div>
-
-<div class="pagination">
-  
-    <span class="pagination-item older">Older</span>
-  
-  
-    <span class="pagination-item newer">Newer</span>
-  
-</div>
-    </div>
-  </body>
-</html>
+PlaygroundPage.current.liveView = UIHostingController(rootView: RootView())
+PlaygroundPage.current.needsIndefiniteExecution = true
+</code></pre><p>P.s.: It is as a Playground because I prefer this way to test/run SwiftUI on Mojave.</p></p><p class="text-center mt-5">Created with <a href="https://github.com/twostraws/Ignite">Ignite</a></p></div></div><script src="/js/bootstrap.bundle.min.js"></script></body></html>
