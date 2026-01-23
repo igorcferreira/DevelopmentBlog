@@ -17,6 +17,7 @@ struct TopBar: HTML {
         NavigationBar(logo: nil) {
             Link(page.dictionary.localised("Home", decoder: decode), target: "/")
             Link(page.dictionary.localised("Categories", decoder: decode), target: Categories())
+            Link(page.dictionary.localised("Resume", decoder: decode), target: Resume())
             Link(page.dictionary.localised("Mastodon", decoder: decode), target: ArkanaKeys.Global().mastodonPage)
         }
         .navigationItemAlignment(.leading)

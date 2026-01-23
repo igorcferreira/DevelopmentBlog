@@ -39,5 +39,6 @@ struct ExampleSite: Site {
     var staticPages: [any StaticPage] {
         Home()
         Categories()
+        Resume()
     }
 }
