@@ -1,4 +1,7 @@
-User-agent: Googlebot
+User-agent: Applebot
+Disallow: *
+
+User-agent: baiduspider
 Disallow: *
 
 User-agent: bingbot
@@ -7,7 +10,16 @@ Disallow: *
 User-agent: GPTBot
 Disallow: *
 
-User-agent: Applebot
+User-agent: CCBot
+Disallow: *
+
+User-agent: Googlebot
+Disallow: *
+
+User-agent: slurp
+Disallow: *
+
+User-agent: yandex
 Disallow: *
 
 User-agent: *

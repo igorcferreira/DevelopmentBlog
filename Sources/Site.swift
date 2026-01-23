@@ -20,6 +20,15 @@ struct ExampleSite: Site {
     var url = URL(string: ArkanaKeys.Global().hostname)!
     var builtInIconsEnabled = true
     var author = ArkanaKeys.Global().authorName
+    var robotsConfiguration: DefaultRobotsConfiguration {
+        var configuration = DefaultRobotsConfiguration()
+        configuration.disallowRules = {
+            var items = KnownRobot.allCases.map(DisallowRule.init(robot:))
+            items.append(DisallowRule(name: "*"))
+            return items
+        }()
+        return configuration
+    }
 
     var homePage = Home()
     var layout = MainLayout()
