@@ -1,0 +1,17 @@
+import_name: 'ArkanaKeys' # Optional. Name of the framework to be imported. Defaults to ArkanaKeys.
+namespace: 'ArkanaKeys' # Optional. Namespace used to access the secrets in the codebase. Defaults to ArkanaKeys.
+pod_name: 'ArkanaKeys' # Optional. Name of the pod to be declared in your Podfile. Defaults to ArkanaKeys.
+result_path: 'keys' # Optional. Destination path of the generated code, related to the path of this config file. Defaults to ArkanaKeys.
+flavors: # Optional. Flavors are keywords added as a prefix to every secret when reading them from environment variables. This is useful for instance in white-label projects. Check the "Usage" section of the README for more information.
+swift_declaration_strategy: let # Optional. One of: lazy var, var, let. Defaults to let.
+kotlin_package_name: 'com.arkanakeys' # Optional. The package name of the generated Kotlin module. Defaults to com.arkanakeys.
+kotlin_sources_path: 'java' # Optional. The path for the generated Kotlin classes. Defaults to kotlin.
+should_generate_gradle_build_file: true # Optional. Whether a build.gradle file should be generated, when running the Kotlin generator. One of: true, false. Defaults to true.
+kotlin_jvm_toolchain_version: 11 # Optional. The kotlin JVM toolchain JDK version to be used in the generated build.gradle file. Defaults to 11.
+package_manager: spm # Optional. One of: spm, cocoapods. If you use both, declare cocoapods. Defaults to spm.
+global_secrets: # Optional. List of secrets that are the same regardless of which environment is being built. Defaults 
+  - Hostname
+  - AuthorName
+  - SiteName
+  - MastodonPage
+  - MastodonHandle

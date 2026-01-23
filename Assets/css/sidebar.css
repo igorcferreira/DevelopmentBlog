@@ -1,0 +1,97 @@
+/*
+ * Contents
+ *
+ * Global resets
+ * Sidebar
+ */
+
+
+/*
+ * Global resets
+ *
+ * Update the foundational and global aspects of the page.
+ */
+
+.language-area {
+  float: inline-end;
+}
+
+.language-icon {
+  height: 1.5em;
+  width: 1.5em;
+  border-radius: 30%;
+  float: inline-end;
+}
+
+.language-link {
+  padding-inline-start: .5em;
+}
+
+/*
+ * Content
+ */
+.content {
+  padding: .5rem;
+}
+
+/*
+ * Sidebar
+ *
+ * The sidebar is the drawer, the item we are toggling with our handy hamburger
+ * button in the corner of the page.
+ *
+ * This particular sidebar implementation was inspired by Chris Coyier's
+ * "Offcanvas Menu with CSS Target" article, and the checkbox variation from the
+ * comments by a reader. It modifies both implementations to continue using the
+ * checkbox (no change in URL means no polluted browser history), but this uses
+ * `position` for the menu to avoid some potential content reflow issues.
+ *
+ * Source: http://css-tricks.com/off-canvas-menu-with-css-target/#comment-207504
+ */
+
+/* Style and "hide" the sidebar */
+
+.sidebar {
+  padding: .5rem;
+  color: rgba(255,255,255,.6);
+  background-color: #404040;
+}
+
+/* Sidebar content */
+.sidebar-nav {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.sidebar a {
+  font-weight: normal;
+  color: #fff;
+}
+.sidebar-item {
+  padding: 0.5rem;
+}
+.sidebar-item p:last-child {
+  margin-bottom: 0;
+}
+
+/* Sidebar nav */
+.sidebar-nav-item {
+  padding: 0.5rem;
+}
+.sidebar-nav-item.active,
+a.sidebar-nav-item:hover,
+a.sidebar-nav-item:focus {
+  text-decoration: none;
+  background-color: rgba(255,255,255,.1);
+  border-color: transparent;
+}
+
+@media (min-width: 48em) {
+  .sidebar-item {
+    padding: 0.5rem;
+  }
+  .sidebar-nav-item {
+    padding-left:  0.5rem;
+    padding-right: 0.5rem;
+  }
+}

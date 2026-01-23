@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  
+
+  Created by Igor Ferreira on 25/05/2024.
+  
+*/
+"Home" = "Home";
+"Categories" = "Categories";
+"More" = "More";
+"Tagged with: %@" = "Tagged with: %@";
+"%d words; %d minutes to read" = "%d words; %d minutes to read";

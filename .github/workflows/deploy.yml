@@ -1,0 +1,66 @@
+name: Deploy Static files
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  Hostname: "https://igorcferreira.dev"
+  AuthorName: "Igor Ferreira"
+  SiteName: "Development Blog"
+  MastodonPage: "https://mastodon.social/@igorcferreira"
+  MastodonHandle: "@igorcferreira@mastodon.social"
+
+jobs:
+  publish:
+    environment: main
+    runs-on: macos-latest
+    steps:
+      - name: Checkout plugin
+        uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        name: Install dependencies
+        with:
+          bundler-cache: true
+      - name: Install configuration
+        run: |
+          bundle exec arkana
+      - name: Build Project
+        run: |
+          swift build -c release
+      - name: Create static files
+        run: |
+          swift run -c release
+      - name: Checkout Static branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          clean: false
+      - name: Clean folder
+        run: |
+          find . -not -name 'robots.txt' -not -name 'CNAME' -not -name 'Build' -not -name '.git' -not -name '.gitignore' -not -name '.' -not -name '..' -maxdepth 1 -exec rm -r "{}" \;
+      - name: Remove built robots
+        run: |
+          rm Build/robots.txt
+      - name: Move files
+        run: |
+          cp -r Build/. .
+      - name: Remove _site folder
+        run: |
+          rm -r Build/
+      - name: Configure username
+        env:
+          USER_EMAIL: ${{ secrets.USER_EMAIL }} 
+          USER_NAME: ${{ secrets.USER_NAME }}
+        run: |
+          git config user.email "$USER_EMAIL"
+          git config user.name "$USER_NAME"
+      - name: Timestamp the deploy
+        run: |
+          echo "$(git log -1 --format='%H')" > .version
+      - name: Commit changes
+        run: |
+          git add . && git commit -m "Publish new version"
+      - name: Push changes
+        run: |
+          git push origin gh-pages
