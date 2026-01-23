@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Resume</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/resume" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="Resume" />
+    <meta name="twitter:title" content="Resume" />
+    <meta property="og:url" content="https://igorcferreira.dev/resume" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/css/sidebar.css" rel="stylesheet" />
+    <link href="/css/prism-default-dark.css" rel="stylesheet" />
+    <script src="/script/theme.js"></script>
+    <script src="/script/syntax-highlighting.js"></script>
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <div style="padding-bottom: 20px">
+      <header>
+        <nav class="sidebar sidebar-nav navbar navbar-expand-md">
+          <div class="container flex-wrap flex-lg-nowrap">
+            <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div id="navbarCollapse" class="collapse navbar-collapse">
+              <ul class="navbar-nav mb-2 mb-md-0 col ">
+                <li class="nav-item"><a href="/" class="nav-link text-nowrap">Home</a></li>
+                <li class="nav-item"><a href="/categories" class="nav-link text-nowrap">Categories</a></li>
+                <li class="nav-item"><a href="/resume" class="nav-link active text-nowrap" aria-current="page">Resume</a></li>
+                <li class="nav-item"><a href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+    </div>
+    <div class="ig-main-content">
+      <div>
+        <p></p>
+        <h2>About</h2>I’m a mobile developer focused on building apps that people enjoy using. Over 15+ years in software development (with 10+ of those focused on iOS and Android), I’ve had the chance to work on everything from ride-hailing apps to real estate platforms to fintech products. 
+        <p></p>
+        <p>These days, I spend most of my time with Swift and SwiftUI on iOS, and Kotlin with Jetpack Compose on Android. I also use Kotlin Multiplatform for sharing code across platforms. When projects call for it, I’ve built server-side features using Kotlin and Spring Framework. This full-stack perspective helps me think beyond just the mobile layer.</p>
+        <p>Beyond writing code, I’ve grown into a Platform Leader role: mentoring developers, shaping technical direction, and helping teams ship quality work on both platforms. I care deeply about clean architecture, performance, accessibility, localization, and creating smooth user experiences.</p>
+        <h2>Experience</h2>
+        <h3>Future Workshops</h3>
+        <ul>
+          <li>Role: Senior Mobile Developer &amp; Platform Leader</li>
+          <li>Location: London, England, United Kingdom</li>
+          <li>Start: September 2015</li>
+          <li>End: March 2026</li>
+        </ul>At Future Workshops I’ve grown from Senior Mobile Developer into a Platform Leader. I build iOS apps with Swift and SwiftUI, and Android apps with Kotlin and Jetpack Compose, serving startups and established companies around the world. Server-side development with Kotlin and Spring Framework is also part of my toolkit, which lets me deliver features end-to-end when needed.
+        <p></p>
+        <p>A highlight of my work here has been integrating AI capabilities into mobile apps (chatbots, LLM-powered data processing, and image recognition), bringing intelligent features that improve user experiences.</p>
+        <p>As Platform Leader, I guide technical decisions across iOS and Android, mentor developers at various levels, and help shape how our teams approach mobile architecture. I run code reviews, lead technical discussions, and work to create an environment where developers can grow while delivering their best work. Seeing teammates advance their skills and take on bigger challenges is one of the most rewarding aspects of the role.</p>
+        <h3>App Rail</h3>
+        <ul>
+          <li>Role: Senior Mobile Developer &amp; Platform Lead</li>
+          <li>Location: Remote</li>
+          <li>Start: January 2022</li>
+          <li>End: July 2025</li>
+        </ul>At App Rail, I worked as both architect and developer. I helped design the architecture for native SDKs on both iOS (Swift) and Android (Kotlin), then built them. The iOS SDK leverages SwiftUI for modern UI components, while the Android SDK uses Jetpack Compose, ensuring both feel native and performant.
+        <p></p>
+        <p>The SDK connects to a remote server to power a “no-code” app development approach. Through the App Rail portal, users design app flows using visual UI blocks, and our native SDK brings those designs to life with server-driven features. This approach makes app development more accessible to non-developers.</p>
+        <p>As Platform Lead, I guided technical decisions across both mobile platforms, ensured consistency in how we approached problems, and mentored team members on best practices. My focus was making sure the SDK was easy to integrate and use.</p>
+        <h3>99 Táxis</h3>
+        <ul>
+          <li>Role: Mobile Developer</li>
+          <li>Location: São Paulo, Brazil</li>
+          <li>Start: April 2015</li>
+          <li>End: September 2015</li>
+        </ul>I worked on both sides of a ride-hailing platform: the passenger app (for requesting car and taxi rides) and the driver app (for receiving and managing requests in real time). Delivering a smooth, responsive UI/UX was key. When users are under real-world pressure, every second counts.
+        <p></p>
+        <p>I also developed companion apps for Apple Watch and Android Wear, which were emerging platforms at the time. These wearable apps let passengers check ride status and ETAs at a glance. Distilling complex information into minimal, glanceable interfaces required a thoughtful approach.</p>
+        <p>Building both phone and wearable apps gave me a strong appreciation for how different user experiences need to coordinate seamlessly within the same ecosystem. When a passenger taps “request,” the driver sees it instantly, and that sync needs to be fast and reliable.</p>
+        <h3>Zap Imóveis</h3>
+        <ul>
+          <li>Role: Mobile Developer</li>
+          <li>Location: São Paulo, Brazil</li>
+          <li>Start: October 2013</li>
+          <li>End: March 2015</li>
+        </ul>I built iOS and Android apps for one of Brazil’s largest real estate platforms, helping users find homes to rent or buy. UI/UX was central to this work. Property search involves complex filters, map interactions, and image-heavy listings. Everything needed to feel fast and responsive.
+        <p></p>
+        <p>I also developed early apps for Apple Watch and Android Wear. Users could browse saved properties and receive alerts from their wrist. Working with these emerging wearable platforms meant designing for constraints: tiny screens, limited interaction patterns, and the need to surface the right information instantly.</p>
+        <p>One feature I’m proud of: letting users draw directly on a map to define custom search boundaries. Instead of rigid filters, people could circle exactly where they wanted to live. A simple touch that made property hunting feel more personal and natural.</p>
+        <h2>Skills</h2>
+        <strong>Mobile Development</strong>
+        <ul>
+          <li>iOS: Swift, SwiftUI, UIKit</li>
+          <li>Android: Kotlin, Jetpack Compose</li>
+          <li>Cross-platform: Kotlin Multiplatform</li>
+        </ul>
+        <strong>Backend &amp; Infrastructure</strong>
+        <ul>
+          <li>Kotlin, Spring Framework</li>
+          <li>CI/CD pipeline design</li>
+          <li>SDK architecture</li>
+        </ul>
+        <strong>Specializations</strong>
+        <ul>
+          <li>Platform leadership &amp; mentoring</li>
+          <li>AI/LLM integration</li>
+          <li>AR/VR (Unity, RealityKit, visionOS)</li>
+          <li>Real-time communication (WebRTC, XMPP)</li>
+        </ul>
+        <h2>Featured Projects</h2>
+        <h3>IBM Automation Mobile Capture SDK</h3>
+        <strong>Time Period:</strong> September 2015 – June 2021 
+        <strong>Platforms:</strong> iOS and Android 
+        <strong>Role:</strong> Senior Mobile Developer
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>iOS: Swift, UIKit, Vision Framework (OCR, edge detection), OpenCV, CoreData</li>
+          <li>Android: Kotlin, Fragment/Activity architecture, OpenCV (OCR, edge detection), SQLite</li>
+        </ul>Built native SDKs for iOS and Android that enable document scanning and data extraction. The SDK uses real-time edge detection to identify documents (passports, national IDs, A4 documents, receipts) within the camera frame. It captures high-quality images and extracts structured data using OCR, including MRZ parsing for travel documents.
+        <p></p>
+        <p>Designed the SDK architecture and CI/CD pipeline. This made it easy for developers to integrate document capture into their apps connecting to IBM’s automation platform. The SDK supports configurable scanning scenarios, allowing clients to define which document types and data fields to capture.</p>
+        <p>Accessibility was a core requirement. The SDK provides audio hints to guide users in positioning documents correctly. Localized for multiple languages including English, Japanese, Chinese, German, and Portuguese. All synchronized data is stored securely on-device using CoreData (iOS) and SQLite (Android) for offline support.</p>
+        <p>This was my first project at Future Workshops, spanning six years of development and iteration.</p>
+        <h3>STC Chat SDK</h3>
+        <strong>Time Period:</strong> January 2019 – April 2020 
+        <strong>Platforms:</strong> iOS and Android 
+        <strong>Role:</strong> Senior Mobile Developer
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>General: XMPP protocol, WebRTC, Firebase Cloud Messaging</li>
+          <li>iOS: Swift, UIKit, CoreData, CallKit, Background Tasks</li>
+          <li>Android: Kotlin, Fragment/Activity architecture, SQLite, InCall Service, Background Tasks</li>
+        </ul>Built a chat and calling SDK integrated into STC’s suite of apps (STC Business, MySTC, STC Hub), serving users across Saudi Arabia’s largest telecommunications provider. The SDK enables real-time messaging with support for text, images, documents, and video. Voice and group calls are powered by WebRTC.
+        <p></p>
+        <p>Designed the SDK architecture and CI/CD pipeline for both platforms. On iOS, I integrated CallKit with Firebase Cloud Messaging to enable incoming call notifications even when the app is closed. On Android, I implemented InCall Service for a native calling experience. The XMPP protocol handles message delivery and presence, while WebRTC powers peer-to-peer and group voice communication.</p>
+        <p>All messages are stored locally (CoreData on iOS, SQLite on Android) and synced in the background, ensuring users have access to their conversations offline.</p>
+        <h3>XMPPColibri</h3>
+        <strong>Time Period:</strong> January 2019 – April 2020 
+        <strong>Platform:</strong> iOS 
+        <strong>Role:</strong> Senior Mobile Developer
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>Swift, XMPP, WebRTC, Jitsi, Colibri protocol, Docker</li>
+        </ul>Developed an iOS framework that simplifies WebRTC audio and video calling integration via XMPP. The framework abstracts the complexity of the Jitsi/Colibri protocol. This makes it straightforward to add voice and video calling to iOS apps with CallKit support.
+        <p></p>
+        <p>Built initially as an internal tool to support the STC Chat SDK. The framework handles room creation, joining conferences, and managing WebRTC connections. For security, XMPP rooms used during the signaling phase are automatically deleted once calls are established. This ensures calls are peer-to-peer with no server participation in the actual communication.</p>
+        <p>Designed the SDK architecture and led its development. Currently being rewritten with SwiftUI and Swift Concurrency.</p>
+        <h3>App Rail SDK</h3>
+        <strong>Time Period:</strong> January 2022 – July 2025 
+        <strong>Platforms:</strong> iOS and Android 
+        <strong>Role:</strong> Senior Mobile Developer &amp; Platform Lead
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>iOS: Swift, SwiftUI, Keychain, CoreData, SwiftData</li>
+          <li>Android: Kotlin, Jetpack Compose, Navigation 2, Room, DataStore</li>
+          <li>Server: Rails, Python, GitHub Actions</li>
+        </ul>Architected and built native SDKs for iOS and Android that power a “no-code” app development platform. Through the App Rail web portal, users design app flows using visual UI blocks (lists, stacks, forms, questions, grids). The native SDK then renders these designs as fully functional, native apps.
+        <p></p>
+        <p>The iOS SDK uses SwiftUI for modern UI components. The Android SDK uses Jetpack Compose. Apps built with App Rail feel native and performant on each platform. The server-driven architecture delivers navigation and content via JSON, with support for dynamic data binding between steps and user-provided files.</p>
+        <p>Beyond the SDK, I developed project templates for both platforms and Python scripts for server-side project generation. This enabled App Rail to generate complete, ready-to-ship applications. Developers could commit these to GitHub and deploy to app stores via GitHub Actions.</p>
+        <p>As Platform Lead, I guided technical decisions across both mobile platforms and mentored team members on best practices, ensuring the SDK provided a great experience for developers adopting this no-code solution.</p>
+        <h3>LV x Yayoi Kusama</h3>
+        <strong>Time Period:</strong> October 2022 – February 2023 
+        <strong>Platforms:</strong> iOS and Android 
+        <strong>Role:</strong> Senior Mobile Developer
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>General: Unity, Google Maps</li>
+          <li>iOS: Swift, Vision Framework</li>
+          <li>Android: Kotlin, Camera2</li>
+        </ul>Developed a location-based AR game for Louis Vuitton’s collaboration with artist Yayoi Kusama. Similar to Pokémon Go, users explore a map to find Louis Vuitton stores. They trigger AR experiences at those locations and collect points that convert into virtual representations of LV products. Collecting enough items unlocks real-world rewards.
+        <p></p>
+        <p>The app features multiple mini-games (Colour Craze, Pumpkin Painter, Louis Labyrinth, Alma Assembly), a collectibles system with seeds and boosters, and immersive AR experiences. These overlay Kusama’s signature polka dots onto the real world.</p>
+        <p>Contributed to both iOS and Android development, leveraging previous Unity experience to facilitate integration between native code and the Unity game engine.</p>
+        <h3>visionOS Applications</h3>
+        <strong>Time Period:</strong> October 2023 – April 2024 
+        <strong>Platform:</strong> visionOS 
+        <strong>Role:</strong> Senior iOS Developer
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>Swift, SwiftUI, RealityKit, Blender (3D modeling)</li>
+        </ul>Built an immersive visionOS application that transforms how farm owners visualize and interact with agricultural data. The app renders a detailed 3D model of farmland in mixed reality. Users can explore their fields spatially, viewing weather forecasts, yield trajectories, soil health, and flood risk data in a clean, immersive environment.
+        <p></p>
+        <p>Users can interact with specific areas of their land through spatial pins. They can access detailed field information (soil pH, yield potential, rainfall) and explore intervention options like flood defences with cost and environmental impact breakdowns.</p>
+        <p>Led the entire development as a client exploration project, including visits to Apple’s visionOS Labs before Vision Pro’s public release to learn the hardware and spatial computing best practices firsthand.</p>
+        <h3>WatchWell</h3>
+        <strong>Time Period:</strong> September 2025 – December 2026 
+        <strong>Platform:</strong> iOS 
+        <strong>Role:</strong> Senior Mobile Developer
+        <p></p>
+        <p><strong>Technologies:</strong></p>
+        <ul>
+          <li>Swift, SwiftUI, HealthKit, Swift Charts, WidgetKit, Vision Framework</li>
+          <li>Apple Foundation Models (on-device AI)</li>
+          <li>OpenAI (image analysis for calorie estimation)</li>
+        </ul>Building an iOS health and wellness app that displays and analyzes user health data from HealthKit. This includes steps, heart rate, sleep, and calories burned. The app provides personalized insights and recommendations powered by Apple’s on-device Foundation Models, helping users understand their health trends and improve their habits.
+        <p></p>
+        <p>Key features include AI-powered food tracking that estimates calories from photos using OpenAI’s image analysis. Weekly trend visualizations use Swift Charts. Home screen widgets show real-time health metrics. The Foundation Models integration analyzes health patterns and generates actionable suggestions tailored to each user’s data.</p>
+        <p>Defined the app architecture and led initial development, implementing all data collection pipelines and AI/LLM integrations.</p>
+        <p>Currently in development.</p>
+        <h2>Open Source Projects</h2>
+        <h3><a href="https://github.com/igorcferreira/MusicStreamSync">MusicStreamSync</a></h3>A Kotlin Multiplatform app that connects Apple Music and Last.fm, automatically syncing listening history to the Last.fm portal. The project integrates with native Apple Music SDKs on both iOS and Android. It demonstrates cross-platform development with platform-specific API integration.
+        <h3><a href="https://github.com/igorcferreira/GIFImage">GIFImage</a></h3>A Swift Package for rendering and animating GIFs across Apple platforms (macOS, iOS, and visionOS). Built with Swift Concurrency and SwiftUI, it provides a modern, performant approach to GIF display.
+        <h3><a href="https://github.com/igorcferreira/KotlinNativeStudies">KotlinNativeStudies</a></h3>A collection of Kotlin Native exploration projects. Currently includes a Kotlin Multiplatform app integrating with Microsoft’s SharePoint Embedded APIs, useful for understanding enterprise API integration in a cross-platform context.
+        <h2>Education</h2>
+        <h3>Senac</h3>
+        <ul>
+          <li>Degree: Associate’s degree in Game Development</li>
+          <li>Start: January 2010</li>
+          <li>End: July 2012</li>
+        </ul>This course shaped my mobile development career. I built apps and games for iOS, Android, and Windows Mobile. I worked with native frameworks like Corona and Cocos2d as well as Unity. It gave me hands-on experience across multiple mobile platforms early on, a foundation that carries through my work today.
+        <h3>ETEC - Escola Técnica Estadual de São Paulo</h3>
+        <ul>
+          <li>Degree: Technical degree in Computer Science</li>
+          <li>Start: January 2007</li>
+          <li>End: December 2008</li>
+        </ul>Technical education focused on software development principles, with hands-on experience in C# and Java.
+        <h3>Instituto Federal de Educação, Ciência e Tecnologia de São Paulo</h3>
+        <ul>
+          <li>Degree: High School</li>
+          <li>Start: January 2006</li>
+          <li>End: December 2008</li>
+        </ul>
+        <p></p>
+      </div>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
