@@ -10,6 +10,7 @@ env:
   SiteName: "Development Blog"
   MastodonPage: "https://mastodon.social/@igorcferreira"
   MastodonHandle: "@igorcferreira@mastodon.social"
+  GithubPage: "https://github.com/igorcferreira"
 
 jobs:
   publish:

@@ -18,11 +18,13 @@ struct TopBar: HTML {
             Link(page.dictionary.localised("Home", decoder: decode), target: "/")
             Link(page.dictionary.localised("Categories", decoder: decode), target: Categories())
             Link(page.dictionary.localised("Resume", decoder: decode), target: Resume())
+            Link(page.dictionary.localised("GitHub", decoder: decode), target: ArkanaKeys.Global().githubPage)
             Link(page.dictionary.localised("Mastodon", decoder: decode), target: ArkanaKeys.Global().mastodonPage)
             Link(page.dictionary.localised("Feed", decoder: decode), target: "/feed.rss")
         }
         .navigationItemAlignment(.leading)
-        .class("sidebar", "sidebar-nav")
+        .navigationBarStyle(.dark)
+        .background(.bootstrapRed)
     }
 }
 
