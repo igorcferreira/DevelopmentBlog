@@ -16,6 +16,8 @@ let package = Package(
             dependencies: [
                 "Ignite",
                 .product(name: "ArkanaKeys", package: "ArkanaKeys")
-            ]),
+            ],
+            path: "Sources"
+            ),
     ]
 )
