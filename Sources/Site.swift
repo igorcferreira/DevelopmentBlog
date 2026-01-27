@@ -15,7 +15,15 @@ struct IgniteWebsite {
     }
 }
 
-struct ExampleSite: Site {    
+struct BaseTheme: Theme {
+    var colorScheme: ColorScheme = .light // or .dark
+    // Override any theme properties you want to customize
+    var syntaxHighlighterTheme: HighlighterTheme = .githubDark
+    var accent: Color { Color(hex: "#FF0000") }
+    var secondaryAccent: Color { Color(hex: "#00FF00") }
+}
+
+struct ExampleSite: Site {
     var name = ArkanaKeys.Global().siteName
     var url = URL(string: ArkanaKeys.Global().hostname)!
     var builtInIconsEnabled = true
@@ -32,6 +40,8 @@ struct ExampleSite: Site {
 
     var homePage = Home()
     var layout = MainLayout()
+    var lightTheme: (any Theme)? = BaseTheme()
+    var darkTheme: (any Theme)? = nil
     
     var articlePages: [any ArticlePage] {
         Story()
@@ -40,5 +50,11 @@ struct ExampleSite: Site {
         Home()
         Categories()
         Resume()
+    }
+    var syntaxHighlighterConfiguration: SyntaxHighlighterConfiguration {
+        SyntaxHighlighterConfiguration(languages: [
+            .swift,
+            .kotlin
+        ])
     }
 }
