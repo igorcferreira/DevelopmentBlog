@@ -15,7 +15,6 @@ Beyond writing code, I've grown into a Platform Leader role: mentoring developer
 - Role: Senior Mobile Developer & Platform Leader
 - Location: London, England, United Kingdom
 - Start: September 2015
-- End: March 2026
 
 At Future Workshops I've grown from Senior Mobile Developer into a Platform Leader. I build iOS apps with Swift and SwiftUI, and Android apps with Kotlin and Jetpack Compose, serving startups and established companies around the world. Server-side development with Kotlin and Spring Framework is also part of my toolkit, which lets me deliver features end-to-end when needed.
 
