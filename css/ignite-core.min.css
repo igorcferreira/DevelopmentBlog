@@ -279,16 +279,16 @@ div.alert p:last-child {
 
 
 :root {
-    --bs-primary: rgb(13 110 253 / 100%);
-    --bs-primary-rgb: 13, 110, 253;
-    --bs-primary-text-emphasis: rgb(5 44 101 / 100%);
-    --bs-primary-bg-subtle: rgb(206 226 254 / 100%);
-    --bs-primary-border-subtle: rgb(109 168 253 / 100%);
-    --bs-secondary: rgb(108 117 125 / 100%);
-    --bs-secondary-rgb: 108, 117, 125;
-    --bs-secondary-text-emphasis: rgb(43 46 50 / 100%);
-    --bs-secondary-bg-subtle: rgb(225 227 229 / 100%);
-    --bs-secondary-border-subtle: rgb(166 172 177 / 100%);
+    --bs-primary: rgb(255 0 0 / 100%);
+    --bs-primary-rgb: 255, 0, 0;
+    --bs-primary-text-emphasis: rgb(102 0 0 / 100%);
+    --bs-primary-bg-subtle: rgb(255 204 204 / 100%);
+    --bs-primary-border-subtle: rgb(255 102 102 / 100%);
+    --bs-secondary: rgb(0 255 0 / 100%);
+    --bs-secondary-rgb: 0, 255, 0;
+    --bs-secondary-text-emphasis: rgb(0 102 0 / 100%);
+    --bs-secondary-bg-subtle: rgb(204 255 204 / 100%);
+    --bs-secondary-border-subtle: rgb(102 255 102 / 100%);
     --bs-success: rgb(25 135 84 / 100%);
     --bs-success-rgb: 25, 135, 84;
     --bs-success-text-emphasis: rgb(10 54 33 / 100%);
@@ -338,7 +338,7 @@ div.alert p:last-child {
     --bs-link-hover-color-rgb: 10, 88, 202;
     --bs-border-color: rgb(222 226 230 / 100%);
     --bs-border-color-rgb: 222, 226, 230;
-    --syntax-highlight-theme: "xcode-light";
+    --syntax-highlight-theme: "github-dark";
 }
 
 @media (min-width: 540px) {
@@ -774,133 +774,6 @@ code, pre {
     border-color: rgb(var(--bs-dark-rgb));
 }
 
-
-[data-bs-theme="light"] {
-    --bs-primary: rgb(13 110 253 / 100%);
-    --bs-primary-rgb: 13, 110, 253;
-    --bs-primary-text-emphasis: rgb(5 44 101 / 100%);
-    --bs-primary-bg-subtle: rgb(206 226 254 / 100%);
-    --bs-primary-border-subtle: rgb(109 168 253 / 100%);
-    --bs-secondary: rgb(108 117 125 / 100%);
-    --bs-secondary-rgb: 108, 117, 125;
-    --bs-secondary-text-emphasis: rgb(43 46 50 / 100%);
-    --bs-secondary-bg-subtle: rgb(225 227 229 / 100%);
-    --bs-secondary-border-subtle: rgb(166 172 177 / 100%);
-    --bs-success: rgb(25 135 84 / 100%);
-    --bs-success-rgb: 25, 135, 84;
-    --bs-success-text-emphasis: rgb(10 54 33 / 100%);
-    --bs-success-bg-subtle: rgb(209 231 220 / 100%);
-    --bs-success-border-subtle: rgb(117 183 152 / 100%);
-    --bs-info: rgb(13 202 240 / 100%);
-    --bs-info-rgb: 13, 202, 240;
-    --bs-info-text-emphasis: rgb(5 80 96 / 100%);
-    --bs-info-bg-subtle: rgb(206 244 252 / 100%);
-    --bs-info-border-subtle: rgb(109 223 246 / 100%);
-    --bs-warning: rgb(255 193 7 / 100%);
-    --bs-warning-rgb: 255, 193, 7;
-    --bs-warning-text-emphasis: rgb(102 77 2 / 100%);
-    --bs-warning-bg-subtle: rgb(255 242 205 / 100%);
-    --bs-warning-border-subtle: rgb(255 217 106 / 100%);
-    --bs-danger: rgb(220 53 69 / 100%);
-    --bs-danger-rgb: 220, 53, 69;
-    --bs-danger-text-emphasis: rgb(88 21 27 / 100%);
-    --bs-danger-bg-subtle: rgb(248 214 217 / 100%);
-    --bs-danger-border-subtle: rgb(234 133 143 / 100%);
-    --bs-light: rgb(248 249 250 / 100%);
-    --bs-light-rgb: 248, 249, 250;
-    --bs-light-text-emphasis: rgb(49 49 49 / 100%);
-    --bs-light-bg-subtle: rgb(253 253 254 / 100%);
-    --bs-light-border-subtle: rgb(198 199 200 / 100%);
-    --bs-dark: rgb(33 37 41 / 100%);
-    --bs-dark-rgb: 33, 37, 41;
-    --bs-dark-text-emphasis: rgb(13 14 16 / 100%);
-    --bs-dark-bg-subtle: rgb(210 211 212 / 100%);
-    --bs-dark-border-subtle: rgb(121 124 126 / 100%);
-    --bs-body-color: rgb(33 37 41 / 100%);
-    --bs-body-color-rgb: 33, 37, 41;
-    --bs-body-bg: rgb(255 255 255 / 100%);
-    --bs-body-bg-rgb: 255, 255, 255;
-    --bs-emphasis-color-rgb: 0, 0, 0;
-    --bs-secondary-color: rgb(8415 9435 10455 / 75%);
-    --bs-secondary-color-rgb: 8415, 9435, 10455;
-    --bs-tertiary-color: rgb(8415 9435 10455 / 50%);
-    --bs-tertiary-color-rgb: 8415, 9435, 10455;
-    --bs-secondary-bg: rgb(233 236 239 / 100%);
-    --bs-secondary-bg-rgb: 233, 236, 239;
-    --bs-tertiary-bg: rgb(248 249 250 / 100%);
-    --bs-tertiary-bg-rgb: 248, 249, 250;
-    --bs-link-color: rgb(13 110 253 / 100%);
-    --bs-link-color-rgb: 13, 110, 253;
-    --bs-link-hover-color: rgb(10 88 202 / 100%);
-    --bs-link-hover-color-rgb: 10, 88, 202;
-    --bs-border-color: rgb(222 226 230 / 100%);
-    --bs-border-color-rgb: 222, 226, 230;
-    --syntax-highlight-theme: "xcode-light";
-}
-
-[data-bs-theme="dark"] {
-    --bs-primary: rgb(13 110 253 / 100%);
-    --bs-primary-rgb: 13, 110, 253;
-    --bs-primary-text-emphasis: rgb(109 168 253 / 100%);
-    --bs-primary-bg-subtle: rgb(2 21 50 / 100%);
-    --bs-primary-border-subtle: rgb(7 66 151 / 100%);
-    --bs-secondary: rgb(108 117 125 / 100%);
-    --bs-secondary-rgb: 108, 117, 125;
-    --bs-secondary-text-emphasis: rgb(166 172 177 / 100%);
-    --bs-secondary-bg-subtle: rgb(21 23 24 / 100%);
-    --bs-secondary-border-subtle: rgb(64 70 75 / 100%);
-    --bs-success: rgb(25 135 84 / 100%);
-    --bs-success-rgb: 25, 135, 84;
-    --bs-success-text-emphasis: rgb(117 183 152 / 100%);
-    --bs-success-bg-subtle: rgb(4 26 16 / 100%);
-    --bs-success-border-subtle: rgb(15 81 50 / 100%);
-    --bs-info: rgb(13 202 240 / 100%);
-    --bs-info-rgb: 13, 202, 240;
-    --bs-info-text-emphasis: rgb(109 223 246 / 100%);
-    --bs-info-bg-subtle: rgb(2 40 47 / 100%);
-    --bs-info-border-subtle: rgb(7 121 144 / 100%);
-    --bs-warning: rgb(255 193 7 / 100%);
-    --bs-warning-rgb: 255, 193, 7;
-    --bs-warning-text-emphasis: rgb(255 217 106 / 100%);
-    --bs-warning-bg-subtle: rgb(50 38 1 / 100%);
-    --bs-warning-border-subtle: rgb(153 115 4 / 100%);
-    --bs-danger: rgb(220 53 69 / 100%);
-    --bs-danger-rgb: 220, 53, 69;
-    --bs-danger-text-emphasis: rgb(234 133 143 / 100%);
-    --bs-danger-bg-subtle: rgb(43 10 13 / 100%);
-    --bs-danger-border-subtle: rgb(132 31 41 / 100%);
-    --bs-light: rgb(248 249 250 / 100%);
-    --bs-light-rgb: 248, 249, 250;
-    --bs-light-text-emphasis: rgb(250 251 252 / 100%);
-    --bs-light-bg-subtle: rgb(49 49 49 / 100%);
-    --bs-light-border-subtle: rgb(99 99 100 / 100%);
-    --bs-dark: rgb(33 37 41 / 100%);
-    --bs-dark-rgb: 33, 37, 41;
-    --bs-dark-text-emphasis: rgb(210 211 212 / 100%);
-    --bs-dark-bg-subtle: rgb(6 7 8 / 100%);
-    --bs-dark-border-subtle: rgb(77 80 83 / 100%);
-    --bs-body-color: rgb(222 226 230 / 100%);
-    --bs-body-color-rgb: 222, 226, 230;
-    --bs-body-bg: rgb(33 37 41 / 100%);
-    --bs-body-bg-rgb: 33, 37, 41;
-    --bs-emphasis-color: rgb(255 255 255 / 100%);
-    --bs-emphasis-color-rgb: 255, 255, 255;
-    --bs-secondary-color: rgb(56610 57630 58650 / 75%);
-    --bs-secondary-color-rgb: 56610, 57630, 58650;
-    --bs-tertiary-color: rgb(56610 57630 58650 / 50%);
-    --bs-tertiary-color-rgb: 56610, 57630, 58650;
-    --bs-secondary-bg: rgb(52 58 64 / 100%);
-    --bs-secondary-bg-rgb: 52, 58, 64;
-    --bs-tertiary-bg: rgb(43 48 53 / 100%);
-    --bs-tertiary-bg-rgb: 43, 48, 53;
-    --bs-link-color: rgb(110 168 254 / 100%);
-    --bs-link-color-rgb: 110, 168, 254;
-    --bs-link-hover-color: rgb(158 197 254 / 100%);
-    --bs-link-hover-color-rgb: 158, 197, 254;
-    --bs-border-color: rgb(73 80 87 / 100%);
-    --bs-border-color-rgb: 73, 80, 87;
-    --syntax-highlight-theme: "xcode-dark";
-}
 
 
 
