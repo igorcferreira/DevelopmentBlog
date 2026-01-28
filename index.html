@@ -47,7 +47,7 @@
         <div class="card-body">
           <h1>StateFlow on KMP and SwiftUI</h1>
           <p>Tagged with: iOS, SwiftUI, KMP, Kotlin</p>
-          <p>2104 words; 9 minutes to read</p>
+          <p>2102 words; 9 minutes to read</p>
           <p></p>
           <p>The greatest feature with <a href="https://kotlinlang.org/docs/multiplatform.html">Kotlin Multiplatform (KMP)</a> is the possibility to re-use the business logic between platforms, as a separate framework/module while keeping the UI implemented in the native libraries (<a href="https://developer.apple.com/swiftui/">SwiftUI</a> or <a href="https://developer.android.com/compose">Jetpack Compose</a>).</p>
           <p>This way, all the greatest features of the native UI libraries can be used to create amazing native UI/UX with no need to duplicate the business logic which tends to be the same between platforms. Especially when handling Network requests/responses, data validation and model mapping.</p>
@@ -126,7 +126,7 @@ fun Foo(
           <p>This follows the principles of Clean Architecture of uni-directional state and events. The UI sends events into the business logic and the business logic updates a state. This state changes notifies the UI, which reacts to it and updates accordingly.</p>
           <p>Beautiful.</p>
           <p>On iOS, things are not so easy.</p>
-          <h1>iOS usage</h1>
+          <h2>iOS usage</h2>
           <p>Without modifying the created <code>FooOperation</code>, the closest that can be done on iOS is:</p>
           <pre><code class="language-swift">struct FooView: View {
     let operation: FooOperation
@@ -340,7 +340,7 @@ fun perform() = coroutineScope.launch {
           <h2>ViewModel abstraction</h2>
           <p>SwiftUI also has the ViewModel (VM) abstraction, which isolates the state management code out from the View itself, making it easier to test, update and re-use. Applying a VM allows us to clean up the code above into something like:</p>
           <pre><code class="language-swift">@Observable
-class FooViewModel: ObservableObject {
+class FooViewModel {
     private let operation: FooOperation
     var state: FooOperation.State
     
@@ -409,7 +409,7 @@ struct FooView: View {
 }
 
 @Observable
-class FooViewModel: ObservableObject {
+class FooViewModel {
     private let operation: FooOperation
     var state: FooOperation.State
 
@@ -431,10 +431,10 @@ class FooViewModel: ObservableObject {
           <p></p>
         </div>
       </div>
-      <div id="accordionFDQqI" class="accordion">
+      <div id="accordiono1a92" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionFDQqI-itemRaUsQ" aria-expanded="true" aria-controls="accordionFDQqI-itemRaUsQ">More</button></h2>
-          <div id="accordionFDQqI-itemRaUsQ" class="accordion-collapse collapse show" data-bs-parent="#accordionFDQqI">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordiono1a92-itemVx2q4" aria-expanded="true" aria-controls="accordiono1a92-itemVx2q4">More</button></h2>
+          <div id="accordiono1a92-itemVx2q4" class="accordion-collapse collapse show" data-bs-parent="#accordiono1a92">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
