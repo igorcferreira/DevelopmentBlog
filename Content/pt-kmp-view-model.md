@@ -1,36 +1,36 @@
 ---
 author: Igor Ferreira
-title: StateFlow on KMP and SwiftUI
-description: A brief thought about the usage of StateFlow on KMP when using SwiftUI as frontend for iOS
+title: StateFlow em KMP e SwiftUI
+description: Uma breve reflexão sobre o uso de StateFlow em KMP ao utilizar SwiftUI como frontend para iOS
 date: 2026-01-26 12:00
 tags: iOS, SwiftUI, KMP, Kotlin
 published: true
-language: en
-path: /en/kmp-view-model
+language: pt
+path: /pt/kmp-view-model
 ---
 
-# StateFlow on KMP and SwiftUI
+# StateFlow em KMP e SwiftUI
 
-The greatest feature with [Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform.html) is the possibility to re-use the business logic between platforms, 
-as a separate framework/module while keeping the UI implemented in the native libraries 
-([SwiftUI](https://developer.apple.com/swiftui/) or [Jetpack Compose](https://developer.android.com/compose)).
+A maior vantagem do [Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform.html) é a possibilidade de reutilizar a lógica de negócio entre plataformas,
+como um framework/módulo separado, mantendo a UI implementada nas bibliotecas nativas
+([SwiftUI](https://developer.apple.com/swiftui/) ou [Jetpack Compose](https://developer.android.com/compose)).
 
-This way, all the greatest features of the native UI libraries can be used to create amazing native UI/UX with no need to 
-duplicate the business logic which tends to be the same between platforms. 
-Especially when handling Network requests/responses, data validation and model mapping.
+Dessa forma, todos os melhores recursos das bibliotecas de UI nativas podem ser utilizados para criar experiências nativas incríveis, sem a necessidade de
+duplicar a lógica de negócio, que tende a ser a mesma entre plataformas.
+Especialmente ao lidar com requisições/respostas de rede, validação de dados e mapeamento de modelos.
 
-For most of the business logic, this integration is easy and smooth. Even more given that KMP translates Kotlin 
-coroutines into Objective-C closures, correctly layered so it can be auto-translated into Swift concurrency, 
-making the integration with SwiftUI smooth.
+Para a maior parte da lógica de negócio, essa integração é fácil e fluida. Ainda mais considerando que o KMP traduz
+coroutines do Kotlin em closures do Objective-C, corretamente estruturadas para serem automaticamente traduzidas em concorrência Swift,
+tornando a integração com SwiftUI suave.
 
-The main problem left is: State maintenance.
+O principal problema que resta é: Manutenção de estado.
 
-## Example
+## Exemplo
 
-Let's use a simple example, just to move the debate: An operation class which performs a network request.
+Vamos usar um exemplo simples, apenas para avançar a discussão: Uma classe de operação que realiza uma requisição de rede.
 
-In this thought exercise, the native UI would pass the label, which would be used in a network operation.
-At the start, simple states would need to be handled: Loading, Success and Error.
+Neste exercício de pensamento, a UI nativa passaria o label, que seria usado em uma operação de rede.
+No início, estados simples precisariam ser tratados: Loading, Success e Error.
 
 ```kotlin
 class FooOperation(
@@ -64,9 +64,9 @@ class FooOperation(
 }
 ```
 
-## Android usage
+## Uso no Android
 
-On Android, the usage of this operation is really simple:
+No Android, o uso dessa operação é bem simples:
 
 ```kotlin
 @Composable
@@ -104,20 +104,20 @@ fun Foo(
 }
 ```
 
-The `DisposableEffect` allows us to call the operation on view placement and cancel it if/when the view is removed from
-the hierarchy. The state is fully controlled by the Operation and the UI reacts to this state change.
+O `DisposableEffect` nos permite chamar a operação na inserção da view e cancelá-la se/quando a view for removida da
+hierarquia. O estado é totalmente controlado pela Operation e a UI reage a essa mudança de estado.
 
-This follows the principles of Clean Architecture of uni-directional state and events. The UI sends events into the 
-business logic and the business logic updates a state. This state changes notifies the UI, which reacts to it and 
-updates accordingly.
+Isso segue os princípios de Clean Architecture de estado e eventos unidirecionais. A UI envia eventos para a
+lógica de negócio e a lógica de negócio atualiza um estado. Essa mudança de estado notifica a UI, que reage e
+se atualiza conforme necessário.
 
-Beautiful.
+Lindo.
 
-On iOS, things are not so easy.
+No iOS, as coisas não são tão fáceis.
 
-## iOS usage
+## Uso no iOS
 
-Without modifying the created `FooOperation`, the closest that can be done on iOS is:
+Sem modificar a `FooOperation` criada, o mais próximo que pode ser feito no iOS é:
 
 ```swift
 struct FooView: View {
@@ -153,16 +153,16 @@ struct FooView: View {
 }
 ```
 
-And this implementation has bugs:
+E essa implementação tem bugs:
 
-1. `FooOperation.perform()` is synchronous. It starts the job, but it returns straight away. So, iOS never receives the final state update.
-2. `operation.state.value`, when translated into Swift, loses its type. So, iOS is forced to cast the types.
-3. The initial read of `operation.state.value` happens before the Operation starts, so it has an invalid/paused state.
+1. `FooOperation.perform()` é síncrono. Ele inicia o job, mas retorna imediatamente. Portanto, o iOS nunca recebe a atualização de estado final.
+2. `operation.state.value`, quando traduzido para Swift, perde seu tipo. Então, o iOS é forçado a fazer cast dos tipos.
+3. A leitura inicial de `operation.state.value` acontece antes da Operation iniciar, então tem um estado inválido/pausado.
 
-This means the actual business logic written in the Operation class is never used by the UI.
-The uni-directional state is lost.
+Isso significa que a lógica de negócio real escrita na classe Operation nunca é usada pela UI.
+O estado unidirecional é perdido.
 
-Some changes can be done to minimise the bugs, starting with the `FooOperation`:
+Algumas mudanças podem ser feitas para minimizar os bugs, começando pela `FooOperation`:
 
 ```kotlin
 suspend fun execute() {
@@ -181,8 +181,8 @@ fun perform() = coroutineScope.launch {
 }
 ```
 
-This change exposes a suspend fun `FooOperation.execute()`, which is translated into Objective-C as a closure based message,
-allowing the creation of a swift concurrency wrapper. And the SwiftUI view can be updated into:
+Essa mudança expõe uma suspend fun `FooOperation.execute()`, que é traduzida em Objective-C como uma mensagem baseada em closure,
+permitindo a criação de um wrapper de concorrência Swift. E a view SwiftUI pode ser atualizada para:
 
 ```swift
 struct FooView: View {
@@ -218,56 +218,56 @@ struct FooView: View {
 }
 ```
 
-By having access to the suspend function completion, the final state of the view is now aligned with the result
-of the Operation. But, bugs are still present:
+Ao ter acesso à conclusão da função suspend, o estado final da view agora está alinhado com o resultado
+da Operation. Mas, bugs ainda estão presentes:
 
-1. `operation.state.value` still loses type definition.
-2. The initial read of `operation.state.value` is still wrong.
-3. Since `suspend` functions are converted into Objective-C closures, the CoroutineScope limits are broken.
-4. Error handling is lost in translation, forcing the Swift code to use `try?` or replicate error handling in the UI layer.
+1. `operation.state.value` ainda perde a definição de tipo.
+2. A leitura inicial de `operation.state.value` ainda está errada.
+3. Como funções `suspend` são convertidas em closures do Objective-C, os limites do CoroutineScope são quebrados.
+4. O tratamento de erros é perdido na tradução, forçando o código Swift a usar `try?` ou replicar o tratamento de erros na camada de UI.
 
-And all of this gets even worse if there is more intermediate states in the Operation. For example: File upload;
-A file upload Operation may need to compress the file, start an upload session, upload the file,
-and close the session at the end.
+E tudo isso fica ainda pior se houver mais estados intermediários na Operation. Por exemplo: Upload de arquivo;
+Uma Operation de upload de arquivo pode precisar comprimir o arquivo, iniciar uma sessão de upload, fazer upload do arquivo,
+e fechar a sessão no final.
 
-It would be a good UX to update the UI for all these many intermediary states of the operation. 
-Ideally, Swift code needs to listen to state changes in the Flow.
+Seria uma boa UX atualizar a UI para todos esses muitos estados intermediários da operação.
+Idealmente, o código Swift precisa escutar as mudanças de estado no Flow.
 
-The async/await wrapper would erase the inner states.
+O wrapper async/await apagaria os estados internos.
 
-**iOS issues:**
+**Problemas no iOS:**
 
-1. No type-safety in the state values.
-2. Thread scope disassociation, which prevents Kotlin code from being aware of its threads children.
-3. No access the intermediary state changes.
-4. Error handling is lost or duplicated.
+1. Sem type-safety nos valores de estado.
+2. Desassociação do escopo de thread, que impede o código Kotlin de estar ciente de seus threads filhos.
+3. Sem acesso às mudanças de estado intermediárias.
+4. Tratamento de erros é perdido ou duplicado.
 
-## Thinking out loud
+## Pensando em voz alta
 
-I do not have a solution, that is why I propose this post a thought exercise. 
-But, I did something in my [MusicStreamSync](https://github.com/igorcferreira/MusicStreamSync) project which allowed
-me to re-use the business logic for state handling and having the UI reacting to these state changes.
+Eu não tenho uma solução, por isso proponho este post como um exercício de pensamento.
+Mas, eu fiz algo no meu projeto [MusicStreamSync](https://github.com/igorcferreira/MusicStreamSync) que me permitiu
+reutilizar a lógica de negócio para gerenciamento de estado e ter a UI reagindo a essas mudanças de estado.
 
-What I'll list below is not the most beautiful abstraction, but it is a way to allow us to use the original `FooOperation` 
-implementation while having the iOS code listening to changes in the state flow.
+O que listarei abaixo não é a abstração mais bonita, mas é uma forma de nos permitir usar a implementação original da `FooOperation`
+enquanto o código iOS escuta as mudanças no state flow.
 
-A vital tool in achieving the goal of listening to state changes in iOS is the [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines) project.
+Uma ferramenta vital para alcançar o objetivo de escutar mudanças de estado no iOS é o projeto [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines).
 
-This Kotlin plugin (and Swift Package) enhances the translation of `StateFlow` from Kotlin coroutines into Swift.
+Este plugin Kotlin (e Swift Package) melhora a tradução de `StateFlow` das coroutines Kotlin para Swift.
 
-The 2 main annotations which improve the proposed use-case are `@NativeCoroutinesState` and `@NativeCoroutineScope`
+As 2 principais anotações que melhoram o caso de uso proposto são `@NativeCoroutinesState` e `@NativeCoroutineScope`
 
-- **NativeCoroutinesState**: Exposes the state value as a type-safe read-only value and creates ways to listen to changes.
-- **NativeCoroutineScope**: Defines which scope must be used when creating the async/await translations.
+- **NativeCoroutinesState**: Expõe o valor do estado como um valor somente leitura type-safe e cria formas de escutar mudanças.
+- **NativeCoroutineScope**: Define qual escopo deve ser usado ao criar as traduções async/await.
 
-The 4 iOS issues listed above will be handled as:
+Os 4 problemas do iOS listados acima serão tratados como:
 
-1. No type-safety -> NativeCoroutinesState
-2. Thread scope disassociation -> NativeCoroutineScope
-3. No access to the intermediary state -> NativeCoroutinesState
-4. Error handling is lost or duplicated -> NativeCoroutineScope
+1. Sem type-safety -> NativeCoroutinesState
+2. Desassociação do escopo de thread -> NativeCoroutineScope
+3. Sem acesso ao estado intermediário -> NativeCoroutinesState
+4. Tratamento de erros perdido ou duplicado -> NativeCoroutineScope
 
-**Updated FooOperation:**
+**FooOperation atualizada:**
 
 ```kotlin
 class FooOperation(
@@ -303,7 +303,7 @@ class FooOperation(
 }
 ```
 
-**Updated SwiftUI code**
+**Código SwiftUI atualizado**
 
 ```swift
 struct FooView: View {
@@ -341,43 +341,43 @@ struct FooView: View {
             }
         }
     }
-    
+
     func update(state: FooOperation.State) {
         self.state = state
     }
-    
+
     func load() async {
         operation.perform()
     }
 }
 ```
 
-`@NativeCoroutinesState` allows us to write the `FooView.observe()` method above. Now, any change of state is propagated 
-into the UI layer, allowing the UI to react to state changes. Now:
+`@NativeCoroutinesState` nos permite escrever o método `FooView.observe()` acima. Agora, qualquer mudança de estado é propagada
+para a camada de UI, permitindo que a UI reaja às mudanças de estado. Agora:
 
-1. State is type-safe, through the direct access to `.state`.
-2. Thread scope is defined through `@NativeCoroutineScope`. If the `Task.detached` is cancelled, the `asyncSequence` closes and if the `Job` is cancelled, the `asyncSequence` terminates.
-3. Intermediary states are now propagated into the UI layer.
-4. Error handling is bound to the state.
+1. O estado é type-safe, através do acesso direto a `.state`.
+2. O escopo de thread é definido através de `@NativeCoroutineScope`. Se o `Task.detached` for cancelado, o `asyncSequence` fecha e se o `Job` for cancelado, o `asyncSequence` termina.
+3. Estados intermediários agora são propagados para a camada de UI.
+4. O tratamento de erros está vinculado ao estado.
 
-And the uni-directional state change is now complete. Allowing us to re-use the state management business logic. Great.
+E a mudança de estado unidirecional agora está completa. Nos permitindo reutilizar a lógica de negócio de gerenciamento de estado. Ótimo.
 
-## ViewModel abstraction
+## Abstração ViewModel
 
-SwiftUI also has the ViewModel (VM) abstraction, which isolates the state management code out from the View itself, 
-making it easier to test, update and re-use. Applying a VM allows us to clean up the code above into something like:
+SwiftUI também tem a abstração ViewModel (VM), que isola o código de gerenciamento de estado fora da View em si,
+tornando mais fácil testar, atualizar e reutilizar. Aplicar um VM nos permite limpar o código acima em algo como:
 
 ```swift
 @Observable
 class FooViewModel {
     private let operation: FooOperation
     var state: FooOperation.State
-    
+
     init(operation: FooOperation) {
         self.operation = operation
         self.state = operation.state
     }
-    
+
     func observe() {
         Task.detached {
             let flow = self.operation.stateFlow
@@ -387,7 +387,7 @@ class FooViewModel {
             }
         }
     }
-    
+
     func start() {
         operation.perform()
     }
@@ -421,7 +421,7 @@ struct FooView: View {
 }
 ```
 
-And the `observe` method can be abstracted using Swift Extensions, into something like:
+E o método `observe` pode ser abstraído usando Swift Extensions, em algo como:
 
 ```swift
 extension Observable where Self: AnyObject {
@@ -458,8 +458,8 @@ class FooViewModel {
 }
 ```
 
-## Final Note
+## Nota Final
 
-As I said, this post is more a thought exercise than a solution proposal. But, I felt that it was worth to be put into words.
+Como eu disse, este post é mais um exercício de pensamento do que uma proposta de solução. Mas, senti que valia a pena colocar em palavras.
 
-If you want to give me your opinion, you can find me on [Mastodon](https://mastodon.social/@igorcferreira) or [BlueSky](https://bsky.app/profile/igorcferreira.bsky.social).
+Se você quiser me dar sua opinião, pode me encontrar no [Mastodon](https://mastodon.social/@igorcferreira) ou [BlueSky](https://bsky.app/profile/igorcferreira.bsky.social).

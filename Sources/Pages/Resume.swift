@@ -7,7 +7,7 @@
 import Foundation
 import Ignite
 
-struct Resume: StaticPage {
+struct Resume: LocalisedStaticPage {
     @Environment(\.page) var page
     @Environment(\.decode) var decode
     
@@ -15,11 +15,11 @@ struct Resume: StaticPage {
         page.dictionary.localised("Resume", decoder: decode)
     }
 
-    let resource: String
-    
-    init(resource: String = "Resume.md") {
-        self.resource = resource
+    var resource: String {
+        "resume_\(page.locale.identifier).md"
     }
+    
+    let locale: Locale
     
     var body: some BodyElement {
         if let data = decode.data(forResource: resource),

@@ -7,17 +7,35 @@
 import Foundation
 import Ignite
 
-struct Categories: StaticPage {
+protocol LocalisedStaticPage: StaticPage {
+    var locale: Locale { get }
+}
+
+extension LocalisedStaticPage {
+    /// Auto-generates a path for this page using its Swift type name.
+    var path: String {
+        let prefix = if locale == .default { "" } else { "\(locale.identifier)/" }
+        return "/" + prefix  + String(describing: Self.self).convertedToSlug()
+    }
+}
+
+struct Categories: LocalisedStaticPage {
     @Environment(\.page) var page
     @Environment(\.decode) var decode
     @Environment(\.articles) var articles
     
+    let locale: Locale
+    
     var map: [String: [Article]] {
-        articles.categories(for: page.locale)
+        articles.categories(for: locale)
     }
     
     var title: String {
         page.dictionary.localised("Categories", decoder: decode)
+    }
+    
+    init(locale: Locale) {
+        self.locale = locale
     }
     
     var body: some BodyElement {
@@ -37,11 +55,19 @@ struct Categories: StaticPage {
 }
 
 extension ArticleLoader {
+    func typed(_ type: String, locale: Locale) -> [Article] {
+        self.in(locale: locale).filter { $0.type == type }
+    }
+
+    func tagged(_ tag: String, locale: Locale) -> [Article] {
+        self.in(locale: locale).filter { $0.tags?.contains(tag) == true }
+    }
+    
     func categories(for locale: Locale) -> [String: [Article]] {
-        let tags = Set(all.flatMap({ $0.tags ?? [] }))
+        let tags = Set(self.in(locale: locale).flatMap { article in article.tags ?? [] })
         var map = [String: [Article]]()
         tags.forEach { tag in
-            map[tag] = tagged(tag)
+            map[tag] = tagged(tag, locale: locale)
         }
         return map
     }

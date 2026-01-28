@@ -1,22 +1,31 @@
 import Foundation
 import Ignite
 
-struct Home: StaticPage {
+struct Home: LocalisedStaticPage {
     @Environment(\.page) var page
     @Environment(\.decode) var decode
     @Environment(\.articles) var articles
     
+    let locale: Locale
+    
     var title: String {
         page.dictionary.localised("Home", decoder: decode)
     }
-    
+    var avaibleArticles: [Article] {
+        articles.in(locale: locale)
+    }
     var headArticle: Article? {
-        articles.all.first
+        avaibleArticles.first
     }
     var remainingArticles: [Article] {
-        var list = articles.all.prefix(6)
+        var list = avaibleArticles.prefix(6)
+        guard list.count > 1 else { return [] }
         let _ = list.removeFirst()
         return Array(list)
+    }
+    
+    init(locale: Locale) {
+        self.locale = locale
     }
 
     var body: some HTML {
