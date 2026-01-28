@@ -55,13 +55,19 @@ struct Categories: LocalisedStaticPage {
 }
 
 extension ArticleLoader {
+    func typed(_ type: String, locale: Locale) -> [Article] {
+        self.in(locale: locale).filter { $0.type == type }
+    }
+
+    func tagged(_ tag: String, locale: Locale) -> [Article] {
+        self.in(locale: locale).filter { $0.tags?.contains(tag) == true }
+    }
+    
     func categories(for locale: Locale) -> [String: [Article]] {
-        let tags = Set(self.in(locale: locale).flatMap {
-            article in article.tags ?? []
-        })
+        let tags = Set(self.in(locale: locale).flatMap { article in article.tags ?? [] })
         var map = [String: [Article]]()
         tags.forEach { tag in
-            map[tag] = tagged(tag)
+            map[tag] = tagged(tag, locale: locale)
         }
         return map
     }

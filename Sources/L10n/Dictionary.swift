@@ -75,7 +75,9 @@ extension Article {
 
 extension ArticleLoader {
     func `in`(locale: Locale) -> [Article] {
-        all.filter({ article in article.locale == locale })
+        all.filter({ article in
+            article.locale == locale
+        })
     }
 }
 
