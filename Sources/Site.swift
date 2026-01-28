@@ -38,7 +38,7 @@ struct ExampleSite: Site {
         return configuration
     }
 
-    var homePage = Home()
+    var homePage = Home(locale: Locale.default)
     var layout = MainLayout()
     var lightTheme: (any Theme)? = BaseTheme()
     var darkTheme: (any Theme)? = nil
@@ -47,9 +47,14 @@ struct ExampleSite: Site {
         Story()
     }
     var staticPages: [any StaticPage] {
-        Home()
-        Categories()
-        Resume()
+        let pages: [any StaticPage] = [Locale.default, .alternative].flatMap({ locale in
+            [
+                Home(locale: locale) as any StaticPage,
+                Categories(locale: locale) as any StaticPage,
+                Resume(locale: locale) as any StaticPage
+            ]
+        })
+        return pages
     }
     var syntaxHighlighterConfiguration: SyntaxHighlighterConfiguration {
         SyntaxHighlighterConfiguration(languages: [

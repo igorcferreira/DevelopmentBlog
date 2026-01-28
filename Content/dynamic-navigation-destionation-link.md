@@ -5,6 +5,7 @@ description: A glance on the usage of DynamicNavigationDestinationLink
 date: 2019-06-28 12:00
 tags: iOS, SwiftUI
 published: true
+language: en
 ---
 # Using DynamicNavigationDestinationLink
 

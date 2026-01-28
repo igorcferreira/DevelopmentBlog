@@ -15,9 +15,9 @@ struct TopBar: HTML {
     
     var body: some HTML {
         NavigationBar(logo: nil) {
-            Link(page.dictionary.localised("Home", decoder: decode), target: "/")
-            Link(page.dictionary.localised("Categories", decoder: decode), target: Categories())
-            Link(page.dictionary.localised("Resume", decoder: decode), target: Resume())
+            Link(page.dictionary.localised("Home", decoder: decode), target: Home(locale: page.locale))
+            Link(page.dictionary.localised("Categories", decoder: decode), target: Categories(locale: page.locale))
+            Link(page.dictionary.localised("Resume", decoder: decode), target: Resume(locale: page.locale))
             Link(page.dictionary.localised("GitHub", decoder: decode), target: ArkanaKeys.Global().githubPage)
             Link(page.dictionary.localised("Mastodon", decoder: decode), target: ArkanaKeys.Global().mastodonPage)
             Link(page.dictionary.localised("Feed", decoder: decode), target: "/feed.rss")
@@ -27,28 +27,5 @@ struct TopBar: HTML {
         .navigationItemAlignment(.leading)
         .navigationBarStyle(.dark)
         .background(.bootstrapRed)
-    }
-}
-
-private extension Locale {
-    static var `default`: Locale {
-        Locale(identifier: "en")
-    }
-    static var alternative: Locale {
-        Locale(identifier: "pt")
-    }
-    var linkLabel: String {
-        if self == .default {
-            "Ver em Português"
-        } else {
-            "See in English"
-        }
-    }
-    var linkTarget: Locale {
-        if self == .default {
-            .alternative
-        } else {
-            .default
-        }
     }
 }

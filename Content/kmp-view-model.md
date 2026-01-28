@@ -5,6 +5,7 @@ description: A brief thought about the usage of StateFlow on KMP when using Swif
 date: 2026-01-26 12:00
 tags: iOS, SwiftUI, KMP, Kotlin
 published: true
+language: en
 ---
 
 # StateFlow on KMP and SwiftUI
