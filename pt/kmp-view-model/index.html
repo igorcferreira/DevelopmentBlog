@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A maior vantagem do Kotlin Multiplatform (KMP) é a possibilidade de reutilizar a lógica de negócio entre plataformas, como um framework/módulo separado, mantendo a UI implementada nas bibliotecas nativas (SwiftUI ou Jetpack Compose)." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>StateFlow em KMP e SwiftUI</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-github-dark.css" rel="stylesheet" data-highlight-theme="github-dark" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/pt/kmp-view-model" rel="canonical" />
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="StateFlow em KMP e SwiftUI" />
+    <meta name="twitter:title" content="StateFlow em KMP e SwiftUI" />
+    <meta property="og:description" content="A maior vantagem do Kotlin Multiplatform (KMP) é a possibilidade de reutilizar a lógica de negócio entre plataformas, como um framework/módulo separado, mantendo a UI implementada nas bibliotecas nativas (SwiftUI ou Jetpack Compose)." />
+    <meta name="twitter:description" content="A maior vantagem do Kotlin Multiplatform (KMP) é a possibilidade de reutilizar a lógica de negócio entre plataformas, como um framework/módulo separado, mantendo a UI implementada nas bibliotecas nativas (SwiftUI ou Jetpack Compose)." />
+    <meta property="og:url" content="https://igorcferreira.dev/pt/kmp-view-model" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/pt/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/pt/categories" class="nav-link text-nowrap">Categorias</a></li>
+              <li class="nav-item"><a href="/pt/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/kmp-view-model" class="nav-link text-nowrap">See in English</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>StateFlow em KMP e SwiftUI</h1>
+      <p>Tags: iOS, SwiftUI, KMP, Kotlin</p>
+      <p>2130 palavras; 9 minutos de leitura</p>
+      <p></p>
+      <p>A maior vantagem do <a href="https://kotlinlang.org/docs/multiplatform.html">Kotlin Multiplatform (KMP)</a> é a possibilidade de reutilizar a lógica de negócio entre plataformas, como um framework/módulo separado, mantendo a UI implementada nas bibliotecas nativas (<a href="https://developer.apple.com/swiftui/">SwiftUI</a> ou <a href="https://developer.android.com/compose">Jetpack Compose</a>).</p>
+      <p>Dessa forma, todos os melhores recursos das bibliotecas de UI nativas podem ser utilizados para criar experiências nativas incríveis, sem a necessidade de duplicar a lógica de negócio, que tende a ser a mesma entre plataformas. Especialmente ao lidar com requisições/respostas de rede, validação de dados e mapeamento de modelos.</p>
+      <p>Para a maior parte da lógica de negócio, essa integração é fácil e fluida. Ainda mais considerando que o KMP traduz coroutines do Kotlin em closures do Objective-C, corretamente estruturadas para serem automaticamente traduzidas em concorrência Swift, tornando a integração com SwiftUI suave.</p>
+      <p>O principal problema que resta é: Manutenção de estado.</p>
+      <h2>Exemplo</h2>
+      <p>Vamos usar um exemplo simples, apenas para avançar a discussão: Uma classe de operação que realiza uma requisição de rede.</p>
+      <p>Neste exercício de pensamento, a UI nativa passaria o label, que seria usado em uma operação de rede. No início, estados simples precisariam ser tratados: Loading, Success e Error.</p>
+      <pre><code class="language-kotlin">class FooOperation(
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+    private val networkOperation: suspend () -&gt; String = { "Hello World!" }
+) {
+    sealed class State {
+        object None: State()
+        object Loading : State()
+        data class Error(
+            val message: String
+        ) : State()
+        data class Success(
+            val greeting: String
+        ) : State()
+    }
+
+    private val _state: MutableStateFlow&lt;State&gt; = MutableStateFlow(State.None)
+    val state: StateFlow&lt;State&gt; get() = _state.asStateFlow()
+
+    fun perform() = coroutineScope.launch {
+        try {
+            _state.update { State.Loading }
+            //Simulate a network request
+            val response = networkOperation()
+            _state.update { State.Success(greeting = response) }
+        } catch (e: Throwable) {
+            _state.update { State.Error(e.message.orEmpty()) }
+        }
+    }
+}
+</code></pre>
+      <h2>Uso no Android</h2>
+      <p>No Android, o uso dessa operação é bem simples:</p>
+      <pre><code class="language-kotlin">@Composable
+fun Foo(
+    operation: FooOperation,
+    modifier: Modifier = Modifier,
+) {
+    val state by operation.state.collectAsStateWithLifecycle()
+    DisposableEffect(operation) {
+        val job = operation.perform()
+        onDispose { job.cancel() }
+    }
+    fun errorState() = state as FooOperation.State.Error
+    fun successState() = state as FooOperation.State.Success
+
+    Box(modifier = modifier) {
+        when (state) {
+            is FooOperation.State.None -&gt; {
+                Text("Starting")
+            }
+
+            is FooOperation.State.Loading -&gt; {
+                Text("Loading...")
+            }
+
+            is FooOperation.State.Error -&gt; {
+                Text("Error: ${errorState().message}")
+            }
+
+            is FooOperation.State.Success -&gt; {
+                Text("Success: ${successState().greeting}")
+            }
+        }
+    }
+}
+</code></pre>
+      <p>O <code>DisposableEffect</code> nos permite chamar a operação na inserção da view e cancelá-la se/quando a view for removida da hierarquia. O estado é totalmente controlado pela Operation e a UI reage a essa mudança de estado.</p>
+      <p>Isso segue os princípios de Clean Architecture de estado e eventos unidirecionais. A UI envia eventos para a lógica de negócio e a lógica de negócio atualiza um estado. Essa mudança de estado notifica a UI, que reage e se atualiza conforme necessário.</p>
+      <p>Lindo.</p>
+      <p>No iOS, as coisas não são tão fáceis.</p>
+      <h2>Uso no iOS</h2>
+      <p>Sem modificar a <code>FooOperation</code> criada, o mais próximo que pode ser feito no iOS é:</p>
+      <pre><code class="language-swift">struct FooView: View {
+    let operation: FooOperation
+    @State var state: FooOperation.State
+
+    init(operation: FooOperation) {
+        self.operation = operation
+        self._state = .init(initialValue: operation.state.value as! FooOperation.State)
+    }
+
+    var body: some View {
+        Group {
+            if (state is FooOperation.StateLoading) {
+                Text("Loading...")
+            } else if let error = state as? FooOperation.StateError {
+                Text("Error: \(error.message)")
+            } else if let success = state as? FooOperation.StateSuccess {
+                Text("Success: \(success.greeting)")
+            } else {
+                Text("Starting")
+            }
+        }
+        .padding()
+        .task { await load() }
+    }
+
+    func load() async {
+        self.state = operation.state.value as! FooOperation.State
+        let job = operation.perform()
+        self.state = operation.state.value as! FooOperation.State
+    }
+}
+</code></pre>
+      <p>E essa implementação tem bugs:</p>
+      <ol>
+        <li><code>FooOperation.perform()</code> é síncrono. Ele inicia o job, mas retorna imediatamente. Portanto, o iOS nunca recebe a atualização de estado final.</li>
+        <li><code>operation.state.value</code>, quando traduzido para Swift, perde seu tipo. Então, o iOS é forçado a fazer cast dos tipos.</li>
+        <li>A leitura inicial de <code>operation.state.value</code> acontece antes da Operation iniciar, então tem um estado inválido/pausado.</li>
+      </ol>
+      <p>Isso significa que a lógica de negócio real escrita na classe Operation nunca é usada pela UI. O estado unidirecional é perdido.</p>
+      <p>Algumas mudanças podem ser feitas para minimizar os bugs, começando pela <code>FooOperation</code>:</p>
+      <pre><code class="language-kotlin">suspend fun execute() {
+    try {
+        _state.update { State.Loading }
+        //Simulate a network request
+        val response = networkOperation()
+        _state.update { State.Success(greeting = response) }
+    } catch (e: Throwable) {
+        _state.update { State.Error(e.message.orEmpty()) }
+    }
+}
+
+fun perform() = coroutineScope.launch {
+    execute()
+}
+</code></pre>
+      <p>Essa mudança expõe uma suspend fun <code>FooOperation.execute()</code>, que é traduzida em Objective-C como uma mensagem baseada em closure, permitindo a criação de um wrapper de concorrência Swift. E a view SwiftUI pode ser atualizada para:</p>
+      <pre><code class="language-swift">struct FooView: View {
+    let operation: FooOperation
+    @State var state: FooOperation.State
+
+    init(operation: FooOperation) {
+        self.operation = operation
+        self._state = .init(initialValue: operation.state.value as! FooOperation.State)
+    }
+
+    var body: some View {
+        Group {
+            if (state is FooOperation.StateLoading) {
+                Text("Loading...")
+            } else if let error = state as? FooOperation.StateError {
+                Text("Error: \(error.message)")
+            } else if let success = state as? FooOperation.StateSuccess {
+                Text("Success: \(success.greeting)")
+            } else {
+                Text("Starting")
+            }
+        }
+        .padding()
+        .task { await load() }
+    }
+
+    func load() async {
+        self.state = operation.state.value as! FooOperation.State
+        try? await operation.execute()
+        self.state = operation.state.value as! FooOperation.State
+    }
+}
+</code></pre>
+      <p>Ao ter acesso à conclusão da função suspend, o estado final da view agora está alinhado com o resultado da Operation. Mas, bugs ainda estão presentes:</p>
+      <ol>
+        <li><code>operation.state.value</code> ainda perde a definição de tipo.</li>
+        <li>A leitura inicial de <code>operation.state.value</code> ainda está errada.</li>
+        <li>Como funções <code>suspend</code> são convertidas em closures do Objective-C, os limites do CoroutineScope são quebrados.</li>
+        <li>O tratamento de erros é perdido na tradução, forçando o código Swift a usar <code>try?</code> ou replicar o tratamento de erros na camada de UI.</li>
+      </ol>
+      <p>E tudo isso fica ainda pior se houver mais estados intermediários na Operation. Por exemplo: Upload de arquivo; Uma Operation de upload de arquivo pode precisar comprimir o arquivo, iniciar uma sessão de upload, fazer upload do arquivo, e fechar a sessão no final.</p>
+      <p>Seria uma boa UX atualizar a UI para todos esses muitos estados intermediários da operação. Idealmente, o código Swift precisa escutar as mudanças de estado no Flow.</p>
+      <p>O wrapper async/await apagaria os estados internos.</p>
+      <p><strong>Problemas no iOS:</strong></p>
+      <ol>
+        <li>Sem type-safety nos valores de estado.</li>
+        <li>Desassociação do escopo de thread, que impede o código Kotlin de estar ciente de seus threads filhos.</li>
+        <li>Sem acesso às mudanças de estado intermediárias.</li>
+        <li>Tratamento de erros é perdido ou duplicado.</li>
+      </ol>
+      <h2>Pensando em voz alta</h2>
+      <p>Eu não tenho uma solução, por isso proponho este post como um exercício de pensamento. Mas, eu fiz algo no meu projeto <a href="https://github.com/igorcferreira/MusicStreamSync">MusicStreamSync</a> que me permitiu reutilizar a lógica de negócio para gerenciamento de estado e ter a UI reagindo a essas mudanças de estado.</p>
+      <p>O que listarei abaixo não é a abstração mais bonita, mas é uma forma de nos permitir usar a implementação original da <code>FooOperation</code> enquanto o código iOS escuta as mudanças no state flow.</p>
+      <p>Uma ferramenta vital para alcançar o objetivo de escutar mudanças de estado no iOS é o projeto <a href="https://github.com/rickclephas/KMP-NativeCoroutines">KMP-NativeCoroutines</a>.</p>
+      <p>Este plugin Kotlin (e Swift Package) melhora a tradução de <code>StateFlow</code> das coroutines Kotlin para Swift.</p>
+      <p>As 2 principais anotações que melhoram o caso de uso proposto são <code>@NativeCoroutinesState</code> e <code>@NativeCoroutineScope</code></p>
+      <ul>
+        <li><strong>NativeCoroutinesState</strong>: Expõe o valor do estado como um valor somente leitura type-safe e cria formas de escutar mudanças.</li>
+        <li><strong>NativeCoroutineScope</strong>: Define qual escopo deve ser usado ao criar as traduções async/await.</li>
+      </ul>
+      <p>Os 4 problemas do iOS listados acima serão tratados como:</p>
+      <ol>
+        <li>Sem type-safety -&gt; NativeCoroutinesState</li>
+        <li>Desassociação do escopo de thread -&gt; NativeCoroutineScope</li>
+        <li>Sem acesso ao estado intermediário -&gt; NativeCoroutinesState</li>
+        <li>Tratamento de erros perdido ou duplicado -&gt; NativeCoroutineScope</li>
+      </ol>
+      <p><strong>FooOperation atualizada:</strong></p>
+      <pre><code class="language-kotlin">class FooOperation(
+    @NativeCoroutineScope
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+    private val networkOperation: suspend () -&gt; String = { "Hello World!" }
+) {
+    sealed class State {
+        object None: State()
+        object Loading : State()
+        data class Error(
+            val message: String
+        ) : State()
+        data class Success(
+            val greeting: String
+        ) : State()
+    }
+
+    private val _state: MutableStateFlow&lt;State&gt; = MutableStateFlow(State.None)
+    @NativeCoroutinesState
+    val state: StateFlow&lt;State&gt; get() = _state.asStateFlow()
+
+    fun perform() = coroutineScope.launch {
+        try {
+            _state.update { State.Loading }
+            //Simulate a network request
+            val response = networkOperation()
+            _state.update { State.Success(greeting = response) }
+        } catch (e: Throwable) {
+            _state.update { State.Error(e.message.orEmpty()) }
+        }
+    }
+}
+</code></pre>
+      <p><strong>Código SwiftUI atualizado</strong></p>
+      <pre><code class="language-swift">struct FooView: View {
+    let operation: FooOperation
+    @State var state: FooOperation.State
+
+    init(operation: FooOperation) {
+        self.operation = operation
+        self._state = .init(initialValue: operation.state)
+        self.observe()
+    }
+
+    var body: some View {
+        Group {
+            if (state is FooOperation.StateLoading) {
+                Text("Loading...")
+            } else if let error = state as? FooOperation.StateError {
+                Text("Error: \(error.message)")
+            } else if let success = state as? FooOperation.StateSuccess {
+                Text("Success: \(success.greeting)")
+            } else {
+                Text("Starting")
+            }
+        }
+        .padding()
+        .task { await load() }
+    }
+
+    func observe() {
+        Task.detached {
+            let flow = await operation.stateFlow
+            let sequence = asyncSequence(for: flow)
+            for try await output in sequence {
+                await update(state: output)
+            }
+        }
+    }
+
+    func update(state: FooOperation.State) {
+        self.state = state
+    }
+
+    func load() async {
+        operation.perform()
+    }
+}
+</code></pre>
+      <p><code>@NativeCoroutinesState</code> nos permite escrever o método <code>FooView.observe()</code> acima. Agora, qualquer mudança de estado é propagada para a camada de UI, permitindo que a UI reaja às mudanças de estado. Agora:</p>
+      <ol>
+        <li>O estado é type-safe, através do acesso direto a <code>.state</code>.</li>
+        <li>O escopo de thread é definido através de <code>@NativeCoroutineScope</code>. Se o <code>Task.detached</code> for cancelado, o <code>asyncSequence</code> fecha e se o <code>Job</code> for cancelado, o <code>asyncSequence</code> termina.</li>
+        <li>Estados intermediários agora são propagados para a camada de UI.</li>
+        <li>O tratamento de erros está vinculado ao estado.</li>
+      </ol>
+      <p>E a mudança de estado unidirecional agora está completa. Nos permitindo reutilizar a lógica de negócio de gerenciamento de estado. Ótimo.</p>
+      <h2>Abstração ViewModel</h2>
+      <p>SwiftUI também tem a abstração ViewModel (VM), que isola o código de gerenciamento de estado fora da View em si, tornando mais fácil testar, atualizar e reutilizar. Aplicar um VM nos permite limpar o código acima em algo como:</p>
+      <pre><code class="language-swift">@Observable
+class FooViewModel {
+    private let operation: FooOperation
+    var state: FooOperation.State
+
+    init(operation: FooOperation) {
+        self.operation = operation
+        self.state = operation.state
+    }
+
+    func observe() {
+        Task.detached {
+            let flow = self.operation.stateFlow
+            let sequence = asyncSequence(for: flow)
+            for try await output in sequence {
+                self.state = output
+            }
+        }
+    }
+
+    func start() {
+        operation.perform()
+    }
+}
+
+struct FooView: View {
+    @State var vm: FooViewModel
+    var state: FooOperation.State {
+        vm.state
+    }
+
+    init(operation: FooOperation) {
+        self.vm = .init(operation: operation)
+    }
+
+    var body: some View {
+        Group {
+            if (state is FooOperation.StateLoading) {
+                Text("Loading...")
+            } else if let error = state as? FooOperation.StateError {
+                Text("Error: \(error.message)")
+            } else if let success = state as? FooOperation.StateSuccess {
+                Text("Success: \(success.greeting)")
+            } else {
+                Text("Starting")
+            }
+        }
+        .padding()
+        .task { vm.observe() }
+    }
+}
+</code></pre>
+      <p>E o método <code>observe</code> pode ser abstraído usando Swift Extensions, em algo como:</p>
+      <pre><code class="language-swift">extension Observable where Self: AnyObject {
+    func collect&lt;Output, Failure: Error&gt;(
+        _ flow: @escaping NativeFlow&lt;Output, Failure, KotlinUnit&gt;,
+        into path: ReferenceWritableKeyPath&lt;Self, Output&gt;
+    ) {
+        Task.detached { [weak self] in
+            let sequence = asyncSequence(for: flow)
+            for try await output in sequence {
+                Task.detached { @MainActor in
+                    self?[keyPath: path] = output
+                }
+            }
+        }
+    }
+}
+
+@Observable
+class FooViewModel {
+    private let operation: FooOperation
+    var state: FooOperation.State
+
+    init(operation: FooOperation) {
+        self.operation = operation
+        self.state = operation.state
+
+        collect(operation.stateFlow, into: \.state)
+    }
+
+    func start() {
+        operation.perform()
+    }
+}
+</code></pre>
+      <h2>Nota Final</h2>
+      <p>Como eu disse, este post é mais um exercício de pensamento do que uma proposta de solução. Mas, senti que valia a pena colocar em palavras.</p>
+      <p>Se você quiser me dar sua opinião, pode me encontrar no <a href="https://mastodon.social/@igorcferreira">Mastodon</a> ou <a href="https://bsky.app/profile/igorcferreira.bsky.social">BlueSky</a>.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
