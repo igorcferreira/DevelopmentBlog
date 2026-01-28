@@ -9,3 +9,6 @@ DerivedData/
 .netrc
 .env
 keys/
+firebase-debug.log
+CLAUDE.md
+AGENTS.md

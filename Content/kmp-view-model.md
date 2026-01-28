@@ -113,7 +113,7 @@ Beautiful.
 
 On iOS, things are not so easy.
 
-# iOS usage
+## iOS usage
 
 Without modifying the created `FooOperation`, the closest that can be done on iOS is:
 
@@ -367,7 +367,7 @@ making it easier to test, update and re-use. Applying a VM allows us to clean up
 
 ```swift
 @Observable
-class FooViewModel: ObservableObject {
+class FooViewModel {
     private let operation: FooOperation
     var state: FooOperation.State
     
@@ -439,7 +439,7 @@ extension Observable where Self: AnyObject {
 }
 
 @Observable
-class FooViewModel: ObservableObject {
+class FooViewModel {
     private let operation: FooOperation
     var state: FooOperation.State
 
