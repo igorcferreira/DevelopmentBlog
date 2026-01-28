@@ -21,6 +21,8 @@ struct TopBar: HTML {
             Link(page.dictionary.localised("GitHub", decoder: decode), target: ArkanaKeys.Global().githubPage)
             Link(page.dictionary.localised("Mastodon", decoder: decode), target: ArkanaKeys.Global().mastodonPage)
             Link(page.dictionary.localised("Feed", decoder: decode), target: "/feed.rss")
+            Spacer()
+            Link(page.dictionary.localised(page.locale.linkLabel, decoder: decode), target: page.path(in: page.locale.linkTarget))
         }
         .navigationItemAlignment(.leading)
         .navigationBarStyle(.dark)
@@ -28,21 +30,25 @@ struct TopBar: HTML {
     }
 }
 
-extension PageMetadata {
-    var dictionary: Dictionary {
-        Dictionary(locale: locale)
+private extension Locale {
+    static var `default`: Locale {
+        Locale(identifier: "en")
     }
-    var locale: Locale {
-        url.locale
+    static var alternative: Locale {
+        Locale(identifier: "pt")
     }
-}
-
-extension URL {
-    var locale: Locale {
-        return if pathComponents.count > 1 {
-            Locale(identifier: pathComponents[1])
+    var linkLabel: String {
+        if self == .default {
+            "Ver em Português"
         } else {
-            Locale(identifier: "en")
+            "See in English"
+        }
+    }
+    var linkTarget: Locale {
+        if self == .default {
+            .alternative
+        } else {
+            .default
         }
     }
 }

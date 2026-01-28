@@ -39,3 +39,36 @@ struct Dictionary {
         ))
     }
 }
+
+extension PageMetadata {
+    var dictionary: Dictionary {
+        Dictionary(locale: locale)
+    }
+    var locale: Locale {
+        url.locale
+    }
+    var path: String {
+        url.path()
+    }
+    func path(in other: Locale) -> String {
+        guard other != locale else {
+            return path
+        }
+        var components = url.pathComponents
+        _ = components.removeFirst()
+        if (other != Locale(identifier: "en")) {
+            components.insert(other.identifier, at: 0)
+        }
+        return "/\(components.joined(separator: "/"))"
+    }
+}
+
+extension URL {
+    var locale: Locale {
+        return if pathComponents.count > 1 {
+            Locale(identifier: pathComponents[1])
+        } else {
+            Locale(identifier: "en")
+        }
+    }
+}
