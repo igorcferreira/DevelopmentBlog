@@ -26,9 +26,6 @@ jobs:
       - name: Install configuration
         run: |
           bundle exec arkana
-      - name: Build Project
-        run: |
-          swift build -c release
       - name: Create static files
         run: |
           swift run -c release
