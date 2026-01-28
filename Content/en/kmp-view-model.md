@@ -6,7 +6,6 @@ date: 2026-01-26 12:00
 tags: iOS, SwiftUI, KMP, Kotlin
 published: true
 language: en
-path: /en/kmp-view-model
 ---
 
 # StateFlow on KMP and SwiftUI

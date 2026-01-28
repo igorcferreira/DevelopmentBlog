@@ -14,8 +14,7 @@ protocol LocalisedStaticPage: StaticPage {
 extension LocalisedStaticPage {
     /// Auto-generates a path for this page using its Swift type name.
     var path: String {
-        let prefix = if locale == .default { "" } else { "\(locale.identifier)/" }
-        return "/" + prefix  + String(describing: Self.self).convertedToSlug()
+        "/\(locale.identifier)/" + String(describing: Self.self).convertedToSlug()
     }
 }
 

@@ -97,11 +97,12 @@ extension PageMetadata {
         }
         var components = url.pathComponents
             .filter({ $0 != "/" })
-        if !components.isEmpty && locale != Locale.default {
+        if !components.isEmpty {
             _ = components.removeFirst()
         }
-        if other != Locale.default {
-            components.insert(other.identifier, at: 0)
+        components.insert(other.identifier, at: 0)
+        if components.count == 1 {
+            components.append("home")
         }
         return "/\(components.joined(separator: "/"))"
     }

@@ -6,7 +6,6 @@ date: 2019-06-28 12:00
 tags: iOS, SwiftUI
 published: true
 language: en
-path: /en/dynamic-navigation-destionation-link
 ---
 # Using DynamicNavigationDestinationLink
 
