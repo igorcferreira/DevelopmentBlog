@@ -19,10 +19,10 @@ struct Index: StaticPage {
         Script(code: """
             const userLang = navigator.language || navigator.userLanguage;
             const locale = new Intl.Locale(userLang);
-            if (locale.language === "pt") {
-                window.location.replace("/pt/home");
+            if (locale.language === "\(Locale.alternative.identifier)") {
+                window.location.replace("/\(Locale.alternative.identifier)/home");
             } else {
-                window.location.replace("/en/home");
+                window.location.replace("/\(Locale.default.identifier)/home");
             }
             """)
     }
