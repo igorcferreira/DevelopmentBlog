@@ -25,25 +25,6 @@
     <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
   </head>
   <body class="container">
-    <header>
-      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
-        <div class="container flex-wrap flex-lg-nowrap">
-          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-          <div id="navbarCollapse" class="collapse navbar-collapse">
-            <ul class="navbar-nav mb-2 mb-md-0 col ">
-              <li class="nav-item"><a href="/en/home" class="nav-link text-nowrap">Home</a></li>
-              <li class="nav-item"><a href="/en/categories" class="nav-link text-nowrap">Categories</a></li>
-              <li class="nav-item"><a href="/en/resume" class="nav-link text-nowrap">Resume</a></li>
-              <li class="nav-item"><a href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
-              <li class="nav-item"><a href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
-              <li class="nav-item"><a href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
-              <div class="ms-auto"></div>
-              <li class="nav-item"><a href="/pt/home" class="nav-link text-nowrap">Ver em Português</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
     <div class="ig-main-content">
       <script>const userLang = navigator.language || navigator.userLanguage;
 const locale = new Intl.Locale(userLang);
@@ -53,7 +34,6 @@ if (locale.language === "pt") {
     window.location.replace("/en/home");
 }</script>
     </div>
-    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/syntax-highlighting.js"></script>
     <script src="/js/ignite-core.js"></script>
