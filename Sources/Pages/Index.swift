@@ -8,8 +8,12 @@ import Foundation
 import Ignite
 
 struct Index: StaticPage {
+    typealias LayoutType = EmptyPageLayout
+    
     @Environment(\.page) var page
     @Environment(\.decode) var decode
+    
+    var layout: EmptyPageLayout = EmptyPageLayout()
     
     var title: String {
         page.dictionary.localised("Home", decoder: decode)
