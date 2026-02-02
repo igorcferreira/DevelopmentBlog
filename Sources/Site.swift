@@ -38,7 +38,7 @@ struct ExampleSite: Site {
         return configuration
     }
 
-    var homePage = Home(locale: Locale.default)
+    var homePage = Index()
     var layout = MainLayout()
     var lightTheme: (any Theme)? = BaseTheme()
     var darkTheme: (any Theme)? = nil
