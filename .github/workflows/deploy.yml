@@ -1,6 +1,7 @@
 name: Deploy Static files
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
 
