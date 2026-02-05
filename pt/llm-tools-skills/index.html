@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="O Model Context Protocol (#MCP) é uma ótima maneira de adicionar capacidades aos seus agentes #LLM. Mas ao trabalhar com #Claude ou #Codex, não é a única forma de melhorar o conhecimento e as ações do seu assistente de código. Em alguns casos, pode não ser a abordagem preferida." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Ferramentas LLM - Além do MCP</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-github-dark.css" rel="stylesheet" data-highlight-theme="github-dark" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/pt/llm-tools-skills" rel="canonical" />
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="Ferramentas LLM - Além do MCP" />
+    <meta name="twitter:title" content="Ferramentas LLM - Além do MCP" />
+    <meta property="og:description" content="O Model Context Protocol (#MCP) é uma ótima maneira de adicionar capacidades aos seus agentes #LLM. Mas ao trabalhar com #Claude ou #Codex, não é a única forma de melhorar o conhecimento e as ações do seu assistente de código. Em alguns casos, pode não ser a abordagem preferida." />
+    <meta name="twitter:description" content="O Model Context Protocol (#MCP) é uma ótima maneira de adicionar capacidades aos seus agentes #LLM. Mas ao trabalhar com #Claude ou #Codex, não é a única forma de melhorar o conhecimento e as ações do seu assistente de código. Em alguns casos, pode não ser a abordagem preferida." />
+    <meta property="og:url" content="https://igorcferreira.dev/pt/llm-tools-skills" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/pt/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/pt/categories" class="nav-link text-nowrap">Categorias</a></li>
+              <li class="nav-item"><a href="/pt/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/en/llm-tools-skills" class="nav-link text-nowrap">See in English</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>Ferramentas LLM - Além do MCP</h1>
+      <p>Tags: MCP, LLM, Claude, Codex</p>
+      <p>477 palavras; 2 minutos de leitura</p>
+      <p></p>
+      <p>O <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Model Context Protocol</a> (#MCP) é uma ótima maneira de adicionar capacidades aos seus agentes #LLM. Mas ao trabalhar com #Claude ou #Codex, não é a única forma de melhorar o conhecimento e as ações do seu assistente de código. Em alguns casos, pode não ser a abordagem preferida.</p>
+      <p>MCP é um protocolo que permite que servidores e executáveis injetem contexto em agentes e listem métodos que podem ser chamados para executar ações com base no comportamento do agente. Sendo um protocolo, ele vem com a necessidade de criar e manter uma camada que garanta que seu servidor/executável possa ser compreendido pelos agentes, especialmente em relação às entradas/saídas das ações.</p>
+      <p>Mas às vezes você só quer ensinar o agente sobre o que seu computador já é capaz de fazer. Seja comandos xcodebuild, uso de executáveis CLI locais (como o gh do GitHub), ou simplesmente como enviar comandos para outros apps no computador usando AppleScript, a necessidade de envolver isso em uma orquestração de protocolo pode ser “demais”.</p>
+      <p>Felizmente, agentes LLM têm outra maneira de entender contexto: texto legível por humanos.</p>
+      <p>Um contexto inicial de projeto/pasta pode ser definido usando um arquivo CLAUDE.md/AGENTS.md, mas há o risco deste arquivo crescer demais e dificultar a reutilização dessas instruções de contexto entre múltiplos projetos. Para resolver esses problemas, temos as “Skills”.</p>
+      <p>Skills são uma estrutura de texto/pasta que coleta uma série de instruções legíveis por humanos que podem ser passadas ao seu agente, local ou globalmente, ensinando o agente de onde obter informações, como usar outros elementos do seu computador, ou até mesmo fornecendo uma coleção de scripts que o agente pode usar para executar melhor certas tarefas.</p>
+      <p>Recentemente criei uma ferramenta CLI para apoiar meu uso do GitHub Actions: <a href="https://github.com/igorcferreira/GHActionTrigger">GHActionTrigger</a>. Esta ferramenta CLI ajuda a disparar GitHub Actions sem necessidade de push/PR e também suporta esperar e analisar runs/jobs existentes. Isso poderia ser feito com a linha de comando gh, mas o gh estava faltando algumas dessas capacidades.</p>
+      <p>Durante o processo de desenvolvimento de uma aplicação, se você tem o GitHub como seu principal repo/CI, você pode querer verificar jobs que falharam, passá-los por agentes LLM, e fazer o agente LLM te apoiar na correção/atualização deles. Minha solução para integrar a ferramenta CLI: Skills.</p>
+      <p>Ao criar um arquivo <code>skills/ghaction.md</code>, posso dar contexto ao agente LLM. E através de plugins, posso estender essa funcionalidade para todos os projetos na minha máquina.</p>
+      <p>Tudo isso mantendo a integração como um documento legível por humanos, sem a necessidade de uma camada complexa/extensa de MCP.</p>
+      <p>O que é ótimo. :)</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
