@@ -19,8 +19,11 @@ struct TopBar: HTML {
             Link(page.dictionary.localised("Categories", decoder: decode), target: Categories(locale: page.locale))
             Link(page.dictionary.localised("Resume", decoder: decode), target: Resume(locale: page.locale))
             Link(page.dictionary.localised("GitHub", decoder: decode), target: ArkanaKeys.Global().githubPage)
+                .target(.blank)
             Link(page.dictionary.localised("Mastodon", decoder: decode), target: ArkanaKeys.Global().mastodonPage)
+                .target(.blank)
             Link(page.dictionary.localised("Feed", decoder: decode), target: "/feed.rss")
+                .target(.blank)
             Spacer()
             Link(page.dictionary.localised(page.locale.linkLabel, decoder: decode), target: page.path(in: page.locale.linkTarget))
         }
