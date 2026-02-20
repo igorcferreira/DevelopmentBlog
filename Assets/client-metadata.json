@@ -1,0 +1,12 @@
+{
+  "client_id": "https://igorcferreira.dev/client-metadata.json",
+  "client_name": "Acaraje",
+  "client_uri": "https://igorcferreira.dev",
+  "application_type": "native",
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "scope": "atproto transition:generic",
+  "redirect_uris": ["dev.igorcferreira:/oauth/bluesky"],
+  "token_endpoint_auth_method": "none",
+  "dpop_bound_access_tokens": true
+}
