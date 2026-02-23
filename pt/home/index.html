@@ -47,29 +47,52 @@
     <div class="ig-main-content">
       <div class="card">
         <div class="card-body">
-          <h1>Ferramentas LLM - Além do MCP</h1>
-          <p>Tags: MCP, LLM, Claude, Codex</p>
-          <p>477 palavras; 2 minutos de leitura</p>
+          <h1>Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode</h1>
+          <p>Tags: iOS, SwiftUI, KMP, Kotlin</p>
+          <p>457 palavras; 2 minutos de leitura</p>
           <p></p>
-          <p>O <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Model Context Protocol</a> (#MCP) é uma ótima maneira de adicionar capacidades aos seus agentes #LLM. Mas ao trabalhar com #Claude ou #Codex, não é a única forma de melhorar o conhecimento e as ações do seu assistente de código. Em alguns casos, pode não ser a abordagem preferida.</p>
-          <p>MCP é um protocolo que permite que servidores e executáveis injetem contexto em agentes e listem métodos que podem ser chamados para executar ações com base no comportamento do agente. Sendo um protocolo, ele vem com a necessidade de criar e manter uma camada que garanta que seu servidor/executável possa ser compreendido pelos agentes, especialmente em relação às entradas/saídas das ações.</p>
-          <p>Mas às vezes você só quer ensinar o agente sobre o que seu computador já é capaz de fazer. Seja comandos xcodebuild, uso de executáveis CLI locais (como o gh do GitHub), ou simplesmente como enviar comandos para outros apps no computador usando AppleScript, a necessidade de envolver isso em uma orquestração de protocolo pode ser “demais”.</p>
-          <p>Felizmente, agentes LLM têm outra maneira de entender contexto: texto legível por humanos.</p>
-          <p>Um contexto inicial de projeto/pasta pode ser definido usando um arquivo CLAUDE.md/AGENTS.md, mas há o risco deste arquivo crescer demais e dificultar a reutilização dessas instruções de contexto entre múltiplos projetos. Para resolver esses problemas, temos as “Skills”.</p>
-          <p>Skills são uma estrutura de texto/pasta que coleta uma série de instruções legíveis por humanos que podem ser passadas ao seu agente, local ou globalmente, ensinando o agente de onde obter informações, como usar outros elementos do seu computador, ou até mesmo fornecendo uma coleção de scripts que o agente pode usar para executar melhor certas tarefas.</p>
-          <p>Recentemente criei uma ferramenta CLI para apoiar meu uso do GitHub Actions: <a href="https://github.com/igorcferreira/GHActionTrigger">GHActionTrigger</a>. Esta ferramenta CLI ajuda a disparar GitHub Actions sem necessidade de push/PR e também suporta esperar e analisar runs/jobs existentes. Isso poderia ser feito com a linha de comando gh, mas o gh estava faltando algumas dessas capacidades.</p>
-          <p>Durante o processo de desenvolvimento de uma aplicação, se você tem o GitHub como seu principal repo/CI, você pode querer verificar jobs que falharam, passá-los por agentes LLM, e fazer o agente LLM te apoiar na correção/atualização deles. Minha solução para integrar a ferramenta CLI: Skills.</p>
-          <p>Ao criar um arquivo <code>skills/ghaction.md</code>, posso dar contexto ao agente LLM. E através de plugins, posso estender essa funcionalidade para todos os projetos na minha máquina.</p>
-          <p>Tudo isso mantendo a integração como um documento legível por humanos, sem a necessidade de uma camada complexa/extensa de MCP.</p>
-          <p>O que é ótimo. :)</p>
+          <p>Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho.</p>
+          <p>Na maior parte do tempo, o seu shell profile resolve isso sem problemas. Mas existe um lugar onde essa configuração falha silenciosamente: o Build Phase do Xcode.</p>
+          <h2>Por que o Xcode não enxerga a sua configuração do Java</h2>
+          <p>Quando o template do KMP configura o target iOS, ele adiciona um script no Build Phase que chama <code>embedAndSignAppleFrameworkForXcode</code> no projeto Gradle compartilhado. O problema é que o Xcode executa esse script em um ambiente bash isolado, que não carrega o seu <code>.zshrc</code>, <code>.bash_profile</code>, nem qualquer outro arquivo onde você configurou o seu toolchain do Java. Em vez de usar a versão que você definiu, o Gradle pega qualquer versão do Java que estiver no topo do path do sistema. Se essa versão for o Java 25 e o seu projeto exigir o Java 21, o build falha.</p>
+          <h2>A solução</h2>
+          <p>Antes da correção, o script padrão do Build Phase tem esta aparência:</p>
+          <pre><code class="language-shell">if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+  echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
+  exit 0
+fi
+cd "$SRCROOT/.."
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+</code></pre>
+          <p>A solução é definir o <code>JAVA_HOME</code> inline, com escopo restrito àquela invocação do Gradle, usando o utilitário <code>java_home</code> do próprio macOS:</p>
+          <pre><code class="language-shell">if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+  echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
+  exit 0
+fi
+cd "$SRCROOT/.."
+JAVA_HOME="$(/usr/libexec/java_home -v21)" ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+</code></pre>
+          <p>O comando <code>/usr/libexec/java_home -v21</code> resolve o caminho completo para a instalação do Java 21. Definindo inline, a variável afeta apenas aquele comando específico, sem interferir no restante do ambiente de build.</p>
+          <p>Ajuste o número da versão conforme o que o seu projeto exige. Se não tiver certeza de quais versões estão disponíveis na sua máquina, execute <code>/usr/libexec/java_home -V</code> (V maiúsculo) para listar todas elas.</p>
+          <h2>Vale lembrar</h2>
+          <p>Este é um arquivo de template, o que significa que ele pode ser regenerado caso você execute novamente o setup do projeto KMP. Vale registrar essa alteração em algum lugar no projeto – um comentário no próprio script já resolve – para não ser pego de surpresa depois de uma atualização.</p>
+          <hr />
+          <p>Simples, direto, e espero que útil para quem esbarrar no mesmo problema.</p>
           <p></p>
         </div>
       </div>
-      <div id="accordionxtQdS" class="accordion">
+      <div id="accordionoW3dc" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionxtQdS-itemnRK9S" aria-expanded="true" aria-controls="accordionxtQdS-itemnRK9S">Mais</button></h2>
-          <div id="accordionxtQdS-itemnRK9S" class="accordion-collapse collapse show" data-bs-parent="#accordionxtQdS">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionoW3dc-itemzPeyw" aria-expanded="true" aria-controls="accordionoW3dc-itemzPeyw">Mais</button></h2>
+          <div id="accordionoW3dc-itemzPeyw" class="accordion-collapse collapse show" data-bs-parent="#accordionoW3dc">
             <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <h2><a href="/pt/llm-tools-skills">Ferramentas LLM - Além do MCP</a></h2>
+                  <p class="ig-text-xSmall">Tags: MCP, LLM, Claude, Codex</p>
+                  <p class="lead">O Model Context Protocol (#MCP) é uma ótima maneira de adicionar capacidades aos seus agentes #LLM. Mas ao trabalhar com #Claude ou #Codex, não é a única forma de melhorar o conhecimento e as ações do seu assistente de código. Em alguns casos, pode não ser a abordagem preferida.</p>
+                </div>
+              </div>
               <div class="card">
                 <div class="card-body">
                   <h2><a href="/pt/kmp-view-model">StateFlow em KMP e SwiftUI</a></h2>

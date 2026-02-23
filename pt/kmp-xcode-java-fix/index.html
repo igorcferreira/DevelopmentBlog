@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-github-dark.css" rel="stylesheet" data-highlight-theme="github-dark" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/pt/kmp-xcode-java-fix" rel="canonical" />
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode" />
+    <meta name="twitter:title" content="Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode" />
+    <meta property="og:description" content="Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho." />
+    <meta name="twitter:description" content="Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho." />
+    <meta property="og:url" content="https://igorcferreira.dev/pt/kmp-xcode-java-fix" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/pt/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/pt/categories" class="nav-link text-nowrap">Categorias</a></li>
+              <li class="nav-item"><a href="/pt/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a target="_blank" href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a target="_blank" href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a target="_blank" href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/en/kmp-xcode-java-fix" class="nav-link text-nowrap">See in English</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode</h1>
+      <p>Tags: iOS, SwiftUI, KMP, Kotlin</p>
+      <p>457 palavras; 2 minutos de leitura</p>
+      <p></p>
+      <p>Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho.</p>
+      <p>Na maior parte do tempo, o seu shell profile resolve isso sem problemas. Mas existe um lugar onde essa configuração falha silenciosamente: o Build Phase do Xcode.</p>
+      <h2>Por que o Xcode não enxerga a sua configuração do Java</h2>
+      <p>Quando o template do KMP configura o target iOS, ele adiciona um script no Build Phase que chama <code>embedAndSignAppleFrameworkForXcode</code> no projeto Gradle compartilhado. O problema é que o Xcode executa esse script em um ambiente bash isolado, que não carrega o seu <code>.zshrc</code>, <code>.bash_profile</code>, nem qualquer outro arquivo onde você configurou o seu toolchain do Java. Em vez de usar a versão que você definiu, o Gradle pega qualquer versão do Java que estiver no topo do path do sistema. Se essa versão for o Java 25 e o seu projeto exigir o Java 21, o build falha.</p>
+      <h2>A solução</h2>
+      <p>Antes da correção, o script padrão do Build Phase tem esta aparência:</p>
+      <pre><code class="language-shell">if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+  echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
+  exit 0
+fi
+cd "$SRCROOT/.."
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+</code></pre>
+      <p>A solução é definir o <code>JAVA_HOME</code> inline, com escopo restrito àquela invocação do Gradle, usando o utilitário <code>java_home</code> do próprio macOS:</p>
+      <pre><code class="language-shell">if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+  echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
+  exit 0
+fi
+cd "$SRCROOT/.."
+JAVA_HOME="$(/usr/libexec/java_home -v21)" ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+</code></pre>
+      <p>O comando <code>/usr/libexec/java_home -v21</code> resolve o caminho completo para a instalação do Java 21. Definindo inline, a variável afeta apenas aquele comando específico, sem interferir no restante do ambiente de build.</p>
+      <p>Ajuste o número da versão conforme o que o seu projeto exige. Se não tiver certeza de quais versões estão disponíveis na sua máquina, execute <code>/usr/libexec/java_home -V</code> (V maiúsculo) para listar todas elas.</p>
+      <h2>Vale lembrar</h2>
+      <p>Este é um arquivo de template, o que significa que ele pode ser regenerado caso você execute novamente o setup do projeto KMP. Vale registrar essa alteração em algum lugar no projeto – um comentário no próprio script já resolve – para não ser pego de surpresa depois de uma atualização.</p>
+      <hr />
+      <p>Simples, direto, e espero que útil para quem esbarrar no mesmo problema.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
