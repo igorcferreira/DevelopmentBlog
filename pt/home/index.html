@@ -47,45 +47,134 @@
     <div class="ig-main-content">
       <div class="card">
         <div class="card-body">
-          <h1>Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode</h1>
+          <h1>Usando Koin com Kotlin Multiplatform no iOS: Uma Abordagem com Bridge</h1>
           <p>Tags: iOS, SwiftUI, KMP, Kotlin</p>
-          <p>457 palavras; 2 minutos de leitura</p>
+          <p>878 palavras; 4 minutos de leitura</p>
           <p></p>
-          <p>Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho.</p>
-          <p>Na maior parte do tempo, o seu shell profile resolve isso sem problemas. Mas existe um lugar onde essa configuração falha silenciosamente: o Build Phase do Xcode.</p>
-          <h2>Por que o Xcode não enxerga a sua configuração do Java</h2>
-          <p>Quando o template do KMP configura o target iOS, ele adiciona um script no Build Phase que chama <code>embedAndSignAppleFrameworkForXcode</code> no projeto Gradle compartilhado. O problema é que o Xcode executa esse script em um ambiente bash isolado, que não carrega o seu <code>.zshrc</code>, <code>.bash_profile</code>, nem qualquer outro arquivo onde você configurou o seu toolchain do Java. Em vez de usar a versão que você definiu, o Gradle pega qualquer versão do Java que estiver no topo do path do sistema. Se essa versão for o Java 25 e o seu projeto exigir o Java 21, o build falha.</p>
-          <h2>A solução</h2>
-          <p>Antes da correção, o script padrão do Build Phase tem esta aparência:</p>
-          <pre><code class="language-shell">if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
-  echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
-  exit 0
-fi
-cd "$SRCROOT/.."
-./gradlew :shared:embedAndSignAppleFrameworkForXcode
-</code></pre>
-          <p>A solução é definir o <code>JAVA_HOME</code> inline, com escopo restrito àquela invocação do Gradle, usando o utilitário <code>java_home</code> do próprio macOS:</p>
-          <pre><code class="language-shell">if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
-  echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
-  exit 0
-fi
-cd "$SRCROOT/.."
-JAVA_HOME="$(/usr/libexec/java_home -v21)" ./gradlew :shared:embedAndSignAppleFrameworkForXcode
-</code></pre>
-          <p>O comando <code>/usr/libexec/java_home -v21</code> resolve o caminho completo para a instalação do Java 21. Definindo inline, a variável afeta apenas aquele comando específico, sem interferir no restante do ambiente de build.</p>
-          <p>Ajuste o número da versão conforme o que o seu projeto exige. Se não tiver certeza de quais versões estão disponíveis na sua máquina, execute <code>/usr/libexec/java_home -V</code> (V maiúsculo) para listar todas elas.</p>
-          <h2>Vale lembrar</h2>
-          <p>Este é um arquivo de template, o que significa que ele pode ser regenerado caso você execute novamente o setup do projeto KMP. Vale registrar essa alteração em algum lugar no projeto – um comentário no próprio script já resolve – para não ser pego de surpresa depois de uma atualização.</p>
+          <h2>Introdução</h2>
+          <p>Eu estava lendo um post do <a href="https://mastodon.social/@_inside">Gui Rambo</a> onde ele demonstra o uso do <a href="https://rambo.codes/posts/2021-12-06-using-cloudkit-for-content-hosting-and-feature-flags">CloudKit para hospedagem de conteúdo e feature flags</a>. Nele, ele menciona:</p>
+          <blockquote>
+            <p>If you’d like to consume the same content that you’re hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.</p>
+          </blockquote>
+          <p>E isso me fez pensar: se o CloudKit tem uma API HTTP, ela pode ser usada como controle de feature flags em soluções Kotlin Multiplatform.</p>
+          <p>Montei um projeto de exemplo rápido para validar essa ideia, e funciona. Mas o processo também trouxe um segundo desafio à tona: uma arquitetura limpa tem muitas peças em movimento, como camadas de rede, mappers, repositórios e managers, e conectar tudo isso de forma organizada exige uma injeção de dependência sólida. Foi essa percepção que me trouxe até aqui.</p>
           <hr />
-          <p>Simples, direto, e espero que útil para quem esbarrar no mesmo problema.</p>
+          <h2>Injeção de Dependência no Kotlin Multiplatform</h2>
+          <p>Gerenciamento de dependências é um dos pilares de uma base de código saudável e escalável. No ecossistema Android, contamos com ferramentas maduras como Hilt e <a href="https://github.com/InsertKoinIO/koin">Koin</a> que resolvem isso bem. O Koin, em particular, se encaixa bem no Kotlin Multiplatform: é leve, feito para Kotlin, e simples de configurar em um módulo compartilhado.</p>
+          <p>No Android, usar o Koin é direto. Você o inicia na classe <code>Application</code> e injeta onde precisar usando <code>by inject()</code> ou <code>get()</code>, com <code>KoinComponent</code> e as funções de extensão do Kotlin funcionando naturalmente.</p>
+          <p>No iOS, a história é diferente. <code>KoinComponent</code> e funções de extensão do Kotlin não se traduzem bem pela bridge Swift/Obj-C, o que significa que você não pode depender dos mecanismos de injeção típicos do Koin no lado iOS. É necessário encontrar uma forma de expor os objetos injetados ao Swift sem depender de construções que ele não compreende.</p>
+          <hr />
+          <h2>A Abordagem com Bridge</h2>
+          <p>Uma forma de lidar com isso é introduzir uma classe <code>DIHelper</code> no módulo compartilhado. Sua função é inicializar o Koin e expor um <code>KoinBridge</code>, um objeto simples que o Swift consegue entender, que fornece acesso aos objetos gerenciados pelo Koin. Pense nele como uma janela controlada para o seu grafo de DI, criada especificamente para a camada Swift.</p>
+          <p>Veja como isso fica na prática:</p>
+          <p><strong>Compartilhado</strong></p>
+          <pre><code class="language-kotlin">val networkModule = module {
+    single&lt;Json&gt; {
+        //...
+    }
+    factory&lt;Logger&gt; {
+        //...
+    }
+    factory&lt;LogLevel&gt; {
+        //...
+    }
+    factory&lt;HttpClient&gt; {
+        //...
+    }
+    factory&lt;CloudKitFeatureRepository&gt; {
+        //...
+    }
+}
+
+val domainModule = module {
+    factory&lt;DomainMapper&lt;Map&lt;String, CloudKitIntField&gt;, AppFeatures&gt;&gt; {
+        //..
+    }
+    factory&lt;AppFeatureRepository&gt; {
+        //..
+    }
+    single&lt;AppFeatureManager&gt; {
+        //...
+    }
+}
+
+class DIHelper {
+    class KoinBridge: KoinComponent {
+        val manager: AppFeatureManager
+            get() = get&lt;AppFeatureManager&gt;()
+    }
+
+    @OptIn(ExperimentalObjCRefinement::class)
+    companion object {
+        val MODULES = listOf(
+            domainModule,
+            networkModule,
+        )
+
+        @HiddenFromObjC
+        fun initKoin() = startKoin {
+            modules(MODULES)
+        }
+
+        fun buildBridge(): KoinBridge {
+            initKoin()
+            return KoinBridge()
+        }
+    }
+}
+</code></pre>
+          <p>No Android, você inicializa o Koin da forma habitual, com os extras específicos da plataforma, como o contexto Android:</p>
+          <p><strong>Android Application</strong></p>
+          <pre><code class="language-kotlin">class Application: Application() {
+    override fun onCreate() {
+        super.onCreate()
+        DIHelper.initKoin()
+            .androidContext(applicationContext)
+            .androidLogger()
+    }
+}
+</code></pre>
+          <p>No iOS, ao invés de trabalhar contra a bridge, você chama <code>buildBridge()</code> e extrai diretamente o que precisa:</p>
+          <p><strong>iOS Application</strong></p>
+          <pre><code class="language-swift">@main
+struct iOSApp: App {
+    let manager: AppFeatureManager = {
+        let koin = DIHelper.companion.buildBridge()
+        return koin.manager
+    }()
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView(appFeatures: manager.state)
+        }
+    }
+}
+</code></pre>
+          <p>O Swift recebe um objeto limpo e fortemente tipado, sem extensões Kotlin ou <code>KoinComponent</code> envolvidos, apenas uma entrega direta e simples.</p>
+          <hr />
+          <h2>Prós e Contras</h2>
+          <p>Esse padrão é prático, mas vale entendê-lo bem antes de adotá-lo.</p>
+          <p>No lado positivo, sua configuração de DI fica em um único lugar, compartilhada entre as duas plataformas. A injeção permanece centralizada e controlada pelo Koin, a camada compartilhada continua testável de forma independente, e você tem um pool de objetos gerenciado sem precisar de nenhuma infraestrutura adicional.</p>
+          <p>Os principais pontos de atenção são que todo objeto que você queira expor ao Swift precisa ser declarado explicitamente no <code>KoinBridge</code>, e existe potencial de duplicação entre as propriedades do Bridge e as definições dos módulos, especialmente quando ViewModels entram em cena.</p>
+          <hr />
+          <h2>Conclusão</h2>
+          <p>O padrão <code>DIHelper</code> / <code>KoinBridge</code> é uma resposta pragmática a uma limitação real da bridge Swift. Ele mantém a injeção de dependência centralizada e a lógica compartilhada organizada, sem abrir mão da acessibilidade pelo lado iOS. Para um projeto onde você quer o Koin gerenciando o grafo de objetos em ambas as plataformas, é um ponto de partida razoável e válido.</p>
+          <p>Se você já abordou esse problema de outra forma ou encontrou maneiras de reduzir o boilerplate do Bridge, fique à vontade para compartilhar. Esse espaço continua evoluindo e há, certamente, outros padrões a explorar.</p>
           <p></p>
         </div>
       </div>
-      <div id="accordionoW3dc" class="accordion">
+      <div id="accordionVSX7S" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionoW3dc-itemzPeyw" aria-expanded="true" aria-controls="accordionoW3dc-itemzPeyw">Mais</button></h2>
-          <div id="accordionoW3dc-itemzPeyw" class="accordion-collapse collapse show" data-bs-parent="#accordionoW3dc">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionVSX7S-itemjmjc7" aria-expanded="true" aria-controls="accordionVSX7S-itemjmjc7">Mais</button></h2>
+          <div id="accordionVSX7S-itemjmjc7" class="accordion-collapse collapse show" data-bs-parent="#accordionVSX7S">
             <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <h2><a href="/pt/kmp-xcode-java-fix">Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode</a></h2>
+                  <p class="ig-text-xSmall">Tags: iOS, SwiftUI, KMP, Kotlin</p>
+                  <p class="lead">Se você trabalha com Kotlin Multiplatform há algum tempo, é provável que tenha mais de um SDK do Java instalado na sua máquina. Desenvolvimento Android, Spring Framework, ferramentas de linha de comando – cada um tem suas próprias preferências de versão, e gerenciar isso faz parte do trabalho.</p>
+                </div>
+              </div>
               <div class="card">
                 <div class="card-body">
                   <h2><a href="/pt/llm-tools-skills">Ferramentas LLM - Além do MCP</a></h2>

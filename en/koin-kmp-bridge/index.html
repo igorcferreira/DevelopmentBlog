@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="I was reading a post made by Gui Rambo where he demonstrates the usage of CloudKit for content hosting and feature flags. In there, he mentions:" />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-github-dark.css" rel="stylesheet" data-highlight-theme="github-dark" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/en/koin-kmp-bridge" rel="canonical" />
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach" />
+    <meta name="twitter:title" content="Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach" />
+    <meta property="og:description" content="I was reading a post made by Gui Rambo where he demonstrates the usage of CloudKit for content hosting and feature flags. In there, he mentions:" />
+    <meta name="twitter:description" content="I was reading a post made by Gui Rambo where he demonstrates the usage of CloudKit for content hosting and feature flags. In there, he mentions:" />
+    <meta property="og:url" content="https://igorcferreira.dev/en/koin-kmp-bridge" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/en/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/en/categories" class="nav-link text-nowrap">Categories</a></li>
+              <li class="nav-item"><a href="/en/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a target="_blank" href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a target="_blank" href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a target="_blank" href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/pt/koin-kmp-bridge" class="nav-link text-nowrap">Ver em Português</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</h1>
+      <p>Tagged with: iOS, SwiftUI, KMP, Kotlin</p>
+      <p>835 words; 4 minutes to read</p>
+      <p></p>
+      <h2>Introduction</h2>
+      <p>I was reading a post made by <a href="https://mastodon.social/@_inside">Gui Rambo</a> where he demonstrates the usage of <a href="https://rambo.codes/posts/2021-12-06-using-cloudkit-for-content-hosting-and-feature-flags">CloudKit for content hosting and feature flags</a>. In there, he mentions:</p>
+      <blockquote>
+        <p>If you’d like to consume the same content that you’re hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.</p>
+      </blockquote>
+      <p>And this triggered something in my mind: if CloudKit has an HTTP API, it can be used as a feature flag control in Kotlin Multiplatform solutions.</p>
+      <p>I put together a quick sample project to validate that idea, and it works. But building it also surfaced a second challenge: a clean architecture has many moving parts, like networking, mappers, repositories, and managers, and wiring them all together cleanly requires solid dependency injection. That realization is what led me here.</p>
+      <hr />
+      <h2>Dependency Injection in Kotlin Multiplatform</h2>
+      <p>Dependency management is a cornerstone of a healthy and scalable codebase. In the Android ecosystem, we have mature tools like Hilt and <a href="https://github.com/InsertKoinIO/koin">Koin</a> that handle this well. Koin in particular is a solid fit for Kotlin Multiplatform: it is lightweight, Kotlin-first, and straightforward to set up in a shared module.</p>
+      <p>On Android, consuming Koin is seamless. You start it in your <code>Application</code> class and inject wherever you need using <code>by inject()</code> or <code>get()</code>, with <code>KoinComponent</code> and Kotlin extension functions working naturally.</p>
+      <p>On iOS, it is a different story. <code>KoinComponent</code> and Kotlin extension functions do not translate cleanly through the Swift/Obj-C bridge, which means you cannot rely on Koin’s typical injection mechanisms from the iOS side. You need a way to expose your injected objects to Swift without relying on constructs it does not understand.</p>
+      <hr />
+      <h2>A Bridge Approach</h2>
+      <p>One way to handle this is to introduce a <code>DIHelper</code> class in your shared module. Its job is to initialize Koin and expose a <code>KoinBridge</code>, a plain object that Swift can work with, which provides access to the objects Koin manages. Think of it as a controlled window into your DI graph, purpose-built for the Swift layer.</p>
+      <p>Here’s how that looks in practice:</p>
+      <p><strong>Shared</strong></p>
+      <pre><code class="language-kotlin">val networkModule = module {
+    single&lt;Json&gt; {
+        //...
+    }
+    factory&lt;Logger&gt; {
+        //...
+    }
+    factory&lt;LogLevel&gt; {
+        //...
+    }
+    factory&lt;HttpClient&gt; {
+        //...
+    }
+    factory&lt;CloudKitFeatureRepository&gt; {
+        //...
+    }
+}
+
+val domainModule = module {
+    factory&lt;DomainMapper&lt;Map&lt;String, CloudKitIntField&gt;, AppFeatures&gt;&gt; {
+        //..
+    }
+    factory&lt;AppFeatureRepository&gt; {
+        //..
+    }
+    single&lt;AppFeatureManager&gt; {
+        //...
+    }
+}
+
+class DIHelper {
+    class KoinBridge: KoinComponent {
+        val manager: AppFeatureManager
+            get() = get&lt;AppFeatureManager&gt;()
+    }
+
+    @OptIn(ExperimentalObjCRefinement::class)
+    companion object {
+        val MODULES = listOf(
+            domainModule,
+            networkModule,
+        )
+
+        @HiddenFromObjC
+        fun initKoin() = startKoin {
+            modules(MODULES)
+        }
+
+        fun buildBridge(): KoinBridge {
+            initKoin()
+            return KoinBridge()
+        }
+    }
+}
+</code></pre>
+      <p>On Android, you initialize Koin the usual way, with platform-specific extras like the Android context:</p>
+      <p><strong>Android Application</strong></p>
+      <pre><code class="language-kotlin">class Application: Application() {
+    override fun onCreate() {
+        super.onCreate()
+        DIHelper.initKoin()
+            .androidContext(applicationContext)
+            .androidLogger()
+    }
+}
+</code></pre>
+      <p>On iOS, instead of working against the bridge, you call <code>buildBridge()</code> and pull out what you need directly:</p>
+      <p><strong>iOS Application</strong></p>
+      <pre><code class="language-swift">@main
+struct iOSApp: App {
+    let manager: AppFeatureManager = {
+        let koin = DIHelper.companion.buildBridge()
+        return koin.manager
+    }()
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView(appFeatures: manager.state)
+        }
+    }
+}
+</code></pre>
+      <p>Swift receives a clean, strongly-typed object with no Kotlin extensions or <code>KoinComponent</code> involved, just a straightforward handoff.</p>
+      <hr />
+      <h2>Trade-offs</h2>
+      <p>This pattern is practical, but worth understanding before adopting it.</p>
+      <p>On the positive side, your DI configuration lives in one place, shared across both platforms. Injection remains centralized and controlled by Koin, the shared layer stays independently testable, and you get a simple managed object pool without any extra infrastructure.</p>
+      <p>The main friction points are that every object you want to expose to Swift must be explicitly declared in the <code>KoinBridge</code>, and there is potential for duplication between Bridge properties and your module definitions, particularly once ViewModels enter the picture.</p>
+      <hr />
+      <h2>Wrapping Up</h2>
+      <p>The <code>DIHelper</code> / <code>KoinBridge</code> pattern is a pragmatic response to a real limitation of the Swift bridge. It keeps dependency injection centralized and the shared logic clean, while remaining accessible from the iOS side. For a project where you want Koin managing your object graph across both platforms, it is a reasonable starting point worth considering.</p>
+      <p>If you have tackled this differently or found ways to reduce the Bridge boilerplate, feel free to share. This space continues to evolve and there are likely other patterns worth exploring.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
