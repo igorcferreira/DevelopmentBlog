@@ -14,7 +14,7 @@ language: pt
 
 Eu estava lendo um post do [Gui Rambo](https://mastodon.social/@_inside) onde ele demonstra o uso do [CloudKit para hospedagem de conteúdo e feature flags](https://rambo.codes/posts/2021-12-06-using-cloudkit-for-content-hosting-and-feature-flags). Nele, ele menciona:
 
-> If you'd like to consume the same content that you're hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.
+"If you'd like to consume the same content that you're hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP."
 
 E isso me fez pensar: se o CloudKit tem uma API HTTP, ela pode ser usada como controle de feature flags em soluções Kotlin Multiplatform.
 
