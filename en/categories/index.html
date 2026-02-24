@@ -7,11 +7,56 @@
     <meta name="generator" content="Ignite v0.6.0" />
     <title>Categories</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/css/prism-github-dark.css" rel="stylesheet" data-highlight-theme="github-dark" />
+    <link href="/css/prism-xcode-dark.css" rel="stylesheet" data-highlight-theme="xcode-dark" />
+    <link href="/css/prism-xcode-light.css" rel="stylesheet" data-highlight-theme="xcode-light" />
     <link href="/css/prism-plugins.css" rel="stylesheet" />
     <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
     <link href="/css/ignite-core.min.css" rel="stylesheet" />
     <link href="https://igorcferreira.dev/en/categories" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
     <meta property="og:site_name" content="Development Blog" />
     <meta property="og:title" content="Categories" />
     <meta name="twitter:title" content="Categories" />
@@ -45,10 +90,10 @@
       </nav>
     </header>
     <div class="ig-main-content">
-      <div id="accordionD9mtW" class="accordion">
+      <div id="accordionr8CYp" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemRFYXN" aria-expanded="true" aria-controls="accordionD9mtW-itemRFYXN">iOS</button></h2>
-          <div id="accordionD9mtW-itemRFYXN" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itemHxb0E" aria-expanded="true" aria-controls="accordionr8CYp-itemHxb0E">KMP</button></h2>
+          <div id="accordionr8CYp-itemHxb0E" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
@@ -63,8 +108,24 @@
           </div>
         </div>
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemUy1JS" aria-expanded="true" aria-controls="accordionD9mtW-itemUy1JS">MCP</button></h2>
-          <div id="accordionD9mtW-itemUy1JS" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itemNe53y" aria-expanded="true" aria-controls="accordionr8CYp-itemNe53y">SwiftUI</button></h2>
+          <div id="accordionr8CYp-itemNe53y" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
+            <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                    <a href="/en/koin-kmp-bridge" class="list-group-item">Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</a>
+                    <a href="/en/kmp-xcode-java-fix" class="list-group-item">Kotlin Multiplatform: Fixing Java Version Conflicts in the Xcode Build Phase</a>
+                    <a href="/en/kmp-view-model" class="list-group-item">StateFlow on KMP and SwiftUI</a>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itembvDVG" aria-expanded="true" aria-controls="accordionr8CYp-itembvDVG">MCP</button></h2>
+          <div id="accordionr8CYp-itembvDVG" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
@@ -77,8 +138,8 @@
           </div>
         </div>
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-item7d01r" aria-expanded="true" aria-controls="accordionD9mtW-item7d01r">KMP</button></h2>
-          <div id="accordionD9mtW-item7d01r" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itemTzxu2" aria-expanded="true" aria-controls="accordionr8CYp-itemTzxu2">Kotlin</button></h2>
+          <div id="accordionr8CYp-itemTzxu2" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
@@ -93,8 +154,24 @@
           </div>
         </div>
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemDgazg" aria-expanded="true" aria-controls="accordionD9mtW-itemDgazg">Codex</button></h2>
-          <div id="accordionD9mtW-itemDgazg" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itemnpCt4" aria-expanded="true" aria-controls="accordionr8CYp-itemnpCt4">iOS</button></h2>
+          <div id="accordionr8CYp-itemnpCt4" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
+            <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                    <a href="/en/koin-kmp-bridge" class="list-group-item">Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</a>
+                    <a href="/en/kmp-xcode-java-fix" class="list-group-item">Kotlin Multiplatform: Fixing Java Version Conflicts in the Xcode Build Phase</a>
+                    <a href="/en/kmp-view-model" class="list-group-item">StateFlow on KMP and SwiftUI</a>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-item95gph" aria-expanded="true" aria-controls="accordionr8CYp-item95gph">Codex</button></h2>
+          <div id="accordionr8CYp-item95gph" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
@@ -107,8 +184,8 @@
           </div>
         </div>
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemlOHNY" aria-expanded="true" aria-controls="accordionD9mtW-itemlOHNY">LLM</button></h2>
-          <div id="accordionD9mtW-itemlOHNY" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itemXPZUh" aria-expanded="true" aria-controls="accordionr8CYp-itemXPZUh">Claude</button></h2>
+          <div id="accordionr8CYp-itemXPZUh" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
@@ -121,40 +198,8 @@
           </div>
         </div>
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemBTu1b" aria-expanded="true" aria-controls="accordionD9mtW-itemBTu1b">SwiftUI</button></h2>
-          <div id="accordionD9mtW-itemBTu1b" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
-            <div class="accordion-body">
-              <div class="card">
-                <div class="card-body">
-                  <ul class="list-group list-group-flush">
-                    <a href="/en/koin-kmp-bridge" class="list-group-item">Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</a>
-                    <a href="/en/kmp-xcode-java-fix" class="list-group-item">Kotlin Multiplatform: Fixing Java Version Conflicts in the Xcode Build Phase</a>
-                    <a href="/en/kmp-view-model" class="list-group-item">StateFlow on KMP and SwiftUI</a>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemLrtlD" aria-expanded="true" aria-controls="accordionD9mtW-itemLrtlD">Kotlin</button></h2>
-          <div id="accordionD9mtW-itemLrtlD" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
-            <div class="accordion-body">
-              <div class="card">
-                <div class="card-body">
-                  <ul class="list-group list-group-flush">
-                    <a href="/en/koin-kmp-bridge" class="list-group-item">Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</a>
-                    <a href="/en/kmp-xcode-java-fix" class="list-group-item">Kotlin Multiplatform: Fixing Java Version Conflicts in the Xcode Build Phase</a>
-                    <a href="/en/kmp-view-model" class="list-group-item">StateFlow on KMP and SwiftUI</a>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionD9mtW-itemNhqGc" aria-expanded="true" aria-controls="accordionD9mtW-itemNhqGc">Claude</button></h2>
-          <div id="accordionD9mtW-itemNhqGc" class="accordion-collapse collapse show" data-bs-parent="#accordionD9mtW">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionr8CYp-itemvL87N" aria-expanded="true" aria-controls="accordionr8CYp-itemvL87N">LLM</button></h2>
+          <div id="accordionr8CYp-itemvL87N" class="accordion-collapse collapse show" data-bs-parent="#accordionr8CYp">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">

@@ -7,11 +7,56 @@
     <meta name="generator" content="Ignite v0.6.0" />
     <title>Home</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/css/prism-github-dark.css" rel="stylesheet" data-highlight-theme="github-dark" />
+    <link href="/css/prism-xcode-dark.css" rel="stylesheet" data-highlight-theme="xcode-dark" />
+    <link href="/css/prism-xcode-light.css" rel="stylesheet" data-highlight-theme="xcode-light" />
     <link href="/css/prism-plugins.css" rel="stylesheet" />
     <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
     <link href="/css/ignite-core.min.css" rel="stylesheet" />
     <link href="https://igorcferreira.dev/pt/home" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
     <meta property="og:site_name" content="Development Blog" />
     <meta property="og:title" content="Home" />
     <meta name="twitter:title" content="Home" />
@@ -49,13 +94,11 @@
         <div class="card-body">
           <h1>Usando Koin com Kotlin Multiplatform no iOS: Uma Abordagem com Bridge</h1>
           <p>Tags: iOS, SwiftUI, KMP, Kotlin</p>
-          <p>878 palavras; 4 minutos de leitura</p>
+          <p>876 palavras; 4 minutos de leitura</p>
           <p></p>
           <h2>Introdução</h2>
           <p>Eu estava lendo um post do <a href="https://mastodon.social/@_inside">Gui Rambo</a> onde ele demonstra o uso do <a href="https://rambo.codes/posts/2021-12-06-using-cloudkit-for-content-hosting-and-feature-flags">CloudKit para hospedagem de conteúdo e feature flags</a>. Nele, ele menciona:</p>
-          <blockquote>
-            <p>If you’d like to consume the same content that you’re hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.</p>
-          </blockquote>
+          <p>“If you’d like to consume the same content that you’re hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.”</p>
           <p>E isso me fez pensar: se o CloudKit tem uma API HTTP, ela pode ser usada como controle de feature flags em soluções Kotlin Multiplatform.</p>
           <p>Montei um projeto de exemplo rápido para validar essa ideia, e funciona. Mas o processo também trouxe um segundo desafio à tona: uma arquitetura limpa tem muitas peças em movimento, como camadas de rede, mappers, repositórios e managers, e conectar tudo isso de forma organizada exige uma injeção de dependência sólida. Foi essa percepção que me trouxe até aqui.</p>
           <hr />
@@ -163,10 +206,10 @@ struct iOSApp: App {
           <p></p>
         </div>
       </div>
-      <div id="accordionVSX7S" class="accordion">
+      <div id="accordiontzZH2" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionVSX7S-itemjmjc7" aria-expanded="true" aria-controls="accordionVSX7S-itemjmjc7">Mais</button></h2>
-          <div id="accordionVSX7S-itemjmjc7" class="accordion-collapse collapse show" data-bs-parent="#accordionVSX7S">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordiontzZH2-itemR39w9" aria-expanded="true" aria-controls="accordiontzZH2-itemR39w9">Mais</button></h2>
+          <div id="accordiontzZH2-itemR39w9" class="accordion-collapse collapse show" data-bs-parent="#accordiontzZH2">
             <div class="accordion-body">
               <div class="card">
                 <div class="card-body">
