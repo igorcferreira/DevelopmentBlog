@@ -92,125 +92,179 @@
     <div class="ig-main-content">
       <div class="card">
         <div class="card-body">
-          <h1>Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</h1>
-          <p>Tagged with: iOS, SwiftUI, KMP, Kotlin</p>
-          <p>833 words; 4 minutes to read</p>
+          <h1>Integrating your app functionality into on-device LLMs</h1>
+          <p>Tagged with: iOS, Android, Gemini, Apple Intelligence</p>
+          <p>1936 words; 8 minutes to read</p>
           <p></p>
-          <h2>Introduction</h2>
-          <p>I was reading a post made by <a href="https://mastodon.social/@_inside">Gui Rambo</a> where he demonstrates the usage of <a href="https://rambo.codes/posts/2021-12-06-using-cloudkit-for-content-hosting-and-feature-flags">CloudKit for content hosting and feature flags</a>. In there, he mentions:</p>
-          <p>“If you’d like to consume the same content that you’re hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.”</p>
-          <p>And this triggered something in my mind: if CloudKit has an HTTP API, it can be used as a feature flag control in Kotlin Multiplatform solutions.</p>
-          <p>I put together a quick sample project to validate that idea, and it works. But building it also surfaced a second challenge: a clean architecture has many moving parts, like networking, mappers, repositories, and managers, and wiring them all together cleanly requires solid dependency injection. That realization is what led me here.</p>
-          <hr />
-          <h2>Dependency Injection in Kotlin Multiplatform</h2>
-          <p>Dependency management is a cornerstone of a healthy and scalable codebase. In the Android ecosystem, we have mature tools like Hilt and <a href="https://github.com/InsertKoinIO/koin">Koin</a> that handle this well. Koin in particular is a solid fit for Kotlin Multiplatform: it is lightweight, Kotlin-first, and straightforward to set up in a shared module.</p>
-          <p>On Android, consuming Koin is seamless. You start it in your <code>Application</code> class and inject wherever you need using <code>by inject()</code> or <code>get()</code>, with <code>KoinComponent</code> and Kotlin extension functions working naturally.</p>
-          <p>On iOS, it is a different story. <code>KoinComponent</code> and Kotlin extension functions do not translate cleanly through the Swift/Obj-C bridge, which means you cannot rely on Koin’s typical injection mechanisms from the iOS side. You need a way to expose your injected objects to Swift without relying on constructs it does not understand.</p>
-          <hr />
-          <h2>A Bridge Approach</h2>
-          <p>One way to handle this is to introduce a <code>DIHelper</code> class in your shared module. Its job is to initialize Koin and expose a <code>KoinBridge</code>, a plain object that Swift can work with, which provides access to the objects Koin manages. Think of it as a controlled window into your DI graph, purpose-built for the Swift layer.</p>
-          <p>Here’s how that looks in practice:</p>
-          <p><strong>Shared</strong></p>
-          <pre><code class="language-kotlin">val networkModule = module {
-    single&lt;Json&gt; {
-        //...
-    }
-    factory&lt;Logger&gt; {
-        //...
-    }
-    factory&lt;LogLevel&gt; {
-        //...
-    }
-    factory&lt;HttpClient&gt; {
-        //...
-    }
-    factory&lt;CloudKitFeatureRepository&gt; {
-        //...
+          <p>On-device AI assistants are becoming first-class citizens on both iOS and Android. Apple Intelligence brings a suite of AI features deeply integrated into the system, while Google’s Gemini assistant is increasingly capable of acting across apps on Android. Both platforms now ship with on-device language models that can understand user intent and take action, without a round-trip to the cloud.</p>
+          <p>That’s exciting. But if you’re building an app and want those assistants to interact with your features, there’s an important constraint worth knowing upfront.</p>
+          <h2>Apple Intelligence and Gemini assistant</h2>
+          <p>Apple Intelligence is Apple’s on-device AI layer, introduced in iOS 18. It powers features like Writing Tools, smart summaries in Mail and Messages, and (most relevant here) a significantly more capable Siri that can understand natural language requests across the system and deep-link into apps.</p>
+          <p>On Android, Gemini acts as the assistant layer, with Google expanding its ability to understand on-screen context and orchestrate tasks across apps. Gemini can interact with apps in more than one way: AppFunctions is the structured, opt-in approach covered in this post, but Gemini also includes an agentic mode that drives apps through the accessibility API, without any integration work required from the developer. Both assistants are backed, at least in part, by models running locally on-device, giving them speed and privacy advantages over purely cloud-based approaches.</p>
+          <h2>MCP tools limitations</h2>
+          <p>If you’ve been following the AI tooling ecosystem, you’re probably familiar with the <a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a>, a standard way to expose tools and data sources to LLMs, so they can call into external services during inference.</p>
+          <p>It’s a great pattern. But on-device assistants on iOS and Android don’t support injecting arbitrary MCP servers. The models running on these platforms operate in a sandboxed, controlled environment. You can’t just point Siri or Gemini at your MCP endpoint and expect it to call your tools.</p>
+          <p>Instead, both platforms offer their own first-party mechanisms for exactly this purpose, and they work surprisingly well as a conceptual equivalent.</p>
+          <h2>AppIntent and AppFunctions</h2>
+          <p>Apple’s answer is <strong><a href="https://developer.apple.com/documentation/appintents/appintent">AppIntents</a></strong>, a Swift framework introduced in iOS 16 that lets you expose discrete pieces of app functionality to the system. Siri, Shortcuts, Spotlight, and now Apple Intelligence all use AppIntents to understand what your app can do.</p>
+          <p>Android’s answer, more recently, is <strong><a href="https://developer.android.com/ai/appfunctions">AppFunctions</a></strong>, a Jetpack library that follows a similar philosophy: annotate your Kotlin functions, and the system (including Gemini) can discover and invoke them on the user’s behalf. AppFunctions require Android 16 or higher, and are currently limited to a small set of supported devices, mainly from Google and Samsung.</p>
+          <p>Both approaches let you describe capabilities in a structured way that an LLM can reason about. Think of them as typed, discoverable tool definitions, serving the same role MCP tools play in a server-side AI setup.</p>
+          <p>Here’s how a task management app might implement them side by side. The full sample project is available on GitHub, with the <a href="https://github.com/igorcferreira/KotlinNativeStudies/tree/main/appfunctiondemo/composeApp/src/main/java/dev/igorcferreira/appfunctiondemo/functions">Android code</a> and the <a href="https://github.com/igorcferreira/KotlinNativeStudies/tree/main/appfunctiondemo/iosApp/iosApp/Intents">iOS code</a> each in their own folder.</p>
+          <h3>Defining functions on Android</h3>
+          <p>With AppFunctions, you create a class and annotate your methods with <code>@AppFunction</code>. The KDoc comment on each function becomes the description the system uses to understand when and how to call it:</p>
+          <pre><code class="language-kotlin">class TaskFunctions : KoinComponent {
+    private val repository: TaskRepository by inject()
+
+    /**
+     * List all the current tasks which are present in the general board.
+     *
+     * @param appFunctionContext    The context in which the AppFunction is executed
+     *
+     * @return The list of [Task] objects currently saved
+     */
+    @AppFunction(isDescribedByKdoc = true)
+    suspend fun listTasks(
+        appFunctionContext: AppFunctionContext
+    ): List&lt;Task&gt; = repository.getAll()
+
+    /**
+     * Adds a new task to the general board.
+     *
+     * @param appFunctionContext    The context in which the AppFunction is executed
+     * @param title                 The task title. This will be the text shown to the user in the general list of tasks
+     * @param description           The optional description of the task. The user will be able to see this text when entering in the task details
+     * @param board                 The board where the task will be assigned to. Defaults to "General"
+     *
+     * @return The created [Task]
+     */
+    @AppFunction(isDescribedByKdoc = true)
+    suspend fun createTask(
+        appFunctionContext: AppFunctionContext,
+        title: String,
+        description: String? = null,
+        board: String? = null,
+    ): Task = repository.createTask(title, description, board?.toBoard() ?: Board.GENERAL)
+}
+</code></pre>
+          <p>Notice that <code>board</code> is typed as <code>String?</code> rather than a <code>Board</code> enum. We’ll come back to that.</p>
+          <h3>Defining intents on iOS</h3>
+          <p>AppIntents take a slightly different shape. Each capability is its own <code>struct</code> conforming to <code>AppIntent</code>, with parameters declared using the <code>@Parameter</code> property wrapper:</p>
+          <pre><code class="language-swift">struct CreateTaskIntent: Sendable, AppIntent {
+    static var title: LocalizedStringResource = "Create a new task"
+    let repository: TaskRepository = DependencyBag.make()
+
+    @Parameter(
+        title: "Title",
+        description: "The task title. This will be the text shown to the user in the general list of tasks"
+    )
+    var title: String
+
+    @Parameter(
+        title: "Description",
+        description: "The optional description of the task. The user will be able to see this text when entering in the task details"
+    )
+    var description: String?
+
+    @Parameter(
+        title: "Board",
+        description: "The board where the task will be assigned to. Defaults to \"General\"",
+        default: Board.general
+    )
+    var board: Board
+
+    func perform() async throws -&gt; some ReturnsValue&lt;Task&gt; {
+        await .result(value: repository.createTask(title: title, description: description, board: board))
     }
 }
+</code></pre>
+          <p>More boilerplate, but also more expressive. Each intent is self-contained and independently testable.</p>
+          <h2>Data input limitations and rules</h2>
+          <p>Here’s where the two platforms diverge in an interesting way.</p>
+          <p>On iOS, the <code>Board</code> parameter above is typed as a <code>Board</code> enum, a Swift enum that conforms to <code>AppEnum</code>. This means Siri knows the exact set of valid values at compile time, can present them as a picker, and can validate input before ever calling <code>perform()</code>. You get type safety all the way through.</p>
+          <pre><code class="language-swift">enum Board: String, Sendable, AppEnum, Codable {
+    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Board")
+    static var caseDisplayRepresentations: [Board: DisplayRepresentation] = [
+        .general: DisplayRepresentation(title: "General")
+    ]
 
-val domainModule = module {
-    factory&lt;DomainMapper&lt;Map&lt;String, CloudKitIntField&gt;, AppFeatures&gt;&gt; {
-        //..
-    }
-    factory&lt;AppFeatureRepository&gt; {
-        //..
-    }
-    single&lt;AppFeatureManager&gt; {
-        //...
-    }
+    case general
 }
+</code></pre>
+          <p>On Android, AppFunctions don’t currently support enums as parameter types. The <code>board</code> parameter has to be a <code>String</code>, and it’s the function’s responsibility to validate and convert it:</p>
+          <pre><code class="language-kotlin">@Throws(AppFunctionInvalidArgumentException::class)
+fun String.toBoard(): Board = Board.entries.firstOrNull {
+    this.equals(it.name, ignoreCase = true)
+} ?: throw AppFunctionInvalidArgumentException(
+    "The board must be one of ${Board.entries.joinToString(", ") { it.capitalize() }}"
+)
+</code></pre>
+          <p>It works, but it pushes validation to runtime rather than compile time, and the valid options need to be communicated through the KDoc description rather than the type system. Apple’s approach is more ergonomic here.</p>
+          <p>The same structural gap appears with <code>Task</code> itself. On iOS, <code>Task</code> conforms to <code>AppEntity</code>, a protocol that makes it a first-class object the system can query, reference by ID, and display in Shortcuts UI. On Android, <code>Task</code> is just a plain data class passed through the function signature.</p>
+          <p>Apple also goes a step further with response presentation. An AppIntent can return not just a value, but a custom UI shown in a sheet by conforming its return type to <code>ShowsSnippetIntent</code>. The following example is taken from Apple’s article <a href="https://developer.apple.com/documentation/appintents/displaying-static-and-interactive-snippets">Displaying static and interactive snippets</a>:</p>
+          <pre><code class="language-swift">struct ClosestLandmarkIntent: AppIntent {
+    static let title: LocalizedStringResource = "Find Closest Landmark"
+    @Dependency var modelData: ModelData
 
-class DIHelper {
-    class KoinBridge: KoinComponent {
-        val manager: AppFeatureManager
-            get() = get&lt;AppFeatureManager&gt;()
-    }
-
-    @OptIn(ExperimentalObjCRefinement::class)
-    companion object {
-        val MODULES = listOf(
-            domainModule,
-            networkModule,
+    func perform() async throws -&gt; some ReturnsValue&lt;LandmarkEntity&gt; &amp; ShowsSnippetIntent {
+        let landmark = await self.findClosestLandmark()
+        return .result(
+            value: landmark,
+            snippetIntent: LandmarkSnippetIntent(landmark: landmark)
         )
-
-        @HiddenFromObjC
-        fun initKoin() = startKoin {
-            modules(MODULES)
-        }
-
-        fun buildBridge(): KoinBridge {
-            initKoin()
-            return KoinBridge()
-        }
     }
 }
 </code></pre>
-          <p>On Android, you initialize Koin the usual way, with platform-specific extras like the Android context:</p>
-          <p><strong>Android Application</strong></p>
-          <pre><code class="language-kotlin">class Application: Application() {
-    override fun onCreate() {
-        super.onCreate()
-        DIHelper.initKoin()
-            .androidContext(applicationContext)
-            .androidLogger()
+          <p>This lets you present a tailored view alongside the assistant’s response, rather than relying on a plain text summary. AppFunctions on Android currently have no equivalent for this, with responses limited to the return value of the function itself.</p>
+          <h2>Integrating Siri</h2>
+          <p>One more step is required on iOS that has no direct equivalent on Android: you need to tell Siri how to invoke your intents through natural language. This is done by conforming a type to <code>AppShortcutsProvider</code> and declaring the trigger phrases:</p>
+          <pre><code class="language-swift">struct AppIntentProvider: AppShortcutsProvider, Sendable {
+    @AppShortcutsBuilder
+    static var appShortcuts: [AppShortcut] {
+        AppShortcut(
+            intent: CreateTaskIntent(),
+            phrases: [
+                "Create a new task on \(.applicationName)",
+                "Add a new task into the \(\.$board) board on \(.applicationName)"
+            ],
+            shortTitle: "Create a new task",
+            systemImageName: "paperplane.fill"
+        )
+        AppShortcut(
+            intent: ListTasksOnBoardIntent(),
+            phrases: [
+                "List the tasks on \(\.$board) on \(.applicationName)",
+                "Find all tasks on \(.applicationName)'s \(\.$board)"
+            ],
+            shortTitle: "List Tasks on Board",
+            systemImageName: "paperplane.fill"
+        )
     }
 }
 </code></pre>
-          <p>On iOS, instead of working against the bridge, you call <code>buildBridge()</code> and pull out what you need directly:</p>
-          <p><strong>iOS Application</strong></p>
-          <pre><code class="language-swift">@main
-struct iOSApp: App {
-    let manager: AppFeatureManager = {
-        let koin = DIHelper.companion.buildBridge()
-        return koin.manager
-    }()
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView(appFeatures: manager.state)
-        }
-    }
-}
-</code></pre>
-          <p>Swift receives a clean, strongly-typed object with no Kotlin extensions or <code>KoinComponent</code> involved, just a straightforward handoff.</p>
+          <p>The <code>\(\.$board)</code> interpolation is particularly nice. It tells Siri that this slot in the phrase corresponds to the <code>board</code> parameter, and Siri will handle disambiguation automatically.</p>
+          <p>Android’s AppFunctions don’t require this kind of explicit phrase registration. The system and Gemini infer invocation from the KDoc descriptions and function signatures at runtime, which is less ceremonial but also gives you less control over the exact phrasing users can use.</p>
+          <h2>Testing and debugging</h2>
+          <p>The developer experience differs quite a bit when it comes to testing your integrations.</p>
+          <p>On iOS, the Shortcuts app doubles as a testing tool. Your AppIntents show up there automatically once the app is installed, and you can run any intent manually with full control over each parameter. This makes iteration fast: you don’t need to craft specific voice phrases or wait for Siri to pick up your changes, you can just open Shortcuts, find the intent, fill in the parameters, and run it.</p>
+          <p>On Android, there’s no equivalent sandbox. Testing an AppFunction means going through Gemini directly, which requires phrasing a natural language request in a way that leads the assistant to identify and invoke the right function. That introduces a layer of unpredictability into the feedback loop, since a function not being called might mean it’s broken, or it might just mean Gemini didn’t select it for that particular prompt. This makes debugging harder and slower compared to iOS.</p>
           <hr />
-          <h2>Trade-offs</h2>
-          <p>This pattern is practical, but worth understanding before adopting it.</p>
-          <p>On the positive side, your DI configuration lives in one place, shared across both platforms. Injection remains centralized and controlled by Koin, the shared layer stays independently testable, and you get a simple managed object pool without any extra infrastructure.</p>
-          <p>The main friction points are that every object you want to expose to Swift must be explicitly declared in the <code>KoinBridge</code>, and there is potential for duplication between Bridge properties and your module definitions, particularly once ViewModels enter the picture.</p>
-          <hr />
-          <h2>Wrapping Up</h2>
-          <p>The <code>DIHelper</code> / <code>KoinBridge</code> pattern is a pragmatic response to a real limitation of the Swift bridge. It keeps dependency injection centralized and the shared logic clean, while remaining accessible from the iOS side. For a project where you want Koin managing your object graph across both platforms, it is a reasonable starting point worth considering.</p>
-          <p>If you have tackled this differently or found ways to reduce the Bridge boilerplate, feel free to share. This space continues to evolve and there are likely other patterns worth exploring.</p>
+          <p>Both platforms are moving toward letting your app be a first-class participant in AI-assisted workflows, without requiring you to stand up a server or implement MCP. AppIntents and AppFunctions are different in their APIs and philosophy, but they share the same core idea: describe what your app can do, and let the system figure out when to call it.</p>
+          <p>Apple’s approach is more mature, with a richer type system, UI response support, and broad device availability. AppFunctions is newer and more constrained for now, both in the features it supports and the devices it runs on. That said, it’s a compelling foundation. As AI agents become a more common interface for users on Android, the API will likely evolve to close those gaps, and it’s worth getting familiar with it early.</p>
           <p></p>
         </div>
       </div>
-      <div id="accordionV4JtO" class="accordion">
+      <div id="accordionqHm5P" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionV4JtO-itemdWh9D" aria-expanded="true" aria-controls="accordionV4JtO-itemdWh9D">More</button></h2>
-          <div id="accordionV4JtO-itemdWh9D" class="accordion-collapse collapse show" data-bs-parent="#accordionV4JtO">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionqHm5P-itemEBAZ0" aria-expanded="true" aria-controls="accordionqHm5P-itemEBAZ0">More</button></h2>
+          <div id="accordionqHm5P-itemEBAZ0" class="accordion-collapse collapse show" data-bs-parent="#accordionqHm5P">
             <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <h2><a href="/en/koin-kmp-bridge">Using Koin with Kotlin Multiplatform on iOS: A Bridge Approach</a></h2>
+                  <p class="ig-text-xSmall">Tagged with: iOS, SwiftUI, KMP, Kotlin</p>
+                  <p class="lead">I was reading a post made by Gui Rambo where he demonstrates the usage of CloudKit for content hosting and feature flags. In there, he mentions:</p>
+                </div>
+              </div>
               <div class="card">
                 <div class="card-body">
                   <h2><a href="/en/kmp-xcode-java-fix">Kotlin Multiplatform: Fixing Java Version Conflicts in the Xcode Build Phase</a></h2>

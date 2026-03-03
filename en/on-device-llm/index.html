@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="On-device AI assistants are becoming first-class citizens on both iOS and Android. Apple Intelligence brings a suite of AI features deeply integrated into the system, while Google’s Gemini assistant is increasingly capable of acting across apps on Android. Both platforms now ship with on-device language models that can understand user intent and take action, without a round-trip to the cloud." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Integrating your app functionality into on-device LLMs</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-xcode-dark.css" rel="stylesheet" data-highlight-theme="xcode-dark" />
+    <link href="/css/prism-xcode-light.css" rel="stylesheet" data-highlight-theme="xcode-light" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/en/on-device-llm" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="Integrating your app functionality into on-device LLMs" />
+    <meta name="twitter:title" content="Integrating your app functionality into on-device LLMs" />
+    <meta property="og:description" content="On-device AI assistants are becoming first-class citizens on both iOS and Android. Apple Intelligence brings a suite of AI features deeply integrated into the system, while Google’s Gemini assistant is increasingly capable of acting across apps on Android. Both platforms now ship with on-device language models that can understand user intent and take action, without a round-trip to the cloud." />
+    <meta name="twitter:description" content="On-device AI assistants are becoming first-class citizens on both iOS and Android. Apple Intelligence brings a suite of AI features deeply integrated into the system, while Google’s Gemini assistant is increasingly capable of acting across apps on Android. Both platforms now ship with on-device language models that can understand user intent and take action, without a round-trip to the cloud." />
+    <meta property="og:url" content="https://igorcferreira.dev/en/on-device-llm" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/en/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/en/categories" class="nav-link text-nowrap">Categories</a></li>
+              <li class="nav-item"><a href="/en/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a target="_blank" href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a target="_blank" href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a target="_blank" href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/pt/on-device-llm" class="nav-link text-nowrap">Ver em Português</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>Integrating your app functionality into on-device LLMs</h1>
+      <p>Tagged with: iOS, Android, Gemini, Apple Intelligence</p>
+      <p>1936 words; 8 minutes to read</p>
+      <p></p>
+      <p>On-device AI assistants are becoming first-class citizens on both iOS and Android. Apple Intelligence brings a suite of AI features deeply integrated into the system, while Google’s Gemini assistant is increasingly capable of acting across apps on Android. Both platforms now ship with on-device language models that can understand user intent and take action, without a round-trip to the cloud.</p>
+      <p>That’s exciting. But if you’re building an app and want those assistants to interact with your features, there’s an important constraint worth knowing upfront.</p>
+      <h2>Apple Intelligence and Gemini assistant</h2>
+      <p>Apple Intelligence is Apple’s on-device AI layer, introduced in iOS 18. It powers features like Writing Tools, smart summaries in Mail and Messages, and (most relevant here) a significantly more capable Siri that can understand natural language requests across the system and deep-link into apps.</p>
+      <p>On Android, Gemini acts as the assistant layer, with Google expanding its ability to understand on-screen context and orchestrate tasks across apps. Gemini can interact with apps in more than one way: AppFunctions is the structured, opt-in approach covered in this post, but Gemini also includes an agentic mode that drives apps through the accessibility API, without any integration work required from the developer. Both assistants are backed, at least in part, by models running locally on-device, giving them speed and privacy advantages over purely cloud-based approaches.</p>
+      <h2>MCP tools limitations</h2>
+      <p>If you’ve been following the AI tooling ecosystem, you’re probably familiar with the <a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a>, a standard way to expose tools and data sources to LLMs, so they can call into external services during inference.</p>
+      <p>It’s a great pattern. But on-device assistants on iOS and Android don’t support injecting arbitrary MCP servers. The models running on these platforms operate in a sandboxed, controlled environment. You can’t just point Siri or Gemini at your MCP endpoint and expect it to call your tools.</p>
+      <p>Instead, both platforms offer their own first-party mechanisms for exactly this purpose, and they work surprisingly well as a conceptual equivalent.</p>
+      <h2>AppIntent and AppFunctions</h2>
+      <p>Apple’s answer is <strong><a href="https://developer.apple.com/documentation/appintents/appintent">AppIntents</a></strong>, a Swift framework introduced in iOS 16 that lets you expose discrete pieces of app functionality to the system. Siri, Shortcuts, Spotlight, and now Apple Intelligence all use AppIntents to understand what your app can do.</p>
+      <p>Android’s answer, more recently, is <strong><a href="https://developer.android.com/ai/appfunctions">AppFunctions</a></strong>, a Jetpack library that follows a similar philosophy: annotate your Kotlin functions, and the system (including Gemini) can discover and invoke them on the user’s behalf. AppFunctions require Android 16 or higher, and are currently limited to a small set of supported devices, mainly from Google and Samsung.</p>
+      <p>Both approaches let you describe capabilities in a structured way that an LLM can reason about. Think of them as typed, discoverable tool definitions, serving the same role MCP tools play in a server-side AI setup.</p>
+      <p>Here’s how a task management app might implement them side by side. The full sample project is available on GitHub, with the <a href="https://github.com/igorcferreira/KotlinNativeStudies/tree/main/appfunctiondemo/composeApp/src/main/java/dev/igorcferreira/appfunctiondemo/functions">Android code</a> and the <a href="https://github.com/igorcferreira/KotlinNativeStudies/tree/main/appfunctiondemo/iosApp/iosApp/Intents">iOS code</a> each in their own folder.</p>
+      <h3>Defining functions on Android</h3>
+      <p>With AppFunctions, you create a class and annotate your methods with <code>@AppFunction</code>. The KDoc comment on each function becomes the description the system uses to understand when and how to call it:</p>
+      <pre><code class="language-kotlin">class TaskFunctions : KoinComponent {
+    private val repository: TaskRepository by inject()
+
+    /**
+     * List all the current tasks which are present in the general board.
+     *
+     * @param appFunctionContext    The context in which the AppFunction is executed
+     *
+     * @return The list of [Task] objects currently saved
+     */
+    @AppFunction(isDescribedByKdoc = true)
+    suspend fun listTasks(
+        appFunctionContext: AppFunctionContext
+    ): List&lt;Task&gt; = repository.getAll()
+
+    /**
+     * Adds a new task to the general board.
+     *
+     * @param appFunctionContext    The context in which the AppFunction is executed
+     * @param title                 The task title. This will be the text shown to the user in the general list of tasks
+     * @param description           The optional description of the task. The user will be able to see this text when entering in the task details
+     * @param board                 The board where the task will be assigned to. Defaults to "General"
+     *
+     * @return The created [Task]
+     */
+    @AppFunction(isDescribedByKdoc = true)
+    suspend fun createTask(
+        appFunctionContext: AppFunctionContext,
+        title: String,
+        description: String? = null,
+        board: String? = null,
+    ): Task = repository.createTask(title, description, board?.toBoard() ?: Board.GENERAL)
+}
+</code></pre>
+      <p>Notice that <code>board</code> is typed as <code>String?</code> rather than a <code>Board</code> enum. We’ll come back to that.</p>
+      <h3>Defining intents on iOS</h3>
+      <p>AppIntents take a slightly different shape. Each capability is its own <code>struct</code> conforming to <code>AppIntent</code>, with parameters declared using the <code>@Parameter</code> property wrapper:</p>
+      <pre><code class="language-swift">struct CreateTaskIntent: Sendable, AppIntent {
+    static var title: LocalizedStringResource = "Create a new task"
+    let repository: TaskRepository = DependencyBag.make()
+
+    @Parameter(
+        title: "Title",
+        description: "The task title. This will be the text shown to the user in the general list of tasks"
+    )
+    var title: String
+
+    @Parameter(
+        title: "Description",
+        description: "The optional description of the task. The user will be able to see this text when entering in the task details"
+    )
+    var description: String?
+
+    @Parameter(
+        title: "Board",
+        description: "The board where the task will be assigned to. Defaults to \"General\"",
+        default: Board.general
+    )
+    var board: Board
+
+    func perform() async throws -&gt; some ReturnsValue&lt;Task&gt; {
+        await .result(value: repository.createTask(title: title, description: description, board: board))
+    }
+}
+</code></pre>
+      <p>More boilerplate, but also more expressive. Each intent is self-contained and independently testable.</p>
+      <h2>Data input limitations and rules</h2>
+      <p>Here’s where the two platforms diverge in an interesting way.</p>
+      <p>On iOS, the <code>Board</code> parameter above is typed as a <code>Board</code> enum, a Swift enum that conforms to <code>AppEnum</code>. This means Siri knows the exact set of valid values at compile time, can present them as a picker, and can validate input before ever calling <code>perform()</code>. You get type safety all the way through.</p>
+      <pre><code class="language-swift">enum Board: String, Sendable, AppEnum, Codable {
+    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Board")
+    static var caseDisplayRepresentations: [Board: DisplayRepresentation] = [
+        .general: DisplayRepresentation(title: "General")
+    ]
+
+    case general
+}
+</code></pre>
+      <p>On Android, AppFunctions don’t currently support enums as parameter types. The <code>board</code> parameter has to be a <code>String</code>, and it’s the function’s responsibility to validate and convert it:</p>
+      <pre><code class="language-kotlin">@Throws(AppFunctionInvalidArgumentException::class)
+fun String.toBoard(): Board = Board.entries.firstOrNull {
+    this.equals(it.name, ignoreCase = true)
+} ?: throw AppFunctionInvalidArgumentException(
+    "The board must be one of ${Board.entries.joinToString(", ") { it.capitalize() }}"
+)
+</code></pre>
+      <p>It works, but it pushes validation to runtime rather than compile time, and the valid options need to be communicated through the KDoc description rather than the type system. Apple’s approach is more ergonomic here.</p>
+      <p>The same structural gap appears with <code>Task</code> itself. On iOS, <code>Task</code> conforms to <code>AppEntity</code>, a protocol that makes it a first-class object the system can query, reference by ID, and display in Shortcuts UI. On Android, <code>Task</code> is just a plain data class passed through the function signature.</p>
+      <p>Apple also goes a step further with response presentation. An AppIntent can return not just a value, but a custom UI shown in a sheet by conforming its return type to <code>ShowsSnippetIntent</code>. The following example is taken from Apple’s article <a href="https://developer.apple.com/documentation/appintents/displaying-static-and-interactive-snippets">Displaying static and interactive snippets</a>:</p>
+      <pre><code class="language-swift">struct ClosestLandmarkIntent: AppIntent {
+    static let title: LocalizedStringResource = "Find Closest Landmark"
+    @Dependency var modelData: ModelData
+
+    func perform() async throws -&gt; some ReturnsValue&lt;LandmarkEntity&gt; &amp; ShowsSnippetIntent {
+        let landmark = await self.findClosestLandmark()
+        return .result(
+            value: landmark,
+            snippetIntent: LandmarkSnippetIntent(landmark: landmark)
+        )
+    }
+}
+</code></pre>
+      <p>This lets you present a tailored view alongside the assistant’s response, rather than relying on a plain text summary. AppFunctions on Android currently have no equivalent for this, with responses limited to the return value of the function itself.</p>
+      <h2>Integrating Siri</h2>
+      <p>One more step is required on iOS that has no direct equivalent on Android: you need to tell Siri how to invoke your intents through natural language. This is done by conforming a type to <code>AppShortcutsProvider</code> and declaring the trigger phrases:</p>
+      <pre><code class="language-swift">struct AppIntentProvider: AppShortcutsProvider, Sendable {
+    @AppShortcutsBuilder
+    static var appShortcuts: [AppShortcut] {
+        AppShortcut(
+            intent: CreateTaskIntent(),
+            phrases: [
+                "Create a new task on \(.applicationName)",
+                "Add a new task into the \(\.$board) board on \(.applicationName)"
+            ],
+            shortTitle: "Create a new task",
+            systemImageName: "paperplane.fill"
+        )
+        AppShortcut(
+            intent: ListTasksOnBoardIntent(),
+            phrases: [
+                "List the tasks on \(\.$board) on \(.applicationName)",
+                "Find all tasks on \(.applicationName)'s \(\.$board)"
+            ],
+            shortTitle: "List Tasks on Board",
+            systemImageName: "paperplane.fill"
+        )
+    }
+}
+</code></pre>
+      <p>The <code>\(\.$board)</code> interpolation is particularly nice. It tells Siri that this slot in the phrase corresponds to the <code>board</code> parameter, and Siri will handle disambiguation automatically.</p>
+      <p>Android’s AppFunctions don’t require this kind of explicit phrase registration. The system and Gemini infer invocation from the KDoc descriptions and function signatures at runtime, which is less ceremonial but also gives you less control over the exact phrasing users can use.</p>
+      <h2>Testing and debugging</h2>
+      <p>The developer experience differs quite a bit when it comes to testing your integrations.</p>
+      <p>On iOS, the Shortcuts app doubles as a testing tool. Your AppIntents show up there automatically once the app is installed, and you can run any intent manually with full control over each parameter. This makes iteration fast: you don’t need to craft specific voice phrases or wait for Siri to pick up your changes, you can just open Shortcuts, find the intent, fill in the parameters, and run it.</p>
+      <p>On Android, there’s no equivalent sandbox. Testing an AppFunction means going through Gemini directly, which requires phrasing a natural language request in a way that leads the assistant to identify and invoke the right function. That introduces a layer of unpredictability into the feedback loop, since a function not being called might mean it’s broken, or it might just mean Gemini didn’t select it for that particular prompt. This makes debugging harder and slower compared to iOS.</p>
+      <hr />
+      <p>Both platforms are moving toward letting your app be a first-class participant in AI-assisted workflows, without requiring you to stand up a server or implement MCP. AppIntents and AppFunctions are different in their APIs and philosophy, but they share the same core idea: describe what your app can do, and let the system figure out when to call it.</p>
+      <p>Apple’s approach is more mature, with a richer type system, UI response support, and broad device availability. AppFunctions is newer and more constrained for now, both in the features it supports and the devices it runs on. That said, it’s a compelling foundation. As AI agents become a more common interface for users on Android, the API will likely evolve to close those gaps, and it’s worth getting familiar with it early.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
