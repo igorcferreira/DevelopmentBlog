@@ -92,125 +92,139 @@
     <div class="ig-main-content">
       <div class="card">
         <div class="card-body">
-          <h1>Usando Koin com Kotlin Multiplatform no iOS: Uma Abordagem com Bridge</h1>
-          <p>Tags: iOS, SwiftUI, KMP, Kotlin</p>
-          <p>876 palavras; 4 minutos de leitura</p>
+          <h1>Estruturando o Contexto do Claude para Desenvolvimento iOS</h1>
+          <p>Tags: Claude, AI Tools, LLM, Agentic AI, Developer Workflow</p>
+          <p>1892 palavras; 8 minutos de leitura</p>
           <p></p>
-          <h2>Introdução</h2>
-          <p>Eu estava lendo um post do <a href="https://mastodon.social/@_inside">Gui Rambo</a> onde ele demonstra o uso do <a href="https://rambo.codes/posts/2021-12-06-using-cloudkit-for-content-hosting-and-feature-flags">CloudKit para hospedagem de conteúdo e feature flags</a>. Nele, ele menciona:</p>
-          <p>“If you’d like to consume the same content that you’re hosting on the public CloudKit database from an Android app or from a web app, you can. You can use the CloudKit Web Services API, which lets you do pretty much everything that can be done through the CloudKit framework over HTTP.”</p>
-          <p>E isso me fez pensar: se o CloudKit tem uma API HTTP, ela pode ser usada como controle de feature flags em soluções Kotlin Multiplatform.</p>
-          <p>Montei um projeto de exemplo rápido para validar essa ideia, e funciona. Mas o processo também trouxe um segundo desafio à tona: uma arquitetura limpa tem muitas peças em movimento, como camadas de rede, mappers, repositórios e managers, e conectar tudo isso de forma organizada exige uma injeção de dependência sólida. Foi essa percepção que me trouxe até aqui.</p>
-          <hr />
-          <h2>Injeção de Dependência no Kotlin Multiplatform</h2>
-          <p>Gerenciamento de dependências é um dos pilares de uma base de código saudável e escalável. No ecossistema Android, contamos com ferramentas maduras como Hilt e <a href="https://github.com/InsertKoinIO/koin">Koin</a> que resolvem isso bem. O Koin, em particular, se encaixa bem no Kotlin Multiplatform: é leve, feito para Kotlin, e simples de configurar em um módulo compartilhado.</p>
-          <p>No Android, usar o Koin é direto. Você o inicia na classe <code>Application</code> e injeta onde precisar usando <code>by inject()</code> ou <code>get()</code>, com <code>KoinComponent</code> e as funções de extensão do Kotlin funcionando naturalmente.</p>
-          <p>No iOS, a história é diferente. <code>KoinComponent</code> e funções de extensão do Kotlin não se traduzem bem pela bridge Swift/Obj-C, o que significa que você não pode depender dos mecanismos de injeção típicos do Koin no lado iOS. É necessário encontrar uma forma de expor os objetos injetados ao Swift sem depender de construções que ele não compreende.</p>
-          <hr />
-          <h2>A Abordagem com Bridge</h2>
-          <p>Uma forma de lidar com isso é introduzir uma classe <code>DIHelper</code> no módulo compartilhado. Sua função é inicializar o Koin e expor um <code>KoinBridge</code>, um objeto simples que o Swift consegue entender, que fornece acesso aos objetos gerenciados pelo Koin. Pense nele como uma janela controlada para o seu grafo de DI, criada especificamente para a camada Swift.</p>
-          <p>Veja como isso fica na prática:</p>
-          <p><strong>Compartilhado</strong></p>
-          <pre><code class="language-kotlin">val networkModule = module {
-    single&lt;Json&gt; {
-        //...
-    }
-    factory&lt;Logger&gt; {
-        //...
-    }
-    factory&lt;LogLevel&gt; {
-        //...
-    }
-    factory&lt;HttpClient&gt; {
-        //...
-    }
-    factory&lt;CloudKitFeatureRepository&gt; {
-        //...
-    }
-}
-
-val domainModule = module {
-    factory&lt;DomainMapper&lt;Map&lt;String, CloudKitIntField&gt;, AppFeatures&gt;&gt; {
-        //..
-    }
-    factory&lt;AppFeatureRepository&gt; {
-        //..
-    }
-    single&lt;AppFeatureManager&gt; {
-        //...
-    }
-}
-
-class DIHelper {
-    class KoinBridge: KoinComponent {
-        val manager: AppFeatureManager
-            get() = get&lt;AppFeatureManager&gt;()
-    }
-
-    @OptIn(ExperimentalObjCRefinement::class)
-    companion object {
-        val MODULES = listOf(
-            domainModule,
-            networkModule,
-        )
-
-        @HiddenFromObjC
-        fun initKoin() = startKoin {
-            modules(MODULES)
-        }
-
-        fun buildBridge(): KoinBridge {
-            initKoin()
-            return KoinBridge()
-        }
-    }
-}
+          <p>O MCP dá aos agentes LLM uma forma estruturada de acessar ferramentas externas, executar comandos e trazer contexto dinâmico. É poderoso, e tem o seu lugar em muitas configurações.</p>
+          <p>Mas vem com overhead. Você precisa de um servidor ou executável, uma camada de protocolo, inputs e outputs tipados, manutenção. Às vezes esse é o tradeoff certo. E às vezes você só quer que o Claude entenda como o seu projeto iOS funciona, sem precisar subir infraestrutura pra isso.</p>
+          <p>É aí que entra a estrutura de pastas <code>.claude/</code>.</p>
+          <h2>O Que É</h2>
+          <p>A pasta <code>.claude/</code> é uma camada de conhecimento local do projeto. É uma coleção de arquivos markdown simples organizados em uma pequena árvore de diretórios. Sem servidor, sem protocolo, sem schema. O Claude lê esses arquivos como contexto em linguagem humana e os usa durante toda a sua sessão.</p>
+          <p>A estrutura fica assim:</p>
+          <pre><code>.claude/
+├── agents/
+│   ├── ios-architect.md
+│   ├── ios-reviewer.md
+│   ├── bug-hunter.md
+│   ├── refactor-specialist.md
+│   └── ui-builder.md
+│
+├── skills/
+│   ├── swift-coding-standards.md
+│   ├── ios-architecture.md
+│   ├── ui-components.md
+│   ├── data-layer.md
+│   └── testing-strategy.md
+│
+├── workflows/
+│   ├── create-feature.md
+│   ├── debug-issue.md
+│   ├── review-pr.md
+│   ├── refactor-module.md
+│   └── build-ui-component.md
+│
+├── memory/
+│   ├── decisions.md
+│   ├── known-issues.md
+│   └── session-notes.md
+│
+└── index.md
 </code></pre>
-          <p>No Android, você inicializa o Koin da forma habitual, com os extras específicos da plataforma, como o contexto Android:</p>
-          <p><strong>Android Application</strong></p>
-          <pre><code class="language-kotlin">class Application: Application() {
-    override fun onCreate() {
-        super.onCreate()
-        DIHelper.initKoin()
-            .androidContext(applicationContext)
-            .androidLogger()
-    }
-}
-</code></pre>
-          <p>No iOS, ao invés de trabalhar contra a bridge, você chama <code>buildBridge()</code> e extrai diretamente o que precisa:</p>
-          <p><strong>iOS Application</strong></p>
-          <pre><code class="language-swift">@main
-struct iOSApp: App {
-    let manager: AppFeatureManager = {
-        let koin = DIHelper.companion.buildBridge()
-        return koin.manager
-    }()
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView(appFeatures: manager.state)
-        }
-    }
-}
-</code></pre>
-          <p>O Swift recebe um objeto limpo e fortemente tipado, sem extensões Kotlin ou <code>KoinComponent</code> envolvidos, apenas uma entrega direta e simples.</p>
+          <p>Cada pasta tem uma responsabilidade específica. Vamos ver cada uma delas.</p>
           <hr />
-          <h2>Prós e Contras</h2>
-          <p>Esse padrão é prático, mas vale entendê-lo bem antes de adotá-lo.</p>
-          <p>No lado positivo, sua configuração de DI fica em um único lugar, compartilhada entre as duas plataformas. A injeção permanece centralizada e controlada pelo Koin, a camada compartilhada continua testável de forma independente, e você tem um pool de objetos gerenciado sem precisar de nenhuma infraestrutura adicional.</p>
-          <p>Os principais pontos de atenção são que todo objeto que você queira expor ao Swift precisa ser declarado explicitamente no <code>KoinBridge</code>, e existe potencial de duplicação entre as propriedades do Bridge e as definições dos módulos, especialmente quando ViewModels entram em cena.</p>
+          <h2>agents/</h2>
+          <p>A pasta <code>agents/</code> guarda definições para sub-agentes especializados. Cada arquivo descreve um papel focado: no que o agente se preocupa, como ele pensa e que tipo de output ele produz.</p>
+          <p>A ideia central é que um único prompt “faz tudo” raramente é o que você quer. Quando você está desenhando uma nova feature, você quer uma perspectiva arquitetural. Quando está investigando um crash, você quer algo afinado para retain cycles e bugs de concorrência. Quando está revisando um PR, você quer algo que conheça as convenções do time e aponte desvios.</p>
+          <p>Ao separar isso em arquivos de agente individuais, você pode invocar a perspectiva certa para a tarefa certa. O seu <code>ios-architect.md</code> pode ter uma cara assim:</p>
+          <pre><code class="language-markdown"># Agente iOS Architect
+
+Você é um arquiteto iOS sênior. Quando pedido para desenhar uma feature, seu trabalho é:
+- Definir fronteiras de módulos e responsabilidades
+- Escolher o padrão arquitetural correto (MVVM+Coordinator, TCA, etc.)
+- Identificar dependências e como elas devem ser injetadas
+- Sinalizar riscos de complexidade e sugerir mitigação
+- Produzir um documento de design antes de qualquer código ser escrito
+
+Não escreva código de implementação nessa fase. Foque na clareza do design.
+</code></pre>
+          <p>E o seu <code>bug-hunter.md</code> tem uma personalidade completamente diferente: ele lê logs de crash, pensa sobre threading, verifica retain cycles e faz perguntas difíceis sobre estado assíncrono.</p>
+          <p>Essa separação mantém cada agente focado. Também facilita atualizar e iterar. Se seus padrões de revisão mudam, você atualiza o <code>ios-reviewer.md</code> e tudo downstream recebe automaticamente.</p>
           <hr />
-          <h2>Conclusão</h2>
-          <p>O padrão <code>DIHelper</code> / <code>KoinBridge</code> é uma resposta pragmática a uma limitação real da bridge Swift. Ele mantém a injeção de dependência centralizada e a lógica compartilhada organizada, sem abrir mão da acessibilidade pelo lado iOS. Para um projeto onde você quer o Koin gerenciando o grafo de objetos em ambas as plataformas, é um ponto de partida razoável e válido.</p>
-          <p>Se você já abordou esse problema de outra forma ou encontrou maneiras de reduzir o boilerplate do Bridge, fique à vontade para compartilhar. Esse espaço continua evoluindo e há, certamente, outros padrões a explorar.</p>
+          <h2>skills/</h2>
+          <p>A pasta <code>skills/</code> ensina o Claude a agir em seu nome e na sua máquina. Enquanto os agentes definem <em>quem</em> o Claude está interpretando em um dado contexto, as skills definem <em>como</em> ele deve executar tarefas específicas: quais ferramentas usar, como rodá-las e qual o formato esperado do output.</p>
+          <p>Pense em uma skill como uma receita para uma capacidade. Se você quer que o Claude rode seu conjunto de testes, dispare um workflow do GitHub Actions, ou use o <code>xcodebuild</code> para fazer um build limpo e analisar o output, você descreve esse processo em um arquivo de skill. O Claude lê isso e sabe exatamente o que fazer quando você pede.</p>
+          <p>Cada arquivo de skill cobre uma capacidade específica que o seu projeto usa:</p>
+          <p><code>swift-coding-standards.md</code> ensina o Claude a escrever Swift do jeito que o seu projeto espera: regras de nomenclatura Swift 6, onde usar <code>Sendable</code>, como lidar com <code>@MainActor</code> e os padrões preferidos do time para concorrência. Quando gerar código, o Claude segue isso como instruções, não apenas sugestões.</p>
+          <p><code>ios-architecture.md</code> descreve as regras que o Claude deve seguir ao criar ou posicionar código: o que pertence à camada de domínio versus a camada de apresentação, como os coordinators são estruturados, onde a injeção de dependência acontece e como são as fronteiras entre camadas.</p>
+          <p><code>ui-components.md</code> diz ao Claude como construir e posicionar componentes SwiftUI neste projeto: quais já existem, como são estruturados e qual é o processo para adicionar um novo corretamente.</p>
+          <p><code>data-layer.md</code> dá ao Claude o contexto que ele precisa para trabalhar com SwiftData corretamente: como os predicates são estruturados nessa codebase, como o modelo de armazenamento se parece e como o contexto em background é tratado.</p>
+          <p><code>testing-strategy.md</code> descreve o processo de testes como um conjunto de passos que o Claude deve seguir: qual framework usar, como os testes são nomeados, a estrutura GIVEN-WHEN-THEN esperada e como o ViewInspector está configurado para testes de UI.</p>
+          <p>Skills são a diferença entre o Claude improvisar uma abordagem e o Claude seguir o processo que o seu time já descobriu que funciona. Elas também são reutilizáveis entre projetos. Um <code>swift-coding-standards.md</code> que você refina em um projeto pode seguir com você para o próximo.</p>
+          <hr />
+          <h2>workflows/</h2>
+          <p>A pasta <code>workflows/</code> fornece playbooks passo-a-passo para as coisas que o seu time faz repetidamente. Em vez de depender que o Claude improvise um processo a cada vez, você define o processo uma vez e o Claude o segue.</p>
+          <p>Isso importa porque processo consistente leva a output consistente. Se toda nova feature segue o mesmo workflow de criação, sua codebase se mantém coerente mesmo conforme cresce. Se todo PR segue o mesmo workflow de revisão, nada escapa.</p>
+          <p>Um <code>create-feature.md</code> típico pode parecer com isso:</p>
+          <pre><code class="language-markdown"># Workflow de Criação de Feature
+
+Quando solicitado a criar uma nova feature, siga esses passos em ordem:
+
+1. Leia o index.md para entender quais módulos serão afetados
+2. Invoque o agente ios-architect para produzir um documento de design
+3. Aguarde a aprovação do design antes de escrever qualquer código
+4. Use a skill ios-architecture para verificar que o plano de implementação segue as regras de arquitetura
+5. Crie os arquivos da feature seguindo a estrutura de módulo definida no documento de design
+6. Escreva testes seguindo a skill testing-strategy
+7. Execute uma verificação final usando o agente ios-reviewer antes de apresentar o output
+</code></pre>
+          <p>Esse tipo de workflow estruturado significa que você gasta menos tempo dizendo ao Claude como abordar uma tarefa e mais tempo revisando o trabalho que ele produz.</p>
+          <p>Outros workflows nessa pasta podem cobrir debug de um crash, revisão de pull request, refatoração segura de um módulo ou construção de um novo componente SwiftUI do zero.</p>
+          <hr />
+          <h2>memory/</h2>
+          <p>A pasta <code>memory/</code> é onde fica o contexto de longo prazo do projeto entre sessões. Por padrão, o Claude não tem memória entre conversas, então qualquer coisa que vale carregar para a próxima sessão precisa ser escrita explicitamente. Essa pasta é onde isso acontece.</p>
+          <p>Os arquivos aqui não são instruções de como agir, e também não são um mapa da codebase. São um registro do que aconteceu e do que foi decidido: escolhas arquiteturais e o raciocínio por trás delas, problemas conhecidos que ainda não foram corrigidos, notas de sessões anteriores que ainda são relevantes.</p>
+          <p>Um arquivo <code>decisions.md</code> pode registrar por que você escolheu MVVM+Coordinator em vez de TCA, ou por que um determinado módulo foi mantido separado em vez de mesclado. Um <code>known-issues.md</code> pode listar um edge case de threading que foi reproduzido mas ainda não resolvido. Um <code>session-notes.md</code> pode registrar que uma refatoração foi iniciada na última sessão e quais arquivos já foram modificados.</p>
+          <p>Sem algo assim, cada sessão começa do zero. O Claude vai fazer perguntas que você já respondeu, ou dar sugestões que contradizem decisões já tomadas. A pasta <code>memory/</code> cria uma ponte entre sessões e mantém o contexto acumulado do projeto disponível.</p>
+          <p>Esses arquivos são feitos para serem atualizados. Quando uma decisão é tomada, escreva. Quando um problema é resolvido, remova. Trate menos como um arquivo histórico e mais como um caderno de notas vivo do projeto.</p>
+          <hr />
+          <h2>index.md</h2>
+          <p>O arquivo <code>index.md</code> é o mapa da codebase. Ele dá ao Claude um entendimento de alto nível do que existe, onde está e como as peças se conectam.</p>
+          <p>Sem isso, o Claude tem que descobrir a estrutura a partir dos arquivos que aparecem no contexto. Com ele, o Claude pode se orientar rapidamente e tomar decisões melhores sobre onde novo código deve ir, quais módulos possuem quais responsabilidades e quais partes da codebase podem ser afetadas por uma mudança.</p>
+          <p>Um <code>index.md</code> útil cobre:</p>
+          <ul>
+            <li>Estrutura de módulos de alto nível e o que cada módulo é responsável por</li>
+            <li>Tipos, protocolos e componentes chave, com caminhos de arquivo</li>
+            <li>Grafo de dependências: quais módulos dependem de quais</li>
+            <li>Camadas de arquitetura e o que pertence a cada uma</li>
+            <li>Convenções ou restrições importantes que vale saber desde o início</li>
+          </ul>
+          <p>Esse arquivo é atualizado conforme o projeto evolui. Não é documentação para humanos, é navegação para o Claude. Mantenha-o honesto e atualizado.</p>
+          <hr />
+          <h2>Por Que Não Usar Só MCP?</h2>
+          <p>MCP é a ferramenta certa quando você precisa de contexto dinâmico, quando quer chamar APIs externas, executar comandos de sistema ou interagir com ferramentas que mudam com o tempo. Ele vale o peso quando essa flexibilidade é genuinamente necessária.</p>
+          <p>A estrutura <code>.claude/</code> é a ferramenta certa quando seu contexto é majoritariamente estático: sua arquitetura, suas convenções, seus workflows, seu mapa da codebase. Essas coisas não mudam a cada invocação. São conhecimento estável que deve estar disponível em toda sessão, e arquivos markdown são uma forma perfeitamente boa de armazenar e compartilhar conhecimento estável.</p>
+          <p>As duas abordagens não estão em competição. Um projeto pode usar ambas: servidores MCP para uso dinâmico de ferramentas e arquivos <code>.claude/</code> para contexto de projeto. Mas se você vai para o MCP por padrão porque parece a integração “correta”, vale perguntar se alguns arquivos markdown fariam o mesmo trabalho de forma mais simples.</p>
+          <hr />
+          <h2>Como Começar</h2>
+          <p>Você não precisa construir toda a estrutura no primeiro dia. Comece com o <code>index.md</code> e um arquivo de skill. Quando esses parecerem úteis, adicione um workflow. Depois defina um agente para a tarefa que você faz com mais frequência.</p>
+          <p>A estrutura é leve o suficiente para que você veja valor rapidamente, e flexível o suficiente para crescer com o seu projeto.</p>
+          <p>Se você está trabalhando em um projeto iOS com o Claude e ainda não configurou uma pasta <code>.claude/</code>, essa é uma boa semana para tentar.</p>
           <p></p>
         </div>
       </div>
-      <div id="accordionw2AVE" class="accordion">
+      <div id="accordionHJSkf" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionw2AVE-itemxxS0c" aria-expanded="true" aria-controls="accordionw2AVE-itemxxS0c">Mais</button></h2>
-          <div id="accordionw2AVE-itemxxS0c" class="accordion-collapse collapse show" data-bs-parent="#accordionw2AVE">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionHJSkf-itemJo5th" aria-expanded="true" aria-controls="accordionHJSkf-itemJo5th">Mais</button></h2>
+          <div id="accordionHJSkf-itemJo5th" class="accordion-collapse collapse show" data-bs-parent="#accordionHJSkf">
             <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <h2><a href="/pt/koin-kmp-bridge">Usando Koin com Kotlin Multiplatform no iOS: Uma Abordagem com Bridge</a></h2>
+                  <p class="ig-text-xSmall">Tags: iOS, SwiftUI, KMP, Kotlin</p>
+                  <p class="lead">Eu estava lendo um post do Gui Rambo onde ele demonstra o uso do CloudKit para hospedagem de conteúdo e feature flags. Nele, ele menciona:</p>
+                </div>
+              </div>
               <div class="card">
                 <div class="card-body">
                   <h2><a href="/pt/kmp-xcode-java-fix">Kotlin Multiplatform: Resolvendo Conflitos de Versão do Java no Build Phase do Xcode</a></h2>

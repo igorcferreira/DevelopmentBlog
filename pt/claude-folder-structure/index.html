@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="O MCP dá aos agentes LLM uma forma estruturada de acessar ferramentas externas, executar comandos e trazer contexto dinâmico. É poderoso, e tem o seu lugar em muitas configurações." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Estruturando o Contexto do Claude para Desenvolvimento iOS</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-xcode-dark.css" rel="stylesheet" data-highlight-theme="xcode-dark" />
+    <link href="/css/prism-xcode-light.css" rel="stylesheet" data-highlight-theme="xcode-light" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/pt/claude-folder-structure" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="Estruturando o Contexto do Claude para Desenvolvimento iOS" />
+    <meta name="twitter:title" content="Estruturando o Contexto do Claude para Desenvolvimento iOS" />
+    <meta property="og:description" content="O MCP dá aos agentes LLM uma forma estruturada de acessar ferramentas externas, executar comandos e trazer contexto dinâmico. É poderoso, e tem o seu lugar em muitas configurações." />
+    <meta name="twitter:description" content="O MCP dá aos agentes LLM uma forma estruturada de acessar ferramentas externas, executar comandos e trazer contexto dinâmico. É poderoso, e tem o seu lugar em muitas configurações." />
+    <meta property="og:url" content="https://igorcferreira.dev/pt/claude-folder-structure" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/pt/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/pt/categories" class="nav-link text-nowrap">Categorias</a></li>
+              <li class="nav-item"><a href="/pt/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a target="_blank" href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a target="_blank" href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a target="_blank" href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/en/claude-folder-structure" class="nav-link text-nowrap">See in English</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>Estruturando o Contexto do Claude para Desenvolvimento iOS</h1>
+      <p>Tags: Claude, AI Tools, LLM, Agentic AI, Developer Workflow</p>
+      <p>1892 palavras; 8 minutos de leitura</p>
+      <p></p>
+      <p>O MCP dá aos agentes LLM uma forma estruturada de acessar ferramentas externas, executar comandos e trazer contexto dinâmico. É poderoso, e tem o seu lugar em muitas configurações.</p>
+      <p>Mas vem com overhead. Você precisa de um servidor ou executável, uma camada de protocolo, inputs e outputs tipados, manutenção. Às vezes esse é o tradeoff certo. E às vezes você só quer que o Claude entenda como o seu projeto iOS funciona, sem precisar subir infraestrutura pra isso.</p>
+      <p>É aí que entra a estrutura de pastas <code>.claude/</code>.</p>
+      <h2>O Que É</h2>
+      <p>A pasta <code>.claude/</code> é uma camada de conhecimento local do projeto. É uma coleção de arquivos markdown simples organizados em uma pequena árvore de diretórios. Sem servidor, sem protocolo, sem schema. O Claude lê esses arquivos como contexto em linguagem humana e os usa durante toda a sua sessão.</p>
+      <p>A estrutura fica assim:</p>
+      <pre><code>.claude/
+├── agents/
+│   ├── ios-architect.md
+│   ├── ios-reviewer.md
+│   ├── bug-hunter.md
+│   ├── refactor-specialist.md
+│   └── ui-builder.md
+│
+├── skills/
+│   ├── swift-coding-standards.md
+│   ├── ios-architecture.md
+│   ├── ui-components.md
+│   ├── data-layer.md
+│   └── testing-strategy.md
+│
+├── workflows/
+│   ├── create-feature.md
+│   ├── debug-issue.md
+│   ├── review-pr.md
+│   ├── refactor-module.md
+│   └── build-ui-component.md
+│
+├── memory/
+│   ├── decisions.md
+│   ├── known-issues.md
+│   └── session-notes.md
+│
+└── index.md
+</code></pre>
+      <p>Cada pasta tem uma responsabilidade específica. Vamos ver cada uma delas.</p>
+      <hr />
+      <h2>agents/</h2>
+      <p>A pasta <code>agents/</code> guarda definições para sub-agentes especializados. Cada arquivo descreve um papel focado: no que o agente se preocupa, como ele pensa e que tipo de output ele produz.</p>
+      <p>A ideia central é que um único prompt “faz tudo” raramente é o que você quer. Quando você está desenhando uma nova feature, você quer uma perspectiva arquitetural. Quando está investigando um crash, você quer algo afinado para retain cycles e bugs de concorrência. Quando está revisando um PR, você quer algo que conheça as convenções do time e aponte desvios.</p>
+      <p>Ao separar isso em arquivos de agente individuais, você pode invocar a perspectiva certa para a tarefa certa. O seu <code>ios-architect.md</code> pode ter uma cara assim:</p>
+      <pre><code class="language-markdown"># Agente iOS Architect
+
+Você é um arquiteto iOS sênior. Quando pedido para desenhar uma feature, seu trabalho é:
+- Definir fronteiras de módulos e responsabilidades
+- Escolher o padrão arquitetural correto (MVVM+Coordinator, TCA, etc.)
+- Identificar dependências e como elas devem ser injetadas
+- Sinalizar riscos de complexidade e sugerir mitigação
+- Produzir um documento de design antes de qualquer código ser escrito
+
+Não escreva código de implementação nessa fase. Foque na clareza do design.
+</code></pre>
+      <p>E o seu <code>bug-hunter.md</code> tem uma personalidade completamente diferente: ele lê logs de crash, pensa sobre threading, verifica retain cycles e faz perguntas difíceis sobre estado assíncrono.</p>
+      <p>Essa separação mantém cada agente focado. Também facilita atualizar e iterar. Se seus padrões de revisão mudam, você atualiza o <code>ios-reviewer.md</code> e tudo downstream recebe automaticamente.</p>
+      <hr />
+      <h2>skills/</h2>
+      <p>A pasta <code>skills/</code> ensina o Claude a agir em seu nome e na sua máquina. Enquanto os agentes definem <em>quem</em> o Claude está interpretando em um dado contexto, as skills definem <em>como</em> ele deve executar tarefas específicas: quais ferramentas usar, como rodá-las e qual o formato esperado do output.</p>
+      <p>Pense em uma skill como uma receita para uma capacidade. Se você quer que o Claude rode seu conjunto de testes, dispare um workflow do GitHub Actions, ou use o <code>xcodebuild</code> para fazer um build limpo e analisar o output, você descreve esse processo em um arquivo de skill. O Claude lê isso e sabe exatamente o que fazer quando você pede.</p>
+      <p>Cada arquivo de skill cobre uma capacidade específica que o seu projeto usa:</p>
+      <p><code>swift-coding-standards.md</code> ensina o Claude a escrever Swift do jeito que o seu projeto espera: regras de nomenclatura Swift 6, onde usar <code>Sendable</code>, como lidar com <code>@MainActor</code> e os padrões preferidos do time para concorrência. Quando gerar código, o Claude segue isso como instruções, não apenas sugestões.</p>
+      <p><code>ios-architecture.md</code> descreve as regras que o Claude deve seguir ao criar ou posicionar código: o que pertence à camada de domínio versus a camada de apresentação, como os coordinators são estruturados, onde a injeção de dependência acontece e como são as fronteiras entre camadas.</p>
+      <p><code>ui-components.md</code> diz ao Claude como construir e posicionar componentes SwiftUI neste projeto: quais já existem, como são estruturados e qual é o processo para adicionar um novo corretamente.</p>
+      <p><code>data-layer.md</code> dá ao Claude o contexto que ele precisa para trabalhar com SwiftData corretamente: como os predicates são estruturados nessa codebase, como o modelo de armazenamento se parece e como o contexto em background é tratado.</p>
+      <p><code>testing-strategy.md</code> descreve o processo de testes como um conjunto de passos que o Claude deve seguir: qual framework usar, como os testes são nomeados, a estrutura GIVEN-WHEN-THEN esperada e como o ViewInspector está configurado para testes de UI.</p>
+      <p>Skills são a diferença entre o Claude improvisar uma abordagem e o Claude seguir o processo que o seu time já descobriu que funciona. Elas também são reutilizáveis entre projetos. Um <code>swift-coding-standards.md</code> que você refina em um projeto pode seguir com você para o próximo.</p>
+      <hr />
+      <h2>workflows/</h2>
+      <p>A pasta <code>workflows/</code> fornece playbooks passo-a-passo para as coisas que o seu time faz repetidamente. Em vez de depender que o Claude improvise um processo a cada vez, você define o processo uma vez e o Claude o segue.</p>
+      <p>Isso importa porque processo consistente leva a output consistente. Se toda nova feature segue o mesmo workflow de criação, sua codebase se mantém coerente mesmo conforme cresce. Se todo PR segue o mesmo workflow de revisão, nada escapa.</p>
+      <p>Um <code>create-feature.md</code> típico pode parecer com isso:</p>
+      <pre><code class="language-markdown"># Workflow de Criação de Feature
+
+Quando solicitado a criar uma nova feature, siga esses passos em ordem:
+
+1. Leia o index.md para entender quais módulos serão afetados
+2. Invoque o agente ios-architect para produzir um documento de design
+3. Aguarde a aprovação do design antes de escrever qualquer código
+4. Use a skill ios-architecture para verificar que o plano de implementação segue as regras de arquitetura
+5. Crie os arquivos da feature seguindo a estrutura de módulo definida no documento de design
+6. Escreva testes seguindo a skill testing-strategy
+7. Execute uma verificação final usando o agente ios-reviewer antes de apresentar o output
+</code></pre>
+      <p>Esse tipo de workflow estruturado significa que você gasta menos tempo dizendo ao Claude como abordar uma tarefa e mais tempo revisando o trabalho que ele produz.</p>
+      <p>Outros workflows nessa pasta podem cobrir debug de um crash, revisão de pull request, refatoração segura de um módulo ou construção de um novo componente SwiftUI do zero.</p>
+      <hr />
+      <h2>memory/</h2>
+      <p>A pasta <code>memory/</code> é onde fica o contexto de longo prazo do projeto entre sessões. Por padrão, o Claude não tem memória entre conversas, então qualquer coisa que vale carregar para a próxima sessão precisa ser escrita explicitamente. Essa pasta é onde isso acontece.</p>
+      <p>Os arquivos aqui não são instruções de como agir, e também não são um mapa da codebase. São um registro do que aconteceu e do que foi decidido: escolhas arquiteturais e o raciocínio por trás delas, problemas conhecidos que ainda não foram corrigidos, notas de sessões anteriores que ainda são relevantes.</p>
+      <p>Um arquivo <code>decisions.md</code> pode registrar por que você escolheu MVVM+Coordinator em vez de TCA, ou por que um determinado módulo foi mantido separado em vez de mesclado. Um <code>known-issues.md</code> pode listar um edge case de threading que foi reproduzido mas ainda não resolvido. Um <code>session-notes.md</code> pode registrar que uma refatoração foi iniciada na última sessão e quais arquivos já foram modificados.</p>
+      <p>Sem algo assim, cada sessão começa do zero. O Claude vai fazer perguntas que você já respondeu, ou dar sugestões que contradizem decisões já tomadas. A pasta <code>memory/</code> cria uma ponte entre sessões e mantém o contexto acumulado do projeto disponível.</p>
+      <p>Esses arquivos são feitos para serem atualizados. Quando uma decisão é tomada, escreva. Quando um problema é resolvido, remova. Trate menos como um arquivo histórico e mais como um caderno de notas vivo do projeto.</p>
+      <hr />
+      <h2>index.md</h2>
+      <p>O arquivo <code>index.md</code> é o mapa da codebase. Ele dá ao Claude um entendimento de alto nível do que existe, onde está e como as peças se conectam.</p>
+      <p>Sem isso, o Claude tem que descobrir a estrutura a partir dos arquivos que aparecem no contexto. Com ele, o Claude pode se orientar rapidamente e tomar decisões melhores sobre onde novo código deve ir, quais módulos possuem quais responsabilidades e quais partes da codebase podem ser afetadas por uma mudança.</p>
+      <p>Um <code>index.md</code> útil cobre:</p>
+      <ul>
+        <li>Estrutura de módulos de alto nível e o que cada módulo é responsável por</li>
+        <li>Tipos, protocolos e componentes chave, com caminhos de arquivo</li>
+        <li>Grafo de dependências: quais módulos dependem de quais</li>
+        <li>Camadas de arquitetura e o que pertence a cada uma</li>
+        <li>Convenções ou restrições importantes que vale saber desde o início</li>
+      </ul>
+      <p>Esse arquivo é atualizado conforme o projeto evolui. Não é documentação para humanos, é navegação para o Claude. Mantenha-o honesto e atualizado.</p>
+      <hr />
+      <h2>Por Que Não Usar Só MCP?</h2>
+      <p>MCP é a ferramenta certa quando você precisa de contexto dinâmico, quando quer chamar APIs externas, executar comandos de sistema ou interagir com ferramentas que mudam com o tempo. Ele vale o peso quando essa flexibilidade é genuinamente necessária.</p>
+      <p>A estrutura <code>.claude/</code> é a ferramenta certa quando seu contexto é majoritariamente estático: sua arquitetura, suas convenções, seus workflows, seu mapa da codebase. Essas coisas não mudam a cada invocação. São conhecimento estável que deve estar disponível em toda sessão, e arquivos markdown são uma forma perfeitamente boa de armazenar e compartilhar conhecimento estável.</p>
+      <p>As duas abordagens não estão em competição. Um projeto pode usar ambas: servidores MCP para uso dinâmico de ferramentas e arquivos <code>.claude/</code> para contexto de projeto. Mas se você vai para o MCP por padrão porque parece a integração “correta”, vale perguntar se alguns arquivos markdown fariam o mesmo trabalho de forma mais simples.</p>
+      <hr />
+      <h2>Como Começar</h2>
+      <p>Você não precisa construir toda a estrutura no primeiro dia. Comece com o <code>index.md</code> e um arquivo de skill. Quando esses parecerem úteis, adicione um workflow. Depois defina um agente para a tarefa que você faz com mais frequência.</p>
+      <p>A estrutura é leve o suficiente para que você veja valor rapidamente, e flexível o suficiente para crescer com o seu projeto.</p>
+      <p>Se você está trabalhando em um projeto iOS com o Claude e ainda não configurou uma pasta <code>.claude/</code>, essa é uma boa semana para tentar.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
