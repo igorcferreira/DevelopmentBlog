@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>I'm Building a Cross-Posting App</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-xcode-dark.css" rel="stylesheet" data-highlight-theme="xcode-dark" />
+    <link href="/css/prism-xcode-light.css" rel="stylesheet" data-highlight-theme="xcode-light" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/en/building-cross-posting-app" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:title" content="I'm Building a Cross-Posting App" />
+    <meta name="twitter:title" content="I'm Building a Cross-Posting App" />
+    <meta property="og:description" content="I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another." />
+    <meta name="twitter:description" content="I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another." />
+    <meta property="og:url" content="https://igorcferreira.dev/en/building-cross-posting-app" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/en/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/en/categories" class="nav-link text-nowrap">Categories</a></li>
+              <li class="nav-item"><a href="/en/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a target="_blank" href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a target="_blank" href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a target="_blank" href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/pt/building-cross-posting-app" class="nav-link text-nowrap">Ver em Português</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>I'm Building a Cross-Posting App</h1>
+      <p>Tagged with: PostPortuguese, iOS, Mastodon, Bluesky, Threads, cross-post</p>
+      <p>666 words; 3 minutes to read</p>
+      <p></p>
+      <p>I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another.</p>
+      <p>Mastodon. Bluesky. Threads.</p>
+      <p>Three platforms. Same content. Three times the effort. And somewhere between the second and third paste, I thought: someone should fix this. And then I thought: why not me?</p>
+      <p>So here we are.</p>
+      <hr />
+      <h2>The problem</h2>
+      <p>I’ve been on the fediverse for a while now, and I genuinely enjoy it. But the reality is that not everyone I know is on Mastodon. Some are on Bluesky. Some haven’t left Threads (or Instagram, or whatever Meta is calling things these days). And if I want to be present across all of them, I have to post everywhere, which is tedious.</p>
+      <p>I know there are some tools out there that handle this. I’ve tried a few.</p>
+      <p>I wanted something that felt native to the platforms, not a lowest-common-denominator solution that strips everything interesting away. Each of these platforms has its own personality. Bluesky has its threading model. Mastodon has content warnings and language settings. Threads is its own thing. A good cross-posting tool should know all of that and handle it quietly in the background.</p>
+      <hr />
+      <h2>What I’m imagining</h2>
+      <p>At its core, PostPortuguese is dead simple: you write your post once, you hit send, and it goes everywhere. But the details matter.</p>
+      <p>Here’s what I’m thinking about:</p>
+      <p><strong>Text posts with language support.</strong> This one feels small but I think it’s important. If you’re writing in Portuguese (yes, the name is a clue), or French, or Japanese, the platform should know that. Mastodon and Bluesky let you tag the language of a post, and it helps with discoverability in local timelines. I want to support that properly.</p>
+      <p><strong>Image posts with alt texts.</strong> Accessibility is not an afterthought. If you’re sharing photos, you should be able to write alt text once and have it go to all platforms that support it. No excuses for skipping this.</p>
+      <p><strong>Threads.</strong> Not the Meta app, I mean threaded posts. Long-form thoughts broken into a chain of linked posts. All three platforms support this in some way, and the app should handle the linking and sequencing automatically across all of them.</p>
+      <p><strong>Post history.</strong> Once you’ve posted, you should be able to look back and see what you shared, and jump directly to any platform to check how it’s doing. Likes, replies, boosts, that kind of thing. The app won’t replace the native apps, but it should make it easy to get there.</p>
+      <hr />
+      <h2>Challenges</h2>
+      <p>Honestly? There are a few.</p>
+      <p>The API situation across three platforms is not trivial. Mastodon’s API is well-documented and fairly straightforward. Bluesky uses the AT Protocol, which is newer and has its own quirks. Threads has a Meta-flavored API that I haven’t dug into fully yet. Getting all three to behave consistently under one interface takes some careful thinking.</p>
+      <p>Authentication is another one. Signing into three different accounts, handling tokens, refreshing sessions… it’s not glamorous work but it’s the kind of thing that, if done badly, makes the whole app feel flaky.</p>
+      <p>And then there’s the question of failure handling. What happens if one platform is down and the others succeed? How do you communicate that clearly without making the experience feel broken? And how do you handle the different character limits across platforms?</p>
+      <hr />
+      <h2>So what?</h2>
+      <p>I’ve started to put some pieces in place. And I plan to post more about the journey as it evolves. This app may reach the store in the near future (once I figure some things out). But… Let’s see.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>

@@ -92,132 +92,51 @@
     <div class="ig-main-content">
       <div class="card">
         <div class="card-body">
-          <h1>Structuring Claude's Context for iOS Development</h1>
-          <p>Tagged with: Claude, AI Tools, LLM, Agentic AI, Developer Workflow</p>
-          <p>1819 words; 8 minutes to read</p>
+          <h1>I'm Building a Cross-Posting App</h1>
+          <p>Tagged with: PostPortuguese, iOS, Mastodon, Bluesky, Threads, cross-post</p>
+          <p>666 words; 3 minutes to read</p>
           <p></p>
-          <p>MCP gives LLM agents a structured way to access external tools, run commands, and pull in dynamic context. It’s powerful, and it earns its place in a lot of setups.</p>
-          <p>But it comes with overhead. You need a server or executable, a protocol layer, typed inputs and outputs, maintenance. Sometimes that’s the right tradeoff. And sometimes you just want Claude to understand how your iOS project works, without spinning up infrastructure to make it happen.</p>
-          <p>That’s where the <code>.claude/</code> folder structure comes in.</p>
-          <h2>What It Is</h2>
-          <p>The <code>.claude/</code> folder is a project-local knowledge layer. It’s a collection of plain markdown files organized into a small directory tree. No server, no protocol, no schema. Claude reads these files as human-readable context and uses them throughout your session.</p>
-          <p>The structure looks like this:</p>
-          <pre><code>.claude/
-├── agents/
-│   ├── ios-architect.md
-│   ├── ios-reviewer.md
-│   ├── bug-hunter.md
-│   ├── refactor-specialist.md
-│   └── ui-builder.md
-│
-├── skills/
-│   ├── swift-coding-standards.md
-│   ├── ios-architecture.md
-│   ├── ui-components.md
-│   ├── data-layer.md
-│   └── testing-strategy.md
-│
-├── workflows/
-│   ├── create-feature.md
-│   ├── debug-issue.md
-│   ├── review-pr.md
-│   ├── refactor-module.md
-│   └── build-ui-component.md
-│
-├── memory/
-│   ├── decisions.md
-│   ├── known-issues.md
-│   └── session-notes.md
-│
-└── index.md
-</code></pre>
-          <p>Each folder has a specific responsibility. Let’s go through them.</p>
+          <p>I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another.</p>
+          <p>Mastodon. Bluesky. Threads.</p>
+          <p>Three platforms. Same content. Three times the effort. And somewhere between the second and third paste, I thought: someone should fix this. And then I thought: why not me?</p>
+          <p>So here we are.</p>
           <hr />
-          <h2>agents/</h2>
-          <p>The <code>agents/</code> folder holds definitions for specialized sub-agents. Each file describes a focused role: what the agent cares about, how it thinks, and what kind of output it produces.</p>
-          <p>The key idea is that a single “do everything” prompt is rarely what you want. When you’re designing a new feature, you want an architectural perspective. When you’re chasing a crash, you want something tuned to retain cycles and concurrency bugs. When you’re reviewing a PR, you want something that knows your team’s conventions and will flag deviations.</p>
-          <p>By separating these into individual agent files, you can invoke the right perspective for the right task. Your <code>ios-architect.md</code> might look something like this:</p>
-          <pre><code class="language-markdown"># iOS Architect Agent
-
-You are a senior iOS architect. When asked to design a feature, your job is to:
-- Define module boundaries and ownership
-- Choose the right architectural pattern (MVVM+Coordinator, TCA, etc.)
-- Identify dependencies and how they should be injected
-- Flag complexity risks and suggest mitigation
-- Produce a written design doc before any code is written
-
-Do not write implementation code during this phase. Focus on clarity of design.
-</code></pre>
-          <p>And your <code>bug-hunter.md</code> has a completely different personality: it reads crash logs, thinks about threading, checks for retain cycles, and asks hard questions about async state.</p>
-          <p>This separation keeps each agent sharp. It also makes it easier to update and iterate. If your review standards change, you update <code>ios-reviewer.md</code> and everything downstream picks that up automatically.</p>
+          <h2>The problem</h2>
+          <p>I’ve been on the fediverse for a while now, and I genuinely enjoy it. But the reality is that not everyone I know is on Mastodon. Some are on Bluesky. Some haven’t left Threads (or Instagram, or whatever Meta is calling things these days). And if I want to be present across all of them, I have to post everywhere, which is tedious.</p>
+          <p>I know there are some tools out there that handle this. I’ve tried a few.</p>
+          <p>I wanted something that felt native to the platforms, not a lowest-common-denominator solution that strips everything interesting away. Each of these platforms has its own personality. Bluesky has its threading model. Mastodon has content warnings and language settings. Threads is its own thing. A good cross-posting tool should know all of that and handle it quietly in the background.</p>
           <hr />
-          <h2>skills/</h2>
-          <p>The <code>skills/</code> folder teaches Claude how to act on your behalf and on your machine. Where agents define <em>who</em> Claude is playing in a given context, skills define <em>how</em> it should perform specific tasks: which tools to reach for, how to run them, and what the expected shape of the output is.</p>
-          <p>Think of a skill as a recipe for a capability. If you want Claude to run your test suite, trigger a GitHub Actions workflow, or use <code>xcodebuild</code> to do a clean build and parse the output, you describe that process in a skill file. Claude reads it and knows exactly what to do when you ask.</p>
-          <p>Each skill file covers a specific capability your project relies on:</p>
-          <p><code>swift-coding-standards.md</code> teaches Claude how to write Swift the way your project expects it: Swift 6 naming rules, where to use <code>Sendable</code>, how to handle <code>@MainActor</code>, and the team’s preferred patterns for concurrency. When generating code, Claude follows these as instructions, not just suggestions.</p>
-          <p><code>ios-architecture.md</code> describes the rules Claude should follow when creating or placing code: what belongs in the domain layer versus the presentation layer, how coordinators are structured, where dependency injection happens, and what the boundaries between layers look like.</p>
-          <p><code>ui-components.md</code> tells Claude how to build and place SwiftUI components in this project: which ones already exist, how they are structured, and what the process is for adding a new one correctly.</p>
-          <p><code>data-layer.md</code> gives Claude the context it needs to work with SwiftData correctly: how predicates are structured in this codebase, what the storage model looks like, and how background context is handled.</p>
-          <p><code>testing-strategy.md</code> describes the testing process as a set of steps Claude should follow: which framework to use, how tests are named, the GIVEN-WHEN-THEN structure expected, and how ViewInspector is set up for UI tests.</p>
-          <p>Skills are the difference between Claude improvising an approach and Claude following the process your team has already figured out. They’re also reusable across projects. A <code>swift-coding-standards.md</code> you refine on one project can travel with you to the next.</p>
+          <h2>What I’m imagining</h2>
+          <p>At its core, PostPortuguese is dead simple: you write your post once, you hit send, and it goes everywhere. But the details matter.</p>
+          <p>Here’s what I’m thinking about:</p>
+          <p><strong>Text posts with language support.</strong> This one feels small but I think it’s important. If you’re writing in Portuguese (yes, the name is a clue), or French, or Japanese, the platform should know that. Mastodon and Bluesky let you tag the language of a post, and it helps with discoverability in local timelines. I want to support that properly.</p>
+          <p><strong>Image posts with alt texts.</strong> Accessibility is not an afterthought. If you’re sharing photos, you should be able to write alt text once and have it go to all platforms that support it. No excuses for skipping this.</p>
+          <p><strong>Threads.</strong> Not the Meta app, I mean threaded posts. Long-form thoughts broken into a chain of linked posts. All three platforms support this in some way, and the app should handle the linking and sequencing automatically across all of them.</p>
+          <p><strong>Post history.</strong> Once you’ve posted, you should be able to look back and see what you shared, and jump directly to any platform to check how it’s doing. Likes, replies, boosts, that kind of thing. The app won’t replace the native apps, but it should make it easy to get there.</p>
           <hr />
-          <h2>workflows/</h2>
-          <p>The <code>workflows/</code> folder provides step-by-step playbooks for the things your team does repeatedly. Instead of relying on Claude to improvise a process each time, you define the process once and Claude follows it.</p>
-          <p>This matters because consistent process leads to consistent output. If every new feature follows the same creation workflow, your codebase stays coherent even as it grows. If every PR follows the same review workflow, things don’t slip through.</p>
-          <p>A typical <code>create-feature.md</code> might look like this:</p>
-          <pre><code class="language-markdown"># Create Feature Workflow
-
-When asked to create a new feature, follow these steps in order:
-
-1. Read the index.md to understand which modules will be affected
-2. Invoke the ios-architect agent to produce a design document
-3. Wait for design approval before writing any code
-4. Use the ios-architecture skill to verify the implementation plan matches architecture rules
-5. Create the feature files following the module structure defined in the design doc
-6. Write tests following the testing-strategy skill
-7. Run a final check using the ios-reviewer agent before presenting the output
-</code></pre>
-          <p>This kind of structured workflow means you spend less time telling Claude how to approach a task and more time actually reviewing the work it produces.</p>
-          <p>Other workflows in this folder might cover debugging a crash, reviewing a pull request, safely refactoring a module, or building a new SwiftUI component from scratch.</p>
+          <h2>Challenges</h2>
+          <p>Honestly? There are a few.</p>
+          <p>The API situation across three platforms is not trivial. Mastodon’s API is well-documented and fairly straightforward. Bluesky uses the AT Protocol, which is newer and has its own quirks. Threads has a Meta-flavored API that I haven’t dug into fully yet. Getting all three to behave consistently under one interface takes some careful thinking.</p>
+          <p>Authentication is another one. Signing into three different accounts, handling tokens, refreshing sessions… it’s not glamorous work but it’s the kind of thing that, if done badly, makes the whole app feel flaky.</p>
+          <p>And then there’s the question of failure handling. What happens if one platform is down and the others succeed? How do you communicate that clearly without making the experience feel broken? And how do you handle the different character limits across platforms?</p>
           <hr />
-          <h2>memory/</h2>
-          <p>The <code>memory/</code> folder is where the project’s long-term context lives across sessions. Claude has no memory between conversations by default, so anything worth carrying forward has to be written down explicitly. This folder is where that happens.</p>
-          <p>The files here are not instructions for how to act, and they’re not a map of the codebase. They’re a record of what has happened and what was decided: architectural choices and the reasoning behind them, known issues that haven’t been fixed yet, notes from previous sessions that are still relevant.</p>
-          <p>A <code>decisions.md</code> file might capture why you chose MVVM+Coordinator over TCA, or why a particular module was kept separate rather than merged. A <code>known-issues.md</code> might list a threading edge case that’s been reproduced but not yet resolved. A <code>session-notes.md</code> might record that a refactor was started in the last session and which files were already touched.</p>
-          <p>Without something like this, every session starts cold. Claude will ask questions you’ve already answered, or make suggestions that contradict decisions already made. The <code>memory/</code> folder bridges sessions and keeps the project’s accumulated context available.</p>
-          <p>These files are meant to be updated. When a decision is made, write it down. When an issue is fixed, remove it. Treat it less like an archive and more like a living notebook for the project.</p>
-          <hr />
-          <h2>index.md</h2>
-          <p>The <code>index.md</code> file is the codebase map. It gives Claude a high-level understanding of what exists, where it lives, and how the pieces connect.</p>
-          <p>Without this, Claude has to figure out the structure from whatever files happen to be in context. With it, Claude can orient quickly and make better decisions about where new code should go, which modules own which responsibilities, and which parts of the codebase might be affected by a change.</p>
-          <p>A useful <code>index.md</code> covers:</p>
-          <ul>
-            <li>Top-level module structure and what each module is responsible for</li>
-            <li>Key types, protocols, and components, with file paths</li>
-            <li>Dependency graph: which modules depend on which</li>
-            <li>Architecture layers and what belongs in each</li>
-            <li>Important conventions or constraints worth knowing upfront</li>
-          </ul>
-          <p>This file gets updated as the project evolves. It’s not documentation for humans, it’s navigation for Claude. Keep it honest and keep it current.</p>
-          <hr />
-          <h2>Why Not Just Use MCP?</h2>
-          <p>MCP is the right tool when you need dynamic context, when you want to call external APIs, run system commands, or interact with tools that change over time. It earns its weight when that flexibility is genuinely needed.</p>
-          <p>The <code>.claude/</code> structure is the right tool when your context is mostly static: your architecture, your conventions, your workflows, your codebase map. These don’t change on every invocation. They’re stable knowledge that should be available in every session, and markdown files are a perfectly good way to store and share stable knowledge.</p>
-          <p>The two approaches are not in competition. A project can use both: MCP servers for dynamic tool use, and <code>.claude/</code> files for project context. But if you reach for MCP by default because it seems like the “proper” integration, it’s worth asking whether a few markdown files would do the same job more simply.</p>
-          <hr />
-          <h2>Getting Started</h2>
-          <p>You don’t need to build out the full structure on day one. Start with <code>index.md</code> and one skill file. Once those feel useful, add a workflow. Then define an agent for the task you do most often.</p>
-          <p>The structure is lightweight enough that you’ll see value quickly, and flexible enough that it grows with your project.</p>
-          <p>If you’re working on an iOS project with Claude and you haven’t set up a <code>.claude/</code> folder yet, this is a good week to try it.</p>
+          <h2>So what?</h2>
+          <p>I’ve started to put some pieces in place. And I plan to post more about the journey as it evolves. This app may reach the store in the near future (once I figure some things out). But… Let’s see.</p>
           <p></p>
         </div>
       </div>
-      <div id="accordion3tiW1" class="accordion">
+      <div id="accordionNftzt" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordion3tiW1-itemqidlI" aria-expanded="true" aria-controls="accordion3tiW1-itemqidlI">More</button></h2>
-          <div id="accordion3tiW1-itemqidlI" class="accordion-collapse collapse show" data-bs-parent="#accordion3tiW1">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionNftzt-itemYo0l0" aria-expanded="true" aria-controls="accordionNftzt-itemYo0l0">More</button></h2>
+          <div id="accordionNftzt-itemYo0l0" class="accordion-collapse collapse show" data-bs-parent="#accordionNftzt">
             <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <h2><a href="/en/claude-folder-structure">Structuring Claude's Context for iOS Development</a></h2>
+                  <p class="ig-text-xSmall">Tagged with: Claude, AI Tools, LLM, Agentic AI, Developer Workflow</p>
+                  <p class="lead">MCP gives LLM agents a structured way to access external tools, run commands, and pull in dynamic context. It’s powerful, and it earns its place in a lot of setups.</p>
+                </div>
+              </div>
               <div class="card">
                 <div class="card-body">
                   <h2><a href="/en/on-device-llm">Integrating your app functionality into on-device LLMs</a></h2>
@@ -244,13 +163,6 @@ When asked to create a new feature, follow these steps in order:
                   <h2><a href="/en/llm-tools-skills">LLM Tools - Beyond MCP</a></h2>
                   <p class="ig-text-xSmall">Tagged with: MCP, LLM, Claude, Codex</p>
                   <p class="lead">Model Context Protocol (#MCP) is a great way to add capabilities to your #LLM agents. But when working with #Claude or #Codex, it’s not the only way to improve the knowledge and actions of your code assistant. In some cases, it may not be the preferred approach either.</p>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h2><a href="/en/kmp-view-model">StateFlow on KMP and SwiftUI</a></h2>
-                  <p class="ig-text-xSmall">Tagged with: iOS, SwiftUI, KMP, Kotlin</p>
-                  <p class="lead">The greatest feature with Kotlin Multiplatform (KMP) is the possibility to re-use the business logic between platforms, as a separate framework/module while keeping the UI implemented in the native libraries (SwiftUI or Jetpack Compose).</p>
                 </div>
               </div>
             </div>
