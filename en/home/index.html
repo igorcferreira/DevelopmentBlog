@@ -92,44 +92,121 @@
     <div class="ig-main-content">
       <div class="card">
         <div class="card-body">
-          <h1>I'm Building a Cross-Posting App</h1>
-          <p>Tagged with: PostPortuguese, iOS, Mastodon, Bluesky, Threads, cross-post</p>
-          <p>666 words; 3 minutes to read</p>
+          <h1>Acaraje, the Foundation of PostPortuguese</h1>
+          <img src="/images/acaraje-architecture.png" alt="" class="img-fluid text-center" style="border-radius: 20px; max-height: 300px; display: block" />
+          <p>Tagged with: PostPortuguese, iOS, Mastodon, Bluesky, Threads, architecture, Swift, framework</p>
+          <p>1405 words; 6 minutes to read</p>
           <p></p>
-          <p>I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another.</p>
-          <p>Mastodon. Bluesky. Threads.</p>
-          <p>Three platforms. Same content. Three times the effort. And somewhere between the second and third paste, I thought: someone should fix this. And then I thought: why not me?</p>
-          <p>So here we are.</p>
+          <p>In the <a href="/en/building-cross-posting-app/">first post</a>, I talked about the problem: copying the same text into three different apps, one after another, is tedious and there had to be a better way. Now I want to talk about the structure I’ve been putting together to solve it, a Swift package called <strong>Acaraje</strong>, designed together with <a href="https://mastodon.social/@diogot">Diogo</a>.</p>
+          <p>The name is not random. Acarajé is a traditional dish from Bahia, Brazil, made from peeled beans fried in dendê oil. It is sold on the streets by baianas, women from Bahia who carry their ingredients and tools on a tray called a tabuleiro. The whole setup is a small, self-contained operation: one person, one tray, everything they need to serve everyone who comes by.</p>
+          <p>That felt like the right metaphor for what I was building.</p>
           <hr />
-          <h2>The problem</h2>
-          <p>I’ve been on the fediverse for a while now, and I genuinely enjoy it. But the reality is that not everyone I know is on Mastodon. Some are on Bluesky. Some haven’t left Threads (or Instagram, or whatever Meta is calling things these days). And if I want to be present across all of them, I have to post everywhere, which is tedious.</p>
-          <p>I know there are some tools out there that handle this. I’ve tried a few.</p>
-          <p>I wanted something that felt native to the platforms, not a lowest-common-denominator solution that strips everything interesting away. Each of these platforms has its own personality. Bluesky has its threading model. Mastodon has content warnings and language settings. Threads is its own thing. A good cross-posting tool should know all of that and handle it quietly in the background.</p>
+          <h2>The core idea</h2>
+          <p>The goal of Acaraje is to give a single, consistent interface for posting to multiple social platforms, while still letting each platform behave exactly as it needs to.</p>
+          <p>This is the tension at the heart of the problem. Mastodon is federated, meaning you connect to a specific server, not a single central authority. Bluesky uses the AT Protocol, with its own OAuth flow and its own quirks. Threads is a Meta product with a Meta-flavored API. They are genuinely different. A good abstraction cannot pretend they are the same, but it also should not force every caller to care about those differences.</p>
+          <p>The way Acaraje handles this is through three layers: the <strong>Tabuleiro protocols</strong>, the <strong>platform implementations</strong>, and the <strong>Baiana</strong> that ties them together.</p>
           <hr />
-          <h2>What I’m imagining</h2>
-          <p>At its core, PostPortuguese is dead simple: you write your post once, you hit send, and it goes everywhere. But the details matter.</p>
-          <p>Here’s what I’m thinking about:</p>
-          <p><strong>Text posts with language support.</strong> This one feels small but I think it’s important. If you’re writing in Portuguese (yes, the name is a clue), or French, or Japanese, the platform should know that. Mastodon and Bluesky let you tag the language of a post, and it helps with discoverability in local timelines. I want to support that properly.</p>
-          <p><strong>Image posts with alt texts.</strong> Accessibility is not an afterthought. If you’re sharing photos, you should be able to write alt text once and have it go to all platforms that support it. No excuses for skipping this.</p>
-          <p><strong>Threads.</strong> Not the Meta app, I mean threaded posts. Long-form thoughts broken into a chain of linked posts. All three platforms support this in some way, and the app should handle the linking and sequencing automatically across all of them.</p>
-          <p><strong>Post history.</strong> Once you’ve posted, you should be able to look back and see what you shared, and jump directly to any platform to check how it’s doing. Likes, replies, boosts, that kind of thing. The app won’t replace the native apps, but it should make it easy to get there.</p>
+          <h2>Tabuleiro: describing what a platform can do</h2>
+          <p>A <code>Tabuleiro</code> is a protocol. At its most basic, it just says: “this thing knows about some accounts, and can log them out.”</p>
+          <pre><code class="language-swift">public protocol Tabuleiro: Sendable {
+    func fetchAccounts() -&gt; [any Account]
+    func logout(account: any Account) async throws
+}
+</code></pre>
+          <p>That is the floor. From there, a platform can opt into additional capabilities by conforming to more specific protocols.</p>
+          <p><strong>Authentication</strong> comes in two flavors, because not all platforms work the same way. Centralized platforms like Bluesky have a single login endpoint:</p>
+          <pre><code class="language-swift">public protocol AuthenticatableTabuleiro: Tabuleiro {
+    func authenticate() async throws -&gt; any Account
+}
+</code></pre>
+          <p>Federated platforms like Mastodon need to know which server you are connecting to:</p>
+          <pre><code class="language-swift">public protocol FederatedTabuleiro: Tabuleiro {
+    func authenticate(instance: URL) async throws -&gt; any Account
+}
+</code></pre>
+          <p><strong>Posting</strong> is also split by content type. Text posts, single image posts, multiple image posts, video posts: each is its own protocol. A platform only conforms to what it actually supports.</p>
+          <pre><code class="language-swift">public protocol TextTabuleiro: Tabuleiro {
+    var maxTextLength: Int { get }
+    func validateText(_ text: String) -&gt; TextValidationResult
+    func post(text: String, language: Locale?, quotePolicy: QuotePolicy?, replyTo: (any Post)?, accounts: [any Account]?) async throws -&gt; [any Post]
+}
+
+public protocol MultipleImageTabuleiro: Tabuleiro {
+    var imageLimit: Int { get }
+    func post(images: [ImageAttachment], text: String?, language: Locale?, quotePolicy: QuotePolicy?, replyTo: (any Post)?, accounts: [any Account]?) async throws -&gt; [any Post]
+}
+</code></pre>
+          <p>This matters for a platform like Instagram, which is image-only. It would conform to <code>AuthenticatableTabuleiro</code> and <code>ImageTabuleiro</code>, but not <code>TextTabuleiro</code>. The rest of the system does not need to know or care about that. It just checks what the platform can do and uses what is available.</p>
           <hr />
-          <h2>Challenges</h2>
-          <p>Honestly? There are a few.</p>
-          <p>The API situation across three platforms is not trivial. Mastodon’s API is well-documented and fairly straightforward. Bluesky uses the AT Protocol, which is newer and has its own quirks. Threads has a Meta-flavored API that I haven’t dug into fully yet. Getting all three to behave consistently under one interface takes some careful thinking.</p>
-          <p>Authentication is another one. Signing into three different accounts, handling tokens, refreshing sessions… it’s not glamorous work but it’s the kind of thing that, if done badly, makes the whole app feel flaky.</p>
-          <p>And then there’s the question of failure handling. What happens if one platform is down and the others succeed? How do you communicate that clearly without making the experience feel broken? And how do you handle the different character limits across platforms?</p>
+          <h2>Platform implementations: the Tabuleiros</h2>
+          <p><code>MastodonTabuleiro</code> and <code>BlueskyTabuleiro</code> are the concrete implementations. Their job is to take the abstract protocols and map them to the actual API calls for each platform.</p>
+          <p><code>MastodonTabuleiro</code> conforms to <code>FederatedTabuleiro</code>, because you have to pick a Mastodon server. It also conforms to <code>TextTabuleiro</code>, <code>ImageTabuleiro</code>, and <code>MultipleImageTabuleiro</code>, because Mastodon supports all of those. The <code>maxTextLength</code> comes from the server configuration, typically 500 characters.</p>
+          <p><code>BlueskyTabuleiro</code> conforms to <code>AuthenticatableTabuleiro</code>, since Bluesky is centralized. Under the hood it uses a low-level AT Protocol client in a separate <code>BlueskyAPI</code> module, which handles the OAuth flow, DPoP tokens, XRPC calls, and token refresh. None of that leaks into the higher-level tabuleiro interface.</p>
+          <p>This separation is intentional. The platform-specific complexity lives inside the tabuleiro. Callers only ever see the protocols.</p>
           <hr />
-          <h2>So what?</h2>
-          <p>I’ve started to put some pieces in place. And I plan to post more about the journey as it evolves. This app may reach the store in the near future (once I figure some things out). But… Let’s see.</p>
+          <h2>Baiana: the one who serves everyone</h2>
+          <p>The <code>Baiana</code> is the coordinator. You give it a list of tabuleiros, and it knows how to delegate calls to the right ones.</p>
+          <pre><code class="language-swift">public final class Baiana: Sendable {
+    public let tabuleiros: [any Tabuleiro]
+
+    public init(tabuleiros: [any Tabuleiro]) {
+        self.tabuleiros = tabuleiros
+    }
+}
+</code></pre>
+          <p>When you ask the Baiana to post some text, it looks through its tabuleiros for anything conforming to <code>TextTabuleiro</code>, then calls all of them concurrently using a <code>TaskGroup</code>. Same for images, threads, and anything else. If a tabuleiro does not support the requested content type, it is simply skipped.</p>
+          <pre><code class="language-swift">func post(text: String, language: Locale?, ...) async throws -&gt; [any Post] {
+    let textTabuleiros = tabuleiros.compactMap { $0 as? TextTabuleiro }
+    return try await withThrowingTaskGroup(of: [any Post].self) { group in
+        for tabuleiro in textTabuleiros {
+            group.addTask {
+                try await tabuleiro.post(text: text, ...)
+            }
+        }
+        // collect and return results
+    }
+}
+</code></pre>
+          <p>Threads (the linked, sequential kind, not the Meta app) are handled similarly, but with an added tracking step. The Baiana keeps track of each platform’s last post and passes it as the <code>replyTo</code> for the next item in the chain. Each platform gets its own reply chain, maintained independently.</p>
+          <p>The result is that the caller writes something like this:</p>
+          <pre><code class="language-swift">let baiana = Baiana(tabuleiros: [mastodonTabuleiro, blueskyTabuleiro])
+let posts = try await baiana.post(text: "Hello, world", language: .current, accounts: nil)
+</code></pre>
+          <p>And both platforms receive the post. No manual looping. No per-platform branching.</p>
+          <hr />
+          <h2>What fits where</h2>
+          <p><img src="/images/acaraje-architecture.png" alt="Acaraje architecture diagram showing the four layers: Baiana, Tabuleiro protocols, platform implementations, and the PostPortuguese app" class="img-fluid" /></p>
+          <p>Here is a summary of the package structure, because the boundaries matter:</p>
+          <ul>
+            <li><strong><code>Acaraje</code></strong>: defines the protocols and data models. No platform-specific logic lives here.</li>
+            <li><strong><code>AcarajeKeychain</code></strong>: shared keychain helpers, used by the tabuleiro implementations to store credentials.</li>
+            <li><strong><code>MastodonTabuleiro</code></strong>: Mastodon implementation, built on top of TootSDK.</li>
+            <li><strong><code>BlueskyAPI</code></strong>: low-level AT Protocol client. OAuth, DPoP, XRPC. Separate from the tabuleiro so it can be used independently if needed.</li>
+            <li><strong><code>BlueskyTabuleiro</code></strong>: Bluesky implementation, using <code>BlueskyAPI</code>.</li>
+          </ul>
+          <p>The app sits on top of the same <code>MastodonTabuleiro</code> and <code>BlueskyTabuleiro</code> libraries. The tabuleiros expose a couple of app-specific extras, like a <code>authenticateWithWebView</code> method for Mastodon that drives login through <code>ASWebAuthenticationSession</code>, but the core protocols are unchanged.</p>
+          <hr />
+          <h2>Why this structure helps</h2>
+          <p>The main benefit of this layered design is that adding a new platform does not touch anything that already exists. You write a new tabuleiro, conform it to whatever protocols make sense for that platform, and hand it to the <code>Baiana</code>. Everything else keeps working.</p>
+          <p>It also makes testing cleaner. You can write a mock tabuleiro that conforms to <code>TextTabuleiro</code> and returns fake posts without touching any network code. The <code>Baiana</code> does not know or care that it’s talking to a mock.</p>
+          <p>And it means the app and the framework share the same core libraries, with each layer adding only the bits specific to its environment, like how credential storage works or how the OAuth redirect is handled.</p>
+          <hr />
+          <p>The name Acaraje is the right one for this. There is one tray, one Baiana, many things she can serve. The dish is made from a few ingredients combined with care, and the result is something that works in many places.</p>
           <p></p>
         </div>
       </div>
-      <div id="accordionNftzt" class="accordion">
+      <div id="accordionGwg5s" class="accordion">
         <div class="accordion-item">
-          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionNftzt-itemYo0l0" aria-expanded="true" aria-controls="accordionNftzt-itemYo0l0">More</button></h2>
-          <div id="accordionNftzt-itemYo0l0" class="accordion-collapse collapse show" data-bs-parent="#accordionNftzt">
+          <h2 class="accordion-header"><button type="button" class="accordion-button btn" data-bs-toggle="collapse" data-bs-target="#accordionGwg5s-itemRcuFG" aria-expanded="true" aria-controls="accordionGwg5s-itemRcuFG">More</button></h2>
+          <div id="accordionGwg5s-itemRcuFG" class="accordion-collapse collapse show" data-bs-parent="#accordionGwg5s">
             <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <h2><a href="/en/building-cross-posting-app">I'm Building a Cross-Posting App</a></h2>
+                  <p class="ig-text-xSmall">Tagged with: PostPortuguese, iOS, Mastodon, Bluesky, Threads, cross-post</p>
+                  <p class="lead">I found myself doing something that felt ridiculous: copying and pasting the same post into three different apps, one after another.</p>
+                </div>
+              </div>
               <div class="card">
                 <div class="card-body">
                   <h2><a href="/en/claude-folder-structure">Structuring Claude's Context for iOS Development</a></h2>
@@ -156,13 +233,6 @@
                   <h2><a href="/en/kmp-xcode-java-fix">Kotlin Multiplatform: Fixing Java Version Conflicts in the Xcode Build Phase</a></h2>
                   <p class="ig-text-xSmall">Tagged with: iOS, SwiftUI, KMP, Kotlin</p>
                   <p class="lead">If you’ve been working with Kotlin Multiplatform for a while, chances are you have more than one Java SDK installed on your machine. Android development, Spring Framework, CLI tooling – they don’t all agree on which Java version they want, and managing that is just part of the job.</p>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h2><a href="/en/llm-tools-skills">LLM Tools - Beyond MCP</a></h2>
-                  <p class="ig-text-xSmall">Tagged with: MCP, LLM, Claude, Codex</p>
-                  <p class="lead">Model Context Protocol (#MCP) is a great way to add capabilities to your #LLM agents. But when working with #Claude or #Codex, it’s not the only way to improve the knowledge and actions of your code assistant. In some cases, it may not be the preferred approach either.</p>
                 </div>
               </div>
             </div>

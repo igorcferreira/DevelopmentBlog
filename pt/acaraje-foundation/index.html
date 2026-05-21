@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="No primeiro post, falei sobre o problema: copiar o mesmo texto em três aplicativos diferentes, um depois do outro, é cansativo e tinha que existir uma forma melhor. Agora quero falar sobre a estrutura que fui montando para resolver isso, um pacote Swift chamado Acaraje, desenvolvido em conjunto com o Diogo." />
+    <meta name="author" content="Igor Ferreira" />
+    <meta name="generator" content="Ignite v0.6.0" />
+    <title>Acarajé, a Base do PostPortuguese</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/prism-xcode-dark.css" rel="stylesheet" data-highlight-theme="xcode-dark" />
+    <link href="/css/prism-xcode-light.css" rel="stylesheet" data-highlight-theme="xcode-light" />
+    <link href="/css/prism-plugins.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <link href="https://igorcferreira.dev/pt/acaraje-foundation" rel="canonical" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+
+    function applySyntaxTheme() {
+        const syntaxTheme = getComputedStyle(document.documentElement)
+            .getPropertyValue('--syntax-highlight-theme').trim().replace(/"/g, '');
+
+        if (!syntaxTheme) return;
+
+        document.querySelectorAll('link[data-highlight-theme]').forEach(link => {
+            link.setAttribute('disabled', 'disabled');
+        });
+
+        const themeLink = document.querySelector(`link[data-highlight-theme="${syntaxTheme}"]`);
+        if (themeLink) {
+            themeLink.removeAttribute('disabled');
+        }
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const currentTheme = getThemePreference();
+        if (currentTheme === 'auto') {
+            applyTheme('auto');
+            applySyntaxTheme();
+        }
+    });
+
+    const savedTheme = getThemePreference();
+    applyTheme(savedTheme);
+    applySyntaxTheme();
+})();
+</script>
+    <meta property="og:site_name" content="Development Blog" />
+    <meta property="og:image" content="/images/acaraje-architecture.png" />
+    <meta name="twitter:image" content="/images/acaraje-architecture.png" />
+    <meta property="og:title" content="Acarajé, a Base do PostPortuguese" />
+    <meta name="twitter:title" content="Acarajé, a Base do PostPortuguese" />
+    <meta property="og:description" content="No primeiro post, falei sobre o problema: copiar o mesmo texto em três aplicativos diferentes, um depois do outro, é cansativo e tinha que existir uma forma melhor. Agora quero falar sobre a estrutura que fui montando para resolver isso, um pacote Swift chamado Acaraje, desenvolvido em conjunto com o Diogo." />
+    <meta name="twitter:description" content="No primeiro post, falei sobre o problema: copiar o mesmo texto em três aplicativos diferentes, um depois do outro, é cansativo e tinha que existir uma forma melhor. Agora quero falar sobre a estrutura que fui montando para resolver isso, um pacote Swift chamado Acaraje, desenvolvido em conjunto com o Diogo." />
+    <meta property="og:url" content="https://igorcferreira.dev/pt/acaraje-foundation" />
+    <meta name="twitter:domain" content="igorcferreira.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:dnt" content="on" />
+    <link href="/apple-touch-icon-precomposed.png" rel="apple-touch-icon" />
+    <link href="https://mastodon.social/@igorcferreira" rel="me" />
+    <meta name="apple-mobile-web-app-title" content="Development Blog" />
+    <meta name="fediverse:creator" content="@igorcferreira@mastodon.social" />
+  </head>
+  <body class="container">
+    <header>
+      <nav class="navbar navbar-expand-md" style="background-color: rgb(220 53 69 / 100%)" data-bs-theme="dark">
+        <div class="container flex-wrap flex-lg-nowrap">
+          <button type="button" class="navbar-toggler btn" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+          <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav mb-2 mb-md-0 col ">
+              <li class="nav-item"><a href="/pt/home" class="nav-link text-nowrap">Home</a></li>
+              <li class="nav-item"><a href="/pt/categories" class="nav-link text-nowrap">Categorias</a></li>
+              <li class="nav-item"><a href="/pt/resume" class="nav-link text-nowrap">Resume</a></li>
+              <li class="nav-item"><a target="_blank" href="https://github.com/igorcferreira" class="nav-link text-nowrap">GitHub</a></li>
+              <li class="nav-item"><a target="_blank" href="https://mastodon.social/@igorcferreira" class="nav-link text-nowrap">Mastodon</a></li>
+              <li class="nav-item"><a target="_blank" href="/feed.rss" class="nav-link text-nowrap">Feed</a></li>
+              <div class="ms-auto"></div>
+              <li class="nav-item"><a href="/en/acaraje-foundation" class="nav-link text-nowrap">See in English</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="ig-main-content">
+      <h1>Acarajé, a Base do PostPortuguese</h1>
+      <img src="/images/acaraje-architecture.png" alt="" class="img-fluid text-center" style="border-radius: 20px; max-height: 300px; display: block" />
+      <p>Tags: PostPortuguese, iOS, Mastodon, Bluesky, Threads, arquitetura, Swift, framework</p>
+      <p>1468 palavras; 6 minutos de leitura</p>
+      <p></p>
+      <p>No <a href="/pt/building-cross-posting-app/">primeiro post</a>, falei sobre o problema: copiar o mesmo texto em três aplicativos diferentes, um depois do outro, é cansativo e tinha que existir uma forma melhor. Agora quero falar sobre a estrutura que fui montando para resolver isso, um pacote Swift chamado <strong>Acaraje</strong>, desenvolvido em conjunto com o <a href="https://mastodon.social/@diogot">Diogo</a>.</p>
+      <p>O nome não é por acaso. Acarajé é um prato tradicional da Bahia, feito de feijão-fradinho amassado e frito no azeite de dendê. É vendido nas ruas pelas baianas, que carregam os ingredientes e utensílios num tabuleiro. A operação toda é pequena e autossuficiente: uma pessoa, um tabuleiro, tudo o que precisa para servir a todo mundo que passar.</p>
+      <p>Essa pareceu a metáfora certa para o que eu estava construindo.</p>
+      <hr />
+      <h2>A ideia central</h2>
+      <p>O objetivo do Acaraje é oferecer uma interface única e consistente para publicar em múltiplas plataformas sociais, sem deixar de permitir que cada plataforma se comporte do jeito que precisa.</p>
+      <p>Essa é a tensão no centro do problema. O Mastodon é federado, ou seja, você se conecta a um servidor específico, não a uma autoridade central única. O Bluesky usa o AT Protocol, com seu próprio fluxo de OAuth e suas próprias particularidades. O Threads é um produto da Meta com uma API no estilo Meta. Eles são genuinamente diferentes. Uma boa abstração não pode fingir que são iguais, mas também não deve obrigar quem usa a se preocupar com essas diferenças.</p>
+      <p>A forma como o Acaraje lida com isso é através de três camadas: os <strong>protocolos Tabuleiro</strong>, as <strong>implementações de plataforma</strong>, e a <strong>Baiana</strong> que une tudo.</p>
+      <hr />
+      <h2>Tabuleiro: descrevendo o que uma plataforma consegue fazer</h2>
+      <p>Um <code>Tabuleiro</code> é um protocolo. Na forma mais básica, ele apenas diz: “esse negócio conhece algumas contas e consegue fazer logout delas.”</p>
+      <pre><code class="language-swift">public protocol Tabuleiro: Sendable {
+    func fetchAccounts() -&gt; [any Account]
+    func logout(account: any Account) async throws
+}
+</code></pre>
+      <p>Esse é o piso. A partir daí, uma plataforma pode optar por capacidades adicionais conformando protocolos mais específicos.</p>
+      <p><strong>Autenticação</strong> vem em dois formatos, porque nem todas as plataformas funcionam do mesmo jeito. Plataformas centralizadas como o Bluesky têm um único endpoint de login:</p>
+      <pre><code class="language-swift">public protocol AuthenticatableTabuleiro: Tabuleiro {
+    func authenticate() async throws -&gt; any Account
+}
+</code></pre>
+      <p>Plataformas federadas como o Mastodon precisam saber a qual servidor você está se conectando:</p>
+      <pre><code class="language-swift">public protocol FederatedTabuleiro: Tabuleiro {
+    func authenticate(instance: URL) async throws -&gt; any Account
+}
+</code></pre>
+      <p><strong>Publicação</strong> também é dividida por tipo de conteúdo. Posts de texto, posts com uma imagem, posts com múltiplas imagens, posts de vídeo: cada um é seu próprio protocolo. Uma plataforma só conforma o que ela de fato suporta.</p>
+      <pre><code class="language-swift">public protocol TextTabuleiro: Tabuleiro {
+    var maxTextLength: Int { get }
+    func validateText(_ text: String) -&gt; TextValidationResult
+    func post(text: String, language: Locale?, quotePolicy: QuotePolicy?, replyTo: (any Post)?, accounts: [any Account]?) async throws -&gt; [any Post]
+}
+
+public protocol MultipleImageTabuleiro: Tabuleiro {
+    var imageLimit: Int { get }
+    func post(images: [ImageAttachment], text: String?, language: Locale?, quotePolicy: QuotePolicy?, replyTo: (any Post)?, accounts: [any Account]?) async throws -&gt; [any Post]
+}
+</code></pre>
+      <p>Isso importa para uma plataforma como o Instagram, que é só de imagens. Ela conformaria <code>AuthenticatableTabuleiro</code> e <code>ImageTabuleiro</code>, mas não <code>TextTabuleiro</code>. O resto do sistema não precisa saber nem se importar com isso. Ele só verifica o que a plataforma consegue fazer e usa o que está disponível.</p>
+      <hr />
+      <h2>Implementações de plataforma: os Tabuleiros</h2>
+      <p><code>MastodonTabuleiro</code> e <code>BlueskyTabuleiro</code> são as implementações concretas. O trabalho deles é pegar os protocolos abstratos e mapeá-los para as chamadas de API reais de cada plataforma.</p>
+      <p><code>MastodonTabuleiro</code> conforma <code>FederatedTabuleiro</code>, porque você precisa escolher um servidor Mastodon. Ele também conforma <code>TextTabuleiro</code>, <code>ImageTabuleiro</code> e <code>MultipleImageTabuleiro</code>, porque o Mastodon suporta tudo isso. O <code>maxTextLength</code> vem da configuração do servidor, tipicamente 500 caracteres.</p>
+      <p><code>BlueskyTabuleiro</code> conforma <code>AuthenticatableTabuleiro</code>, já que o Bluesky é centralizado. Por baixo dos panos, ele usa um cliente AT Protocol de baixo nível num módulo separado, o <code>BlueskyAPI</code>, que cuida do fluxo OAuth, tokens DPoP, chamadas XRPC e renovação de token. Nada disso vaza para a interface de tabuleiro de nível mais alto.</p>
+      <p>Essa separação é intencional. A complexidade específica de cada plataforma vive dentro do tabuleiro. Quem usa o framework só vê os protocolos.</p>
+      <hr />
+      <h2>Baiana: a que serve todo mundo</h2>
+      <p>A <code>Baiana</code> é a coordenadora. Você passa uma lista de tabuleiros para ela, e ela sabe como delegar as chamadas para os certos.</p>
+      <pre><code class="language-swift">public final class Baiana: Sendable {
+    public let tabuleiros: [any Tabuleiro]
+
+    public init(tabuleiros: [any Tabuleiro]) {
+        self.tabuleiros = tabuleiros
+    }
+}
+</code></pre>
+      <p>Quando você pede para a Baiana publicar um texto, ela percorre os tabuleiros procurando qualquer um que conforme <code>TextTabuleiro</code>, e então chama todos eles de forma concorrente usando um <code>TaskGroup</code>. O mesmo vale para imagens, threads e qualquer outra coisa. Se um tabuleiro não suporta o tipo de conteúdo solicitado, ele simplesmente é ignorado.</p>
+      <pre><code class="language-swift">func post(text: String, language: Locale?, ...) async throws -&gt; [any Post] {
+    let textTabuleiros = tabuleiros.compactMap { $0 as? TextTabuleiro }
+    return try await withThrowingTaskGroup(of: [any Post].self) { group in
+        for tabuleiro in textTabuleiros {
+            group.addTask {
+                try await tabuleiro.post(text: text, ...)
+            }
+        }
+        // coleta e retorna os resultados
+    }
+}
+</code></pre>
+      <p>Threads (o tipo encadeado e sequencial, não o app da Meta) são tratados de forma parecida, mas com um passo adicional de rastreamento. A Baiana mantém o registro do último post de cada plataforma e o passa como <code>replyTo</code> para o próximo item da corrente. Cada plataforma tem sua própria cadeia de respostas, mantida de forma independente.</p>
+      <p>O resultado é que quem usa o framework escreve algo assim:</p>
+      <pre><code class="language-swift">let baiana = Baiana(tabuleiros: [mastodonTabuleiro, blueskyTabuleiro])
+let posts = try await baiana.post(text: "Olá, mundo", language: .current, accounts: nil)
+</code></pre>
+      <p>E as duas plataformas recebem o post. Sem loop manual. Sem ramificação por plataforma.</p>
+      <hr />
+      <h2>O que fica onde</h2>
+      <p><img src="/images/acaraje-architecture.png" alt="Diagrama de arquitetura do Acaraje mostrando as quatro camadas: Baiana, protocolos Tabuleiro, implementações de plataforma e o app PostPortuguese" class="img-fluid" /></p>
+      <p>Um resumo da estrutura do pacote, porque os limites entre as camadas importam:</p>
+      <ul>
+        <li><strong><code>Acaraje</code></strong>: define os protocolos e os modelos de dados. Nenhuma lógica específica de plataforma vive aqui.</li>
+        <li><strong><code>AcarajeKeychain</code></strong>: helpers de Keychain compartilhados, usados pelas implementações de tabuleiro para armazenar credenciais.</li>
+        <li><strong><code>MastodonTabuleiro</code></strong>: implementação do Mastodon, construída em cima do TootSDK.</li>
+        <li><strong><code>BlueskyAPI</code></strong>: cliente AT Protocol de baixo nível. OAuth, DPoP, XRPC. Separado do tabuleiro para que possa ser usado de forma independente se necessário.</li>
+        <li><strong><code>BlueskyTabuleiro</code></strong>: implementação do Bluesky, usando o <code>BlueskyAPI</code>.</li>
+      </ul>
+      <p>O app fica em cima das mesmas bibliotecas <code>MastodonTabuleiro</code> e <code>BlueskyTabuleiro</code>. Os tabuleiros expõem alguns extras específicos do app, como um método <code>authenticateWithWebView</code> para o Mastodon que conduz o login através de <code>ASWebAuthenticationSession</code>, mas os protocolos centrais não mudam.</p>
+      <hr />
+      <h2>Por que essa estrutura ajuda</h2>
+      <p>O principal benefício desse design em camadas é que adicionar uma nova plataforma não mexe em nada que já existe. Você escreve um novo tabuleiro, o faz conformar os protocolos que fazem sentido para aquela plataforma, e entrega para a <code>Baiana</code>. Todo o resto continua funcionando.</p>
+      <p>Isso também torna os testes mais limpos. Você pode escrever um tabuleiro mock que conforma <code>TextTabuleiro</code> e retorna posts falsos sem tocar em nenhum código de rede. A <code>Baiana</code> não sabe nem se importa que está falando com um mock.</p>
+      <p>E significa que o app e o framework compartilham as mesmas bibliotecas centrais, com cada camada adicionando apenas o que é específico do seu ambiente, como o funcionamento do armazenamento de credenciais ou o redirecionamento do OAuth.</p>
+      <hr />
+      <p>O nome Acaraje é o certo para isso. Tem um tabuleiro, uma Baiana, muitas coisas que ela pode servir. O prato é feito de poucos ingredientes combinados com cuidado, e o resultado é algo que funciona em muitos lugares.</p>
+      <p></p>
+    </div>
+    <p class="text-center mt-5">Created in Swift with <a href="https://github.com/twostraws/Ignite">Ignite</a></p>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/syntax-highlighting.js"></script>
+    <script src="/js/ignite-core.js"></script>
+  </body>
+</html>
