@@ -16,14 +16,6 @@ struct ArticleContent: HTML {
     var body: some HTML {
         Text(article.title)
             .font(.title1)
-
-        if let image = article.image {
-            Image(image, description: article.imageDescription)
-                .resizable()
-                .cornerRadius(20)
-                .frame(maxHeight: 300)
-                .horizontalAlignment(.center)
-        }
         
         if article.hasTags {
             Group {
