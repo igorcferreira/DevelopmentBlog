@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Igor Ferreira" />
+    <title>PostPortuguese - Privacy Policy</title>
+    <meta name="description" content="Privacy Policy for the PostPortuguese app" />
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/css/ignite-core.min.css" rel="stylesheet" />
+    <script>(function() {
+    function getThemePreference() {
+        return localStorage.getItem('custom-theme') || 'auto';
+    }
+    function applyTheme(themeID) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const lightThemeID = document.documentElement.getAttribute('data-light-theme') || 'light';
+        const darkThemeID = document.documentElement.getAttribute('data-dark-theme') || 'dark';
+        const actualThemeID = themeID === 'auto' ? (prefersDark ? darkThemeID : lightThemeID) : themeID;
+        document.documentElement.setAttribute('data-bs-theme', actualThemeID);
+        document.documentElement.setAttribute('data-theme-state', themeID);
+    }
+    applyTheme(getThemePreference());
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        applyTheme(getThemePreference());
+    });
+    })();</script>
+  </head>
+  <body>
+    <div class="container my-5" style="max-width: 720px;">
+      <h1>PostPortuguese - Privacy Policy</h1>
+      <p><strong>Effective date:</strong> May 27, 2026</p>
+      <p>PostPortuguese is developed by Igor Ferreira. This policy describes how the app handles your data.</p>
+
+      <h2>Data collected and stored on your device</h2>
+      <p>PostPortuguese stores the following data locally on your device:</p>
+      <ul>
+        <li><strong>Social-media credentials.</strong> OAuth tokens for Mastodon and Bluesky are stored in the system Keychain. No passwords are stored by the app.</li>
+        <li><strong>Post history.</strong> A record of posts you have sent (text, media filenames, alt text, timestamps, and account identifiers) is kept in a local database.</li>
+        <li><strong>Scheduled posts.</strong> Drafts you schedule for later, including text, media, and target accounts, are stored in a local database until they are sent or deleted.</li>
+        <li><strong>Media files.</strong> Images and videos you attach are held temporarily on disk until the post is sent.</li>
+      </ul>
+      <p>If your device has iCloud enabled and the app has the CloudKit entitlement, post history and scheduled posts may sync to your private iCloud container. This data is visible only to your Apple Account and is governed by <a href="https://www.apple.com/privacy/" rel="noopener noreferrer">Apple's privacy policy</a>.</p>
+
+      <h2>Third-party services</h2>
+      <p>PostPortuguese communicates with the following third-party services when you use the corresponding features:</p>
+      <table class="table">
+        <thead>
+          <tr><th>Service</th><th>When used</th><th>Data sent</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Mastodon instance</strong> (your chosen server)</td><td>Logging in, posting</td><td>OAuth flow data, post text, media, alt text</td></tr>
+          <tr><td><strong>Bluesky (AT Protocol)</strong></td><td>Logging in, posting</td><td>OAuth flow data, post text, media, alt text</td></tr>
+          <tr><td><strong>DeepL API</strong></td><td>Translating text</td><td>The text you choose to translate</td></tr>
+          <tr><td><strong>Apple Translation (on-device)</strong></td><td>Translating text</td><td>Text is processed on-device and is not sent to any server</td></tr>
+        </tbody>
+      </table>
+      <p>No data is sent to any service other than those listed above. The app does not include any analytics, advertising, or tracking SDKs.</p>
+
+      <h2>Data the app does not collect</h2>
+      <ul>
+        <li>The app does not collect personal information such as your name, email address, or location.</li>
+        <li>The app does not track your activity or build a profile.</li>
+        <li>The app does not share data with data brokers or advertisers.</li>
+      </ul>
+
+      <h2>Data retention and deletion</h2>
+      <p>All app data is stored on your device (and, if enabled, in your private iCloud container). You can delete all data at any time by removing the app. To delete iCloud-synced data, use the iCloud storage management in your device settings.</p>
+
+      <h2>Children's privacy</h2>
+      <p>PostPortuguese does not knowingly collect data from children under 13.</p>
+
+      <h2>Changes to this policy</h2>
+      <p>If this policy is updated, the new version will be posted at this URL with an updated effective date.</p>
+
+      <h2>Contact</h2>
+      <p>If you have questions about this policy, you can reach me at <a href="mailto:me@igorcferreira.dev">me@igorcferreira.dev</a>.</p>
+    </div>
+  </body>
+</html>
